@@ -143,7 +143,7 @@ function Login() {
           <p>
             Don't have an account? <Link to="/register">Register here</Link>
           </p>
-          <Link to="/" className="back-link">Back to home</Link>
+          <Link to="/" className="back-link">← Back to home</Link>
         </div>
       </div>
     </div>
