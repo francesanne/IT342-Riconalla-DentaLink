@@ -1,118 +1,296 @@
+@import './global.css';
+
 .register-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: var(--space-4);
+  background: linear-gradient(135deg, #f6f9fc 0%, #f1f5f9 100%);
 }
 
 .register-card {
   background: white;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xl);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-2xl);
   width: 100%;
   max-width: 500px;
-  padding: 2.5rem;
-  animation: slideUp 0.5s ease-out;
+  padding: var(--space-8);
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
 }
 
 .register-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-8);
 }
 
 .register-header .logo-text {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
   font-family: var(--font-display);
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   display: inline-block;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-4);
+  letter-spacing: -0.02em;
 }
 
 .register-header h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: var(--text-2xl);
+  font-weight: var(--font-semibold);
   color: var(--gray-800);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-2);
 }
 
 .register-header p {
   color: var(--gray-500);
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--space-5);
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .form-group label {
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
   color: var(--gray-700);
+  letter-spacing: 0.02em;
 }
 
 .form-group input {
-  padding: 0.875rem 1rem;
+  height: 48px;
+  padding: 0 var(--space-4);
   border: 2px solid var(--gray-200);
-  border-radius: var(--radius-md);
-  font-size: 1rem;
-  transition: all 0.3s ease;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
+  transition: all 0.2s ease;
   background: var(--gray-50);
+  color: var(--gray-800);
+  width: 100%;
+}
+
+.form-group input:hover {
+  border-color: var(--gray-300);
+  background: white;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: var(--primary);
   background: white;
-  box-shadow: 0 0 0 4px rgba(42, 157, 143, 0.1);
+  box-shadow: 0 0 0 4px rgba(110, 193, 195, 0.15);
 }
 
 .form-group input::placeholder {
   color: var(--gray-400);
+  font-size: var(--text-sm);
+}
+
+.form-group input:disabled {
+  background: var(--gray-100);
+  border-color: var(--gray-200);
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .btn-block {
+  height: 48px;
   width: 100%;
-  padding: 1rem;
-  font-size: 1rem;
-  font-weight: 600;
-  margin-top: 0.5rem;
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  margin-top: var(--space-2);
+  border-radius: var(--radius-lg);
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: var(--shadow-md);
 }
 
+.btn-block:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  background: var(--gradient-primary-hover);
+}
+
+.btn-block:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-block:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--gray-400);
+  margin: var(--space-6) 0;
+  font-size: var(--text-sm);
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.divider span {
+  padding: 0 var(--space-4);
+  color: var(--gray-500);
+  font-weight: var(--font-medium);
+}
+
+/* Google Button */
+.btn-google {
+  height: 48px;
+  background: white;
+  color: var(--gray-700);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  width: 100%;
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-bottom: var(--space-4);
+}
+
+.btn-google:hover:not(:disabled) {
+  background: var(--gray-50);
+  border-color: var(--gray-300);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-google span {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--primary);
+}
+
+.btn-google:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Register Footer */
 .register-footer {
-  margin-top: 2rem;
+  margin-top: var(--space-6);
   text-align: center;
 }
 
 .register-footer p {
   color: var(--gray-600);
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-2);
 }
 
 .register-footer a {
   color: var(--primary);
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .register-footer a:hover {
+  color: var(--primary-dark);
   text-decoration: underline;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--gray-500);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  transition: color 0.2s ease;
+  margin-top: var(--space-2);
+}
+
+.back-link:hover {
+  color: var(--primary);
+}
+
+.back-link::before {
+  content: "←";
+  font-size: var(--text-base);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .register-container {
+    padding: var(--space-2);
+  }
+  
+  .register-card {
+    padding: var(--space-6);
+  }
+  
+  .register-header h2 {
+    font-size: var(--text-xl);
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+  
+  .form-group input {
+    height: 44px;
+  }
+  
+  .btn-block {
+    height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-card {
+    padding: var(--space-4);
+  }
+  
+  .btn-google {
+    height: 44px;
+  }
 }
