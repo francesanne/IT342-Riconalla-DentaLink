@@ -1,4 +1,6 @@
 package com.dentalink.backend.entity;
 
-public class PaymentStatus {
+public enum PaymentStatus {
+    UNPAID,
+    PAID
 }
