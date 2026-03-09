@@ -1,4 +1,8 @@
 package com.dentalink.backend.entity;
 
-public class AppointmentStatus {
+public enum AppointmentStatus {
+    PENDING_PAYMENT,
+    CONFIRMED,
+    COMPLETED,
+    CANCELLED
 }
