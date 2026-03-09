@@ -1,0 +1,4 @@
+package com.dentalink.riconalla.service;
+
+public class DentistService {
+}
