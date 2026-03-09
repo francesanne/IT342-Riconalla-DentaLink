@@ -41,19 +41,13 @@ function Login() {
       console.log("Login success - Full response:", response);
       console.log("Login success - Data:", response.data);
       
-      // Your backend returns: { "token": "eyJhbGci..." }
       if (response.data && response.data.token) {
-        // Store the token
         localStorage.setItem('token', response.data.token);
-        
-        // Also store user email for display purposes (optional)
         localStorage.setItem('userEmail', trimmedEmail);
         
         console.log("Token stored successfully");
         alert("Login successful!");
-        
-        // Redirect to dashboard or home
-        navigate("/dashboard"); // or "/" if you don't have dashboard yet
+        navigate("/dashboard");
         
       } else {
         console.error("Unexpected response format:", response.data);
@@ -64,11 +58,9 @@ function Login() {
       console.log("Login error:", error);
       
       if (error.response) {
-        // Your backend returns error message in the response
         console.log("Error status:", error.response.status);
         console.log("Error data:", error.response.data);
         
-        // Show the error message from backend
         const errorMessage = error.response.data?.message || 
                             error.response.data || 
                             "Invalid email or password";
@@ -89,13 +81,6 @@ function Login() {
   const handleGoogleLogin = () => {
     console.log("Google login clicked");
     alert("Google login will be implemented soon");
-  };
-
-  // For testing - fill with your registered credentials
-  const fillTestCredentials = () => {
-    // CHANGE THESE TO YOUR ACTUAL REGISTERED CREDENTIALS
-    setEmail("test@example.com"); // Replace with your registered email
-    setPassword("password123");    // Replace with your registered password
   };
 
   return (
@@ -141,24 +126,6 @@ function Login() {
           </button>
         </form>
 
-        {/* Temporary test button - remove after debugging */}
-        <button 
-          type="button"
-          onClick={fillTestCredentials}
-          style={{
-            marginTop: '10px',
-            padding: '5px',
-            fontSize: '12px',
-            background: '#f0f0f0',
-            border: '1px dashed #999',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            width: '100%'
-          }}
-        >
-          📋 Fill Test Credentials (DEBUG ONLY)
-        </button>
-
         <div className="divider">
           <span>Or continue with</span>
         </div>
@@ -176,7 +143,7 @@ function Login() {
           <p>
             Don't have an account? <Link to="/register">Register here</Link>
           </p>
-          <Link to="/" className="back-link">← Back to home</Link>
+          <Link to="/" className="back-link">Back to home</Link>
         </div>
       </div>
     </div>

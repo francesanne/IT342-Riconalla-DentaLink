@@ -149,7 +149,7 @@ function Register() {
           <p>
             Already have an account? <Link to="/login">Login here</Link>
           </p>
-          <Link to="/" className="back-link">← Back to home</Link>
+          <Link to="/" className="back-link">Back to home</Link>
         </div>
       </div>
     </div>
