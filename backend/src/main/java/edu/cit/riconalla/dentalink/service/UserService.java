@@ -1,11 +1,11 @@
-package com.dentalink.riconalla.service;
+package edu.cit.riconalla.dentalink.service;
 
-import com.dentalink.riconalla.dto.LoginRequest;
-import com.dentalink.riconalla.dto.RegisterRequest;
-import com.dentalink.riconalla.entity.Role;
-import com.dentalink.riconalla.entity.User;
-import com.dentalink.riconalla.repository.UserRepository;
-import com.dentalink.riconalla.security.JwtUtil;
+import edu.cit.riconalla.dentalink.dto.LoginRequest;
+import edu.cit.riconalla.dentalink.dto.RegisterRequest;
+import edu.cit.riconalla.dentalink.entity.Role;
+import edu.cit.riconalla.dentalink.entity.User;
+import edu.cit.riconalla.dentalink.repository.UserRepository;
+import edu.cit.riconalla.dentalink.security.JwtUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

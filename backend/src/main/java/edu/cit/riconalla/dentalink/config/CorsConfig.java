@@ -1,4 +1,4 @@
-package com.dentalink.riconalla.config;
+package edu.cit.riconalla.dentalink.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

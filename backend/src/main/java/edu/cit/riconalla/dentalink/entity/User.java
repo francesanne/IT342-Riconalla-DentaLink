@@ -1,4 +1,4 @@
-package com.dentalink.riconalla.entity;
+package edu.cit.riconalla.dentalink.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
