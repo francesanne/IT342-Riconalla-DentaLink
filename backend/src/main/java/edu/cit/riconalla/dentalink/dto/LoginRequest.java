@@ -1,4 +1,4 @@
-package com.dentalink.riconalla.dto;
+package edu.cit.riconalla.dentalink.dto;
 
 public class LoginRequest {
 

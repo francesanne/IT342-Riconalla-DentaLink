@@ -1,4 +1,4 @@
-package com.dentalink.riconalla.exception;
+package edu.cit.riconalla.dentalink.exception;
 
 public class GlobalExceptionHandler {
 }

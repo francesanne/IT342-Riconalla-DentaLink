@@ -1,9 +1,9 @@
-package com.dentalink.riconalla.controller;
+package edu.cit.riconalla.dentalink.controller;
 
-import com.dentalink.riconalla.dto.LoginRequest;
-import com.dentalink.riconalla.dto.LoginResponse;
-import com.dentalink.riconalla.dto.RegisterRequest;
-import com.dentalink.riconalla.service.UserService;
+import edu.cit.riconalla.dentalink.dto.LoginRequest;
+import edu.cit.riconalla.dentalink.dto.LoginResponse;
+import edu.cit.riconalla.dentalink.dto.RegisterRequest;
+import edu.cit.riconalla.dentalink.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
