@@ -1,4 +1,4 @@
-package com.dentalink.riconalla.service;
+package edu.cit.riconalla.dentalink.service;
 
 public class DentistService {
 }

@@ -1,6 +1,6 @@
-package com.dentalink.riconalla.repository;
+package edu.cit.riconalla.dentalink.repository;
 
-import com.dentalink.riconalla.entity.Appointment;
+import edu.cit.riconalla.dentalink.entity.Appointment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
