@@ -1,6 +1,5 @@
-package com.dentalink.riconalla.repository;
-
-import com.dentalink.riconalla.entity.User;
+package edu.cit.riconalla.dentalink.repository;
+import edu.cit.riconalla.dentalink.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

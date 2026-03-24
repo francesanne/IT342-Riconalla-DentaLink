@@ -1,4 +1,4 @@
-package com.dentalink.riconalla.controller;
+package edu.cit.riconalla.dentalink.controller;
 
 public class ServiceController {
 }

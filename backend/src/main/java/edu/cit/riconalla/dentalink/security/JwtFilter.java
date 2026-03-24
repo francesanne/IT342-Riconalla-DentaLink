@@ -1,4 +1,3 @@
-package com.dentalink.riconalla.security;
-
+package edu.cit.riconalla.dentalink.security;
 public class JwtFilter {
 }
