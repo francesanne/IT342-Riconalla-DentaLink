@@ -55,4 +55,36 @@ public class UserService {
                 user.getRole().name()
         );
     }
+
+    public String loginWithGoogle(String idToken, GoogleService googleService) {
+
+        var payload = googleService.verifyToken(idToken);
+
+        String email = payload.getEmail();
+        String firstName = (String) payload.get("given_name");
+        String lastName = (String) payload.get("family_name");
+        String googleId = payload.getSubject();
+
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            user = new User();
+            user.setEmail(email);
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setGoogleId(googleId);
+            user.setRole(Role.PATIENT);
+            user.setCreatedAt(java.time.LocalDateTime.now());
+
+            // No password for Google users
+            user.setPassword("");
+
+            userRepository.save(user);
+        }
+
+        return jwtUtil.generateToken(
+                user.getEmail(),
+                user.getRole().name()
+        );
+    }
 }
