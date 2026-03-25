@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/login.css";
+import { GoogleLogin } from '@react-oauth/google';
 
 function Login() {
   const navigate = useNavigate();
@@ -11,17 +12,17 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
+
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
-    
+
     console.log("Attempting login with:", { email: trimmedEmail });
-    
+
     if (!trimmedEmail || !trimmedPassword) {
       alert("Please enter both email and password");
       return;
     }
-    
+
     setIsLoading(true);
 
     try {
@@ -40,15 +41,15 @@ function Login() {
 
       console.log("Login success - Full response:", response);
       console.log("Login success - Data:", response.data);
-      
+
       if (response.data && response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('userEmail', trimmedEmail);
-        
+
         console.log("Token stored successfully");
         alert("Login successful!");
         navigate("/dashboard");
-        
+
       } else {
         console.error("Unexpected response format:", response.data);
         alert("Login successful but unexpected response format");
@@ -56,16 +57,16 @@ function Login() {
 
     } catch (error) {
       console.log("Login error:", error);
-      
+
       if (error.response) {
         console.log("Error status:", error.response.status);
         console.log("Error data:", error.response.data);
-        
-        const errorMessage = error.response.data?.message || 
-                            error.response.data || 
-                            "Invalid email or password";
+
+        const errorMessage = error.response.data?.message ||
+          error.response.data ||
+          "Invalid email or password";
         alert(`Login failed: ${errorMessage}`);
-        
+
       } else if (error.request) {
         console.log("No response from server");
         alert("Cannot connect to server. Please check if backend is running on port 8080");
@@ -78,14 +79,10 @@ function Login() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    console.log("Google login clicked");
-    alert("Google login will be implemented soon");
-  };
-
   return (
     <div className="login-container">
       <div className="login-card">
+
         <div className="login-header">
           <Link to="/" className="logo-text">🦷 DentaLink</Link>
           <h2>Sign in to your account</h2>
@@ -117,8 +114,8 @@ function Login() {
             />
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn btn-primary btn-block"
             disabled={isLoading}
           >
@@ -130,14 +127,33 @@ function Login() {
           <span>Or continue with</span>
         </div>
 
-        <button 
-          onClick={handleGoogleLogin}
-          className="btn btn-google"
-          disabled={isLoading}
-        >
-          <span>G</span>
-          Login with Google
-        </button>
+        <div>
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              try {
+                const idToken = credentialResponse.credential;
+
+                const response = await axios.post(
+                  "http://localhost:8080/auth/google",
+                  { idToken }
+                );
+
+                if (response.data && response.data.token) {
+                  localStorage.setItem('token', response.data.token);
+                  alert("Google login successful!");
+                  navigate("/dashboard");
+                }
+
+              } catch (error) {
+                console.error(error);
+                alert("Google login failed");
+              }
+            }}
+            onError={() => {
+              alert("Google login failed");
+            }}
+          />
+        </div>
 
         <div className="login-footer">
           <p>
@@ -145,6 +161,7 @@ function Login() {
           </p>
           <Link to="/" className="back-link">← Back to home</Link>
         </div>
+
       </div>
     </div>
   );
