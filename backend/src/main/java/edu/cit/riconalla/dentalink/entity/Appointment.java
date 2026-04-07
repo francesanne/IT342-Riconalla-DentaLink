@@ -1,5 +1,5 @@
 package edu.cit.riconalla.dentalink.entity;
-
+import lombok.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +15,9 @@ import java.time.LocalDateTime;
 )
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Appointment {
 
     @Id

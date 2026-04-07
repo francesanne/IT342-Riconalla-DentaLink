@@ -31,40 +31,37 @@ public class AppointmentService {
     /** Patient books an appointment */
     public Appointment createAppointment(String patientEmail, Long serviceId, Long dentistId,
                                          LocalDateTime appointmentDatetime) {
-        // Validate patient exists
+
         User patient = userRepository.findByEmail(patientEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Validate service and dentist exist
         serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new RuntimeException("Service not found"));
         dentistRepository.findById(dentistId)
                 .orElseThrow(() -> new RuntimeException("Dentist not found"));
 
-        // Double-booking check
         if (appointmentRepository.existsByDentistIdAndAppointmentDatetime(dentistId, appointmentDatetime)) {
             throw new RuntimeException("Conflict: This dentist is already booked at the selected date and time");
         }
 
-        Appointment a = new Appointment();
-        a.setPatientId(patient.getUserId());
-        a.setServiceId(serviceId);
-        a.setDentistId(dentistId);
-        a.setAppointmentDatetime(appointmentDatetime);
-        a.setAppointmentStatus(AppointmentStatus.PENDING_PAYMENT);
-        a.setPaymentStatus(PaymentStatus.UNPAID);
+        Appointment a = Appointment.builder()
+                .patientId(patient.getUserId())
+                .serviceId(serviceId)
+                .dentistId(dentistId)
+                .appointmentDatetime(appointmentDatetime)
+                .appointmentStatus(AppointmentStatus.PENDING_PAYMENT)
+                .paymentStatus(PaymentStatus.UNPAID)
+                .build();
 
         return appointmentRepository.save(a);
     }
 
-    /** Patient gets their own appointments */
     public List<Appointment> getPatientAppointments(String patientEmail) {
         User patient = userRepository.findByEmail(patientEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return appointmentRepository.findByPatientId(patient.getUserId());
     }
 
-    /** Admin gets all appointments, optionally filtered by status */
     public List<Appointment> getAllAppointments(String status) {
         if (status != null && !status.isBlank()) {
             AppointmentStatus s = AppointmentStatus.valueOf(status.toUpperCase());
@@ -78,7 +75,6 @@ public class AppointmentService {
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
     }
 
-    /** Admin updates status to COMPLETED or CANCELLED */
     public Appointment updateStatus(Long id, String status) {
         if (status.equalsIgnoreCase("CONFIRMED")) {
             throw new RuntimeException("Forbidden: Only PayMongo webhook can set CONFIRMED status");
@@ -88,7 +84,6 @@ public class AppointmentService {
         return appointmentRepository.save(a);
     }
 
-    /** Admin dashboard stats */
     public java.util.Map<String, Object> getDashboardStats() {
         List<Appointment> all = appointmentRepository.findAll();
         long total = all.size();
@@ -111,7 +106,7 @@ public class AppointmentService {
         List<Appointment> recent = all.stream()
                 .sorted((a, b) -> b.getAppointmentId().compareTo(a.getAppointmentId()))
                 .limit(5)
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
 
         return java.util.Map.of(
                 "totalAppointments", total,
