@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import edu.cit.riconalla.dentalink.dto.AppointmentResponse;
 import java.time.LocalDateTime;
 import java.util.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.stream.Collectors;
 
 @RestController
@@ -60,14 +61,10 @@ public class AppointmentController {
         return ResponseEntity.ok(Map.of("success", true, "data", appointmentService.toResponse(a)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/status")
     public ResponseEntity<Map<String, Object>> updateStatus(@PathVariable Long id,
-                                                            @RequestBody Map<String, Object> body,
-                                                            Authentication auth) {
-
-        boolean isAdmin = auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-        if (!isAdmin) throw new RuntimeException("Forbidden: Admin only");
+                                                            @RequestBody Map<String, Object> body) {
 
         String status = (String) body.get("status");
         Appointment a = appointmentService.updateStatus(id, status);
