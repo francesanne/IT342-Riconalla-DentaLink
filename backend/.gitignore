@@ -32,3 +32,11 @@ build/
 ### VS Code ###
 .vscode/
 .env
+
+# Sensitive configuration
+src/main/resources/application.properties
+
+# Mobile local config
+local.properties
+
+
