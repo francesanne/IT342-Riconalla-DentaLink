@@ -1,7 +1,10 @@
 package edu.cit.riconalla.dentalink.strategy;
 
+import edu.cit.riconalla.dentalink.dto.AuthResponseDto;
 import edu.cit.riconalla.dentalink.dto.LoginRequest;
+import edu.cit.riconalla.dentalink.dto.UserDto;
 import edu.cit.riconalla.dentalink.entity.User;
+import edu.cit.riconalla.dentalink.exception.InvalidCredentialsException;
 import edu.cit.riconalla.dentalink.repository.UserRepository;
 import edu.cit.riconalla.dentalink.security.JwtUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,19 +23,27 @@ public class EmailPasswordStrategy implements AuthStrategy {
     }
 
     @Override
-    public String login(Object request) {
+    public AuthResponseDto login(Object request) {
         LoginRequest req = (LoginRequest) request;
 
         User user = userRepository.findByEmail(req.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
 
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid email or password");
+            throw new InvalidCredentialsException("Invalid email or password");
         }
 
-        return jwtUtil.generateToken(
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+
+        UserDto userDto = new UserDto(
+                user.getUserId(),
+                user.getFirstName(),
+                user.getLastName(),
                 user.getEmail(),
-                user.getRole().name()
+                user.getRole().name(),
+                user.getProfileImageUrl()
         );
+
+        return new AuthResponseDto(userDto, token);
     }
 }

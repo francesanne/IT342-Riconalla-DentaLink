@@ -5,6 +5,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
 
+import edu.cit.riconalla.dentalink.dto.AuthResponseDto;
+import edu.cit.riconalla.dentalink.dto.UserDto;
 import edu.cit.riconalla.dentalink.entity.User;
 import edu.cit.riconalla.dentalink.entity.Role;
 import edu.cit.riconalla.dentalink.repository.UserRepository;
@@ -29,7 +31,6 @@ public class GoogleService {
     }
 
     public GoogleIdToken.Payload verifyToken(String idTokenString) {
-
         try {
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     new NetHttpTransport(),
@@ -51,8 +52,7 @@ public class GoogleService {
         }
     }
 
-    public String loginWithGoogle(String idTokenString) {
-
+    public AuthResponseDto loginWithGoogle(String idTokenString) {
         GoogleIdToken.Payload payload = verifyToken(idTokenString);
 
         String email = payload.getEmail();
@@ -67,14 +67,23 @@ public class GoogleService {
                     newUser.setFirstName(firstName);
                     newUser.setLastName(lastName);
                     newUser.setGoogleId(googleId);
-                    newUser.setPassword("");
+                    newUser.setPassword("");   // workaround: password NOT NULL constraint (issue #17, pending)
                     newUser.setRole(Role.PATIENT);
                     newUser.setCreatedAt(LocalDateTime.now());
                     return userRepository.save(newUser);
                 });
 
-        return jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+
+        UserDto userDto = new UserDto(
+                user.getUserId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getRole().name(),
+                user.getProfileImageUrl()
+        );
+
+        return new AuthResponseDto(userDto, token);
     }
 }
-
-//complete

@@ -1,9 +1,11 @@
 package edu.cit.riconalla.dentalink.service;
 
-import edu.cit.riconalla.dentalink.dto.LoginRequest;
 import edu.cit.riconalla.dentalink.dto.RegisterRequest;
+import edu.cit.riconalla.dentalink.dto.UserDto;
 import edu.cit.riconalla.dentalink.entity.Role;
 import edu.cit.riconalla.dentalink.entity.User;
+import edu.cit.riconalla.dentalink.exception.EmailAlreadyExistsException;
+import edu.cit.riconalla.dentalink.exception.ResourceNotFoundException;
 import edu.cit.riconalla.dentalink.repository.UserRepository;
 import edu.cit.riconalla.dentalink.security.JwtUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,14 +25,17 @@ public class UserService {
         this.jwtUtil = jwtUtil;
     }
 
-    public void registerUser(RegisterRequest request) {
+    /**
+     * Registers a new PATIENT account.
+     * Returns the saved User so AuthService can generate a JWT and build the response.
+     */
+    public User registerUser(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already registered");
+            throw new EmailAlreadyExistsException("Email already registered");
         }
 
         User user = new User();
-
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
@@ -38,53 +43,24 @@ public class UserService {
         user.setRole(Role.PATIENT);
         user.setCreatedAt(LocalDateTime.now());
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
-    public String login(LoginRequest request) {
+    /**
+     * Returns a UserDto for the authenticated user.
+     * Used by GET /auth/me.
+     */
+    public UserDto getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
-
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid email or password");
-        }
-
-        return jwtUtil.generateToken(
+        return new UserDto(
+                user.getUserId(),
+                user.getFirstName(),
+                user.getLastName(),
                 user.getEmail(),
-                user.getRole().name()
-        );
-    }
-
-    public String loginWithGoogle(String idToken, GoogleService googleService) {
-
-        var payload = googleService.verifyToken(idToken);
-
-        String email = payload.getEmail();
-        String firstName = (String) payload.get("given_name");
-        String lastName = (String) payload.get("family_name");
-        String googleId = payload.getSubject();
-
-        User user = userRepository.findByEmail(email).orElse(null);
-
-        if (user == null) {
-            user = new User();
-            user.setEmail(email);
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setGoogleId(googleId);
-            user.setRole(Role.PATIENT);
-            user.setCreatedAt(java.time.LocalDateTime.now());
-
-            // No password for Google users
-            user.setPassword("");
-
-            userRepository.save(user);
-        }
-
-        return jwtUtil.generateToken(
-                user.getEmail(),
-                user.getRole().name()
+                user.getRole().name(),
+                user.getProfileImageUrl()
         );
     }
 }

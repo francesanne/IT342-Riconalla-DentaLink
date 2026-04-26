@@ -1,5 +1,6 @@
 package edu.cit.riconalla.dentalink.strategy;
+import edu.cit.riconalla.dentalink.dto.AuthResponseDto;
 
 public interface AuthStrategy {
-    String login(Object request);
+    AuthResponseDto login(Object request);
 }

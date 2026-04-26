@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = 'http://localhost:8080/api/v1';
 
 const api = axios.create({ baseURL: BASE_URL });
 
@@ -24,6 +24,9 @@ api.interceptors.response.use(
 
 // Auth
 export const authAPI = {
+  register: (data) => api.post('/auth/register', data),
+  login: (data) => api.post('/auth/login', data),
+  googleLogin: (data) => api.post('/auth/google', data),
   me: () => api.get('/auth/me'),
   logout: () => api.post('/auth/logout'),
 };
