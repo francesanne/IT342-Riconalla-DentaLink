@@ -26,7 +26,12 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        // Public auth endpoints (no token needed)
+                        .requestMatchers("/auth/register").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/google").permitAll()
+                        .requestMatchers("/auth/logout").permitAll()
+                        // /auth/me REQUIRES a valid JWT — do NOT include it in permitAll
                         .requestMatchers(HttpMethod.GET, "/services", "/services/**").permitAll()
                         .anyRequest().authenticated()
                 )

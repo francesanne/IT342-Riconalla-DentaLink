@@ -1,5 +1,6 @@
 package edu.cit.riconalla.dentalink.strategy;
 
+import edu.cit.riconalla.dentalink.dto.AuthResponseDto;
 import edu.cit.riconalla.dentalink.dto.GoogleLoginRequest;
 import edu.cit.riconalla.dentalink.service.GoogleService;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,7 @@ public class GoogleStrategy implements AuthStrategy {
     }
 
     @Override
-    public String login(Object request) {
+    public AuthResponseDto login(Object request) {
         GoogleLoginRequest req = (GoogleLoginRequest) request;
         return googleService.loginWithGoogle(req.getIdToken());
     }
