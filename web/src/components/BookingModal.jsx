@@ -38,7 +38,7 @@ export default function BookingModal({ service, onClose, onSuccess }) {
     try {
       const appointmentDatetime = `${date}T${time}:00`;
       await appointmentsAPI.create({
-        serviceId: service.serviceId,
+        serviceId: service.id,
         dentistId: Number(dentistId),
         appointmentDatetime,
       });
@@ -57,7 +57,7 @@ export default function BookingModal({ service, onClose, onSuccess }) {
         <div className="modal-header">
           <div>
             <div className="modal-title">Book Appointment</div>
-            <div className="modal-subtitle">{service.serviceName}</div>
+            <div className="modal-subtitle">{service.name}</div>
           </div>
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
@@ -76,7 +76,7 @@ export default function BookingModal({ service, onClose, onSuccess }) {
             <div>
               <div style={{ fontSize: 'var(--text-xs)', color: 'var(--gray-500)', fontWeight: 'var(--font-medium)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Total Amount</div>
               <div style={{ fontSize: 'var(--text-2xl)', fontWeight: 'var(--font-bold)', color: 'var(--primary)', fontFamily: 'var(--font-display)' }}>
-                {formatPeso(service.servicePrice)}
+                {formatPeso(service.price)}
               </div>
             </div>
           </div>

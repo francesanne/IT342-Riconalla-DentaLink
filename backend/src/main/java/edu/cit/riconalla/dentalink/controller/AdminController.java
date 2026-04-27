@@ -20,7 +20,7 @@ public class AdminController {
 
     /** GET /api/v1/admin/dashboard — SDD §5.3 — ADMIN role required */
     @GetMapping("/dashboard")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ApiResponse<Map<String, Object>>> dashboard() {
         Map<String, Object> stats = appointmentService.getDashboardStats();
         return ResponseEntity.ok(ApiResponse.success(stats));
