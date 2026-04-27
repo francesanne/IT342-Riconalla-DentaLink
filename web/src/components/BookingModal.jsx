@@ -25,8 +25,7 @@ export default function BookingModal({ service, onClose, onSuccess }) {
 
   useEffect(() => {
     dentistsAPI.getAll().then(res => {
-      const active = (res.data.data || []).filter(d => d.dentistStatus === 'ACTIVE');
-      setDentists(active);
+      setDentists(res.data.data || []);
     }).catch(() => {});
   }, []);
 
@@ -92,8 +91,8 @@ export default function BookingModal({ service, onClose, onSuccess }) {
               <select value={dentistId} onChange={e => setDentistId(e.target.value)} required>
                 <option value="">Choose a dentist…</option>
                 {dentists.map(d => (
-                  <option key={d.dentistId} value={d.dentistId}>
-                    {d.dentistName} — {d.dentistSpecialization}
+                  <option key={d.id} value={d.id}>
+                    {d.name} — {d.specialization}
                   </option>
                 ))}
               </select>
