@@ -1,119 +1,103 @@
 package edu.cit.riconalla.dentalink.controller;
 
-import edu.cit.riconalla.dentalink.entity.Service;
+import edu.cit.riconalla.dentalink.dto.ApiResponse;
+import edu.cit.riconalla.dentalink.dto.ServiceDto;
+import edu.cit.riconalla.dentalink.dto.ServiceRequest;
 import edu.cit.riconalla.dentalink.service.ServiceService;
-import edu.cit.riconalla.dentalink.service.SupabaseStorageService;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/services")
-@CrossOrigin(origins = "*")
 public class ServiceController {
 
-
     private final ServiceService serviceService;
-    private final SupabaseStorageService storageService;
 
-    // ✅ FIXED CONSTRUCTOR (THIS IS WHAT YOU ASKED)
-    public ServiceController(ServiceService serviceService,
-                             SupabaseStorageService storageService) {
+    public ServiceController(ServiceService serviceService) {
         this.serviceService = serviceService;
-        this.storageService = storageService;
     }
 
+    /** GET /api/v1/services — public, no auth required — SDD §5.3 */
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getAllServices() {
-        List<Service> services = serviceService.getAllServices();
-        return ResponseEntity.ok(Map.of("success", true, "data", services));
+    public ResponseEntity<ApiResponse<List<ServiceDto>>> getAllServices() {
+        List<ServiceDto> services = serviceService.getAllServices();
+        return ResponseEntity.ok(ApiResponse.success(services));
     }
 
-    @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<Map<String, Object>> createService(
-            @RequestParam String name,
-            @RequestParam(required = false) String description,
-            @RequestParam String price,
-            @RequestParam(required = false) MultipartFile image
+    /** GET /api/v1/services/{id} — public, no auth required — SDD §5.3 */
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<ServiceDto>> getServiceById(@PathVariable Long id) {
+        ServiceDto service = serviceService.getServiceById(id);
+        return ResponseEntity.ok(ApiResponse.success(service));
+    }
+
+    /** POST /api/v1/services — ADMIN only — SDD §5.3 */
+    @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ApiResponse<ServiceDto>> createService(
+            @RequestBody ServiceRequest request
     ) {
-        try {
-            BigDecimal priceValue = new BigDecimal(price);
-
-            String imagePath = null;
-
-            // ✅ SUPABASE UPLOAD (FIXED)
-            if (image != null && !image.isEmpty()) {
-
-                String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-
-                imagePath = storageService.uploadFile(
-                        image.getBytes(),
-                        fileName
-                );
-            }
-
-            Service s = serviceService.createService(name, description, priceValue, imagePath);
-
-            return ResponseEntity.status(201).body(Map.of("success", true, "data", s));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(Map.of(
-                    "success", false,
-                    "error", "UPLOAD FAILED: " + e.getMessage()
-            ));
-        }
+        ServiceDto created = serviceService.createService(
+                request.getName(),
+                request.getDescription(),
+                request.getPrice(),
+                null
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(created));
     }
 
-    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
-    public ResponseEntity<Map<String, Object>> updateService(
+    /** PUT /api/v1/services/{id} — ADMIN only — SDD §5.3 */
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ApiResponse<ServiceDto>> updateService(
             @PathVariable Long id,
-            @RequestParam String name,
-            @RequestParam(required = false) String description,
-            @RequestParam(required = false) String price,
-            @RequestParam(required = false) MultipartFile image
+            @RequestBody ServiceRequest request
     ) {
-        try {
-            BigDecimal priceValue = null;
-
-            if (price != null && !price.isEmpty()) {
-                priceValue = new BigDecimal(price);
-            }
-
-            String imagePath = null;
-
-            // ✅ SUPABASE UPLOAD (FIXED)
-            if (image != null && !image.isEmpty()) {
-
-                String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-
-                imagePath = storageService.uploadFile(
-                        image.getBytes(),
-                        fileName
-                );
-            }
-
-            Service s = serviceService.updateService(id, name, description, priceValue, imagePath);
-
-            return ResponseEntity.ok(Map.of("success", true, "data", s));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(Map.of(
-                    "success", false,
-                    "error", "UPLOAD FAILED: " + e.getMessage()
-            ));
-        }
+        ServiceDto updated = serviceService.updateService(
+                id,
+                request.getName(),
+                request.getDescription(),
+                request.getPrice(),
+                null
+        );
+        return ResponseEntity.ok(ApiResponse.success(updated));
     }
 
+    /** DELETE /api/v1/services/{id} — ADMIN only — SDD §5.3 */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> deleteService(@PathVariable Long id) {
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ApiResponse<String>> deleteService(@PathVariable Long id) {
         serviceService.deleteService(id);
-        return ResponseEntity.ok(Map.of("success", true, "data", "Service deleted"));
+        return ResponseEntity.ok(ApiResponse.success("Service deleted"));
+    }
+
+    /**
+     * POST /api/v1/services/{id}/upload-image — ADMIN only — SDD §5.3
+     * Content-Type: multipart/form-data
+     * Form field: file (JPEG or PNG, max 5 MB)
+     */
+    @PostMapping(value = "/{id}/upload-image", consumes = "multipart/form-data")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ApiResponse<Map<String, String>>> uploadImage(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file
+    ) {
+        try {
+            String imageUrl = serviceService.uploadServiceImage(id, file);
+            return ResponseEntity.ok(ApiResponse.success(Map.of("imageUrl", imageUrl)));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error("INVALID_FILE", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("UPLOAD_FAILED", e.getMessage()));
+        }
     }
 }
