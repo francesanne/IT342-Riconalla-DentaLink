@@ -34,10 +34,10 @@ export const authAPI = {
 // Services
 export const servicesAPI = {
   getAll: () => api.get('/services'),
-  create: (data) => api.post('/services', data, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }),
-  update: (id, data) => api.put(`/services/${id}`, data, {
+  getById: (id) => api.get(`/services/${id}`),
+  create: (data) => api.post('/services', data),
+  update: (id, data) => api.put(`/services/${id}`, data),
+  uploadImage: (id, formData) => api.post(`/services/${id}/upload-image`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
   delete: (id) => api.delete(`/services/${id}`),
