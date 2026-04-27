@@ -61,7 +61,7 @@ public class AppointmentController {
         return ResponseEntity.ok(Map.of("success", true, "data", appointmentService.toResponse(a)));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}/status")
     public ResponseEntity<Map<String, Object>> updateStatus(@PathVariable Long id,
                                                             @RequestBody Map<String, Object> body) {
