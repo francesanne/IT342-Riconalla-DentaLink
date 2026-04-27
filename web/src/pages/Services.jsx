@@ -62,18 +62,18 @@ export default function Services() {
         ) : (
           <div className="services-grid">
             {services.map(service => (
-              <div key={service.serviceId} className="service-card">
+              <div key={service.id} className="service-card">
                 <div className="service-img">
-                  {service.serviceImageUrl ? (
-                    <img src={service.serviceImageUrl} alt={service.serviceName} />
+                  {service.imageUrl ? (
+                    <img src={service.imageUrl} alt={service.name} />
                   ) : (
                     <span>🦷</span>
                   )}
                 </div>
                 <div className="service-card-body">
-                  <div className="service-name">{service.serviceName}</div>
-                  <div className="service-desc">{service.serviceDescription || 'Professional dental service by our expert team.'}</div>
-                  <div className="service-price">{formatPeso(service.servicePrice)}</div>
+                  <div className="service-name">{service.name}</div>
+                  <div className="service-desc">{service.description || 'Professional dental service by our expert team.'}</div>
+                  <div className="service-price">{formatPeso(service.price)}</div>
                   <button
                     className="btn-sm btn-primary-sm"
                     style={{ width: '100%', height: '44px', borderRadius: 'var(--radius-lg)', justifyContent: 'center', fontSize: 'var(--text-sm)' }}
