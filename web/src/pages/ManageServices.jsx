@@ -47,10 +47,10 @@ export default function ManageServices() {
 
     const openEdit = (s) => {
         setForm({
-            name: s.serviceName,
-            description: s.serviceDescription || '',
-            price: s.servicePrice,
-            imageFile: null, // ✅ CHANGED
+            name: s.name,
+            description: s.description || '',
+            price: s.price,
+            imageFile: null,
         });
         setEditing(s);
         setError('');
@@ -75,18 +75,29 @@ export default function ManageServices() {
         setError('');
 
         try {
-            // ✅ CHANGED TO FORMDATA
-            const formData = new FormData();
-            formData.append('name', form.name.trim());
-            formData.append('description', form.description.trim());
-            formData.append('price', parseFloat(form.price));
+            const payload = {
+                name: form.name.trim(),
+                description: form.description.trim(),
+                price: parseFloat(form.price),
+            };
 
-            if (form.imageFile) {
-                formData.append('image', form.imageFile);
+            let savedService;
+            if (modal === 'create') {
+                const res = await servicesAPI.create(payload);
+                savedService = res.data.data;
+            } else {
+                const res = await servicesAPI.update(editing.id, payload);
+                savedService = res.data.data;
             }
 
-            if (modal === 'create') await servicesAPI.create(formData);
-            else await servicesAPI.update(editing.serviceId, formData);
+            // Upload image separately if a file was selected
+            if (form.imageFile && savedService?.id) {
+                const imageForm = new FormData();
+                imageForm.append('file', form.imageFile);
+                const imgRes = await servicesAPI.uploadImage(savedService.id, imageForm);
+                // Update the saved service with the returned imageUrl
+                savedService.imageUrl = imgRes.data.data?.imageUrl || savedService.imageUrl;
+            }
 
             closeModal();
             load();
@@ -144,25 +155,25 @@ export default function ManageServices() {
                 ) : (
                     <div className="services-grid">
                         {services.map(s => (
-                            <div key={s.serviceId} className="service-card">
+                            <div key={s.id} className="service-card">
                                 <div className="service-img">
-                                    {s.serviceImageUrl ? (
+                                    {s.imageUrl ? (
                                         <img
-                                            src={s.serviceImageUrl}
-                                            alt={s.serviceName}
+                                            src={s.imageUrl}
+                                            alt={s.name}
                                             onError={(e) => { e.target.src = '/tooth-icon.png'; }}
                                         />
                                     ) : <span>🦷</span>}
                                 </div>
                                 <div className="service-card-body">
-                                    <div className="service-name">{s.serviceName}</div>
-                                    <div className="service-desc">{s.serviceDescription || 'No description provided.'}</div>
-                                    <div className="service-price">{formatPeso(s.servicePrice)}</div>
+                                    <div className="service-name">{s.name}</div>
+                                    <div className="service-desc">{s.description || 'No description provided.'}</div>
+                                    <div className="service-price">{formatPeso(s.price)}</div>
                                     <div style={{ display: 'flex', gap: 'var(--space-3)', marginTop: 'auto' }}>
                                         <button className="btn-sm btn-outline-sm" style={{ flex: 1, justifyContent: 'center' }} onClick={() => openEdit(s)}>
                                             ✏ Edit
                                         </button>
-                                        <button className="btn-sm btn-danger-sm" style={{ flex: 1, justifyContent: 'center' }} onClick={() => setDeleteId(s.serviceId)}>
+                                        <button className="btn-sm btn-danger-sm" style={{ flex: 1, justifyContent: 'center' }} onClick={() => setDeleteId(s.id)}>
                                             🗑 Delete
                                         </button>
                                     </div>
