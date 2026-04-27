@@ -47,7 +47,7 @@ export default function ManageDentists() {
 
   const openCreate = () => { setForm(EMPTY_FORM); setEditing(null); setError(''); setModal('form'); };
   const openEdit = (d) => {
-    setForm({ name: d.dentistName, specialization: d.dentistSpecialization, status: d.dentistStatus });
+    setForm({ name: d.name, specialization: d.specialization, status: d.status });
     setEditing(d); setError(''); setModal('form');
   };
   const closeModal = () => { setModal(null); setEditing(null); setError(''); };
@@ -58,7 +58,7 @@ export default function ManageDentists() {
     setSaving(true); setError('');
     try {
       if (!editing) await dentistsAPI.create({ name: form.name.trim(), specialization: form.specialization.trim(), status: form.status });
-      else await dentistsAPI.update(editing.dentistId, { name: form.name.trim(), specialization: form.specialization.trim(), status: form.status });
+      else await dentistsAPI.update(editing.id, { name: form.name.trim(), specialization: form.specialization.trim(), status: form.status });
       closeModal(); load();
     } catch (err) {
       setError(err.response?.data?.error?.message || 'Failed to save dentist.');
@@ -114,18 +114,18 @@ export default function ManageDentists() {
                       No dentists yet. Add your first dentist.
                     </td></tr>
                   ) : dentists.map((d, i) => (
-                    <tr key={d.dentistId}>
+                    <tr key={d.id}>
                       <td style={{ color: 'var(--gray-400)', fontSize: 'var(--text-sm)', width: 40 }}>{i + 1}</td>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                          <Initials name={d.dentistName} />
-                          <span style={{ fontWeight: 'var(--font-medium)', color: 'var(--primary)' }}>{d.dentistName}</span>
+                          <Initials name={d.name} />
+                          <span style={{ fontWeight: 'var(--font-medium)', color: 'var(--primary)' }}>{d.name}</span>
                         </div>
                       </td>
-                      <td style={{ color: 'var(--gray-600)' }}>{d.dentistSpecialization}</td>
+                      <td style={{ color: 'var(--gray-600)' }}>{d.specialization}</td>
                       <td>
-                        <span className={`badge ${d.dentistStatus === 'ACTIVE' ? 'badge-active' : 'badge-inactive'}`}>
-                          {d.dentistStatus}
+                        <span className={`badge ${d.status === 'ACTIVE' ? 'badge-active' : 'badge-inactive'}`}>
+                          {d.status}
                         </span>
                       </td>
                       <td>
