@@ -60,6 +60,14 @@ export const appointmentsAPI = {
   updateStatus: (id, status) => api.put(`/appointments/${id}/status`, { status }),
 };
 
+// Users / Profile
+export const usersAPI = {
+  updateProfile: (data) => api.put('/users/me/profile', data),
+  uploadProfilePicture: (formData) => api.post('/users/me/upload-profile-picture', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+};
+
 // Payments
 export const paymentsAPI = {
   createIntent: (data) => api.post('/payments/create-intent', data),

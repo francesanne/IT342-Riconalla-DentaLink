@@ -1,0 +1,141 @@
+/* ─── WelcomePopup ───────────────────────────────────────────────────────────
+   Drop this file at:  web/src/styles/popup.css
+   It uses the same CSS variables defined in global.css.
+─────────────────────────────────────────────────────────────────────────────── */
+
+.wp-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: wp-fade-in 0.25s ease both;
+}
+
+@keyframes wp-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.wp-card {
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 32px 64px -12px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.04);
+  padding: 40px 48px 32px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  animation: wp-pop-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes wp-pop-in {
+  from { opacity: 0; transform: scale(0.82) translateY(24px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+/* ── Animated SVG check ── */
+.wp-icon-wrap {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 20px;
+}
+
+.wp-check {
+  width: 72px;
+  height: 72px;
+}
+
+.wp-circle {
+  stroke: #6EC1C3;
+  stroke-width: 2.5;
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: wp-stroke-circle 0.5s cubic-bezier(0.65, 0, 0.45, 1) 0.1s forwards;
+}
+
+.wp-tick {
+  stroke: #6EC1C3;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: wp-stroke-tick 0.35s cubic-bezier(0.65, 0, 0.45, 1) 0.55s forwards;
+}
+
+@keyframes wp-stroke-circle {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes wp-stroke-tick {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ── Text ── */
+.wp-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1F2937;
+  margin: 0 0 6px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.wp-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #5DA9AB;
+  margin: 0 0 8px;
+}
+
+.wp-sub {
+  font-size: 0.875rem;
+  color: #6B7280;
+  margin: 0 0 16px;
+  line-height: 1.6;
+}
+
+.wp-badge {
+  display: inline-block;
+  background: #D1FAE5;
+  color: #10B981;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 4px 16px;
+  border-radius: 9999px;
+  margin-bottom: 20px;
+}
+
+/* ── Progress bar ── */
+.wp-progress {
+  height: 4px;
+  background: #E5E7EB;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.wp-progress-bar {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(135deg, #6EC1C3 0%, #9AD0A6 100%);
+  border-radius: 9999px;
+  transform-origin: left;
+  animation: wp-drain 3s linear both;
+}
+
+@keyframes wp-drain {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+/* ── Hint ── */
+.wp-hint {
+  font-size: 0.75rem;
+  color: #9CA3AF;
+  font-style: italic;
+  margin: 0;
+}

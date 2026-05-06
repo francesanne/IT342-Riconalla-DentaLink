@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { appointmentsAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import WelcomePopup from '../components/WelcomePopup';
 import '../styles/dashboard.css';
 
 const NAV_LINKS = [
-  { to: '/dashboard', label: 'Dashboard' },
-  { to: '/services', label: 'Services' },
+  { to: '/dashboard',       label: 'Dashboard' },
+  { to: '/services',        label: 'Services' },
   { to: '/my-appointments', label: 'My Appointments' },
+  { to: '/profile',         label: 'Profile' },
 ];
 
 function formatDate(dt) {
@@ -18,10 +20,6 @@ function formatDate(dt) {
 function formatTime(dt) {
   if (!dt) return '';
   return new Date(dt).toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit' });
-}
-function formatPeso(n) {
-  if (!n) return '₱0.00';
-  return `₱${Number(n).toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
 }
 
 function StatusBadge({ status }) {
@@ -57,7 +55,7 @@ export default function PatientDashboard() {
     (a.status !== 'CANCELLED' && new Date(a.appointmentDatetime) < new Date())
   ).sort((a, b) => new Date(b.appointmentDatetime) - new Date(a.appointmentDatetime)).slice(0, 5);
 
-  const pendingCount = appointments.filter(a => a.paymentStatus === 'UNPAID' && a.status !== 'CANCELLED').length;
+  const pendingCount   = appointments.filter(a => a.paymentStatus === 'UNPAID' && a.status !== 'CANCELLED').length;
   const completedCount = appointments.filter(a => a.status === 'COMPLETED').length;
 
   const greeting = () => {
@@ -69,6 +67,9 @@ export default function PatientDashboard() {
 
   return (
     <div className="app-layout">
+      {/* ── Welcome popup — only shows once right after login/Google sign-in ── */}
+      <WelcomePopup />
+
       <Navbar links={NAV_LINKS} />
       <main className="page-container">
 
