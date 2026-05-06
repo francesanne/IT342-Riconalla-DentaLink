@@ -6,10 +6,11 @@ import WelcomePopup from '../components/WelcomePopup';
 import '../styles/dashboard.css';
 
 const NAV_LINKS = [
-  { to: '/admin', label: 'Dashboard' },
-  { to: '/admin/services', label: 'Manage Services' },
-  { to: '/admin/dentists', label: 'Manage Dentists' },
-  { to: '/admin/appointments', label: 'Manage Appointments' },
+  { to: '/admin',                  label: 'Dashboard' },
+  { to: '/admin/services',         label: 'Manage Services' },
+  { to: '/admin/dentists',         label: 'Manage Dentists' },
+  { to: '/admin/appointments',     label: 'Manage Appointments' },
+  { to: '/admin/payments',         label: 'Payments' },
 ];
 
 function StatusBadge({ status }) {
