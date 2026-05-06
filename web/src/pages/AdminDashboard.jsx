@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { adminAPI } from '../services/api';
+import WelcomePopup from '../components/WelcomePopup';
 import '../styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -32,7 +33,7 @@ function formatPeso(n) {
 }
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState(null);
+  const [stats, setStats]   = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -46,6 +47,9 @@ export default function AdminDashboard() {
 
   return (
     <div className="app-layout">
+      {/* ── Welcome popup — only shows once right after login ── */}
+      <WelcomePopup />
+
       <Navbar links={NAV_LINKS} />
       <main className="page-container">
 
@@ -106,32 +110,24 @@ export default function AdminDashboard() {
                   <thead>
                     <tr>
                       <th>Patient</th>
-                      <th>Service</th>
                       <th>Dentist</th>
                       <th>Date & Time</th>
                       <th>Status</th>
-                      <th>Payment</th>
                     </tr>
                   </thead>
                   <tbody>
                     {(stats?.recentAppointments ?? []).length === 0 ? (
-                      <tr><td colSpan={6} style={{ textAlign: 'center', padding: 'var(--space-8)', color: 'var(--gray-400)' }}>No appointments yet</td></tr>
+                      <tr><td colSpan={4} style={{ textAlign: 'center', padding: 'var(--space-8)', color: 'var(--gray-400)' }}>No appointments yet</td></tr>
                     ) : (stats?.recentAppointments ?? []).map(a => (
-                      <tr key={a.appointmentId}>
+                      <tr key={a.id}>
                         <td>
                           <div style={{ fontWeight: 'var(--font-medium)', color: 'var(--gray-900)' }}>
-                            {a.patient?.firstName} {a.patient?.lastName}
+                            {a.patientName}
                           </div>
                         </td>
-                        <td style={{ color: 'var(--gray-700)' }}>{a.serviceName || `Service #${a.serviceId}`}</td>
-                        <td style={{ color: 'var(--gray-700)' }}>{a.dentistName || `Dentist #${a.dentistId}`}</td>
+                        <td style={{ color: 'var(--gray-700)' }}>{a.dentistName}</td>
                         <td style={{ color: 'var(--gray-600)', fontSize: 'var(--text-sm)' }}>{formatDate(a.appointmentDatetime)}</td>
                         <td><StatusBadge status={a.appointmentStatus} /></td>
-                        <td>
-                          <span className={`badge ${a.paymentStatus === 'PAID' ? 'badge-paid' : 'badge-unpaid'}`}>
-                            {a.paymentStatus === 'PAID' ? 'Paid' : 'Unpaid'}
-                          </span>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
