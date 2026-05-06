@@ -10,6 +10,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import ManageServices from './pages/ManageServices';
 import ManageDentists from './pages/ManageDentists';
 import ManageAppointments from './pages/ManageAppointments';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentCancel from './pages/PaymentCancel';
 
 function ProtectedRoute({ children, adminOnly = false }) {
   const { user, loading } = useAuth();
@@ -34,6 +36,8 @@ function AppRoutes() {
       <Route path="/dashboard" element={<ProtectedRoute><PatientDashboard /></ProtectedRoute>} />
       <Route path="/services" element={<ProtectedRoute><Services /></ProtectedRoute>} />
       <Route path="/my-appointments" element={<ProtectedRoute><MyAppointments /></ProtectedRoute>} />
+      <Route path="/payment/success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
+      <Route path="/payment/cancel"  element={<ProtectedRoute><PaymentCancel /></ProtectedRoute>} />
 
       <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
       <Route path="/admin/services" element={<ProtectedRoute adminOnly><ManageServices /></ProtectedRoute>} />

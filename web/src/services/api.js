@@ -60,6 +60,12 @@ export const appointmentsAPI = {
   updateStatus: (id, status) => api.put(`/appointments/${id}/status`, { status }),
 };
 
+// Payments
+export const paymentsAPI = {
+  createIntent: (data) => api.post('/payments/create-intent', data),
+  getAll: () => api.get('/payments'),
+};
+
 // Admin
 export const adminAPI = {
   dashboard: () => api.get('/admin/dashboard'),
