@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { dentistsAPI, appointmentsAPI } from '../services/api';
+import { dentistsAPI, appointmentsAPI, paymentsAPI } from '../services/api';
 
 const TIME_SLOTS = [
   '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
@@ -36,16 +36,27 @@ export default function BookingModal({ service, onClose, onSuccess }) {
     setLoading(true);
     try {
       const appointmentDatetime = `${date}T${time}:00`;
-      await appointmentsAPI.create({
+
+      // Step 1 — Create appointment (status = PENDING_PAYMENT)
+      const apptRes = await appointmentsAPI.create({
         serviceId: service.id,
         dentistId: Number(dentistId),
         appointmentDatetime,
       });
-      onSuccess?.();
+      const appointmentId = apptRes.data.data?.id;
+
+      // Step 2 — Create PayMongo payment intent and redirect to checkout
+      const intentRes = await paymentsAPI.createIntent({ appointmentId });
+      const checkoutUrl = intentRes.data.data?.checkoutUrl;
+
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      } else {
+        onSuccess?.();
+      }
     } catch (err) {
       const msg = err.response?.data?.error?.message || err.response?.data?.message || 'Booking failed. Please try again.';
       setError(msg);
-    } finally {
       setLoading(false);
     }
   };
@@ -146,8 +157,8 @@ export default function BookingModal({ service, onClose, onSuccess }) {
               }}
             >
               {loading ? (
-                <><span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} /> Booking…</>
-              ) : 'Confirm Booking'}
+                <><span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} /> Processing…</>
+              ) : 'Book & Pay'}
             </button>
           </div>
         </form>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
-import { appointmentsAPI } from '../services/api';
+import { appointmentsAPI, paymentsAPI } from '../services/api';
 import '../styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -53,8 +53,16 @@ export default function MyAppointments() {
       ? appointments
       : appointments.filter(a => a.status === filter);
 
-  const handlePay = (appointmentId) => {
-    alert(`Payment feature coming soon for appointment #${appointmentId}`);
+  const handlePay = async (appointmentId) => {
+    try {
+      const res = await paymentsAPI.createIntent({ appointmentId });
+      const checkoutUrl = res.data.data?.checkoutUrl;
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      }
+    } catch (err) {
+      alert(err.response?.data?.error?.message || 'Failed to initiate payment. Please try again.');
+    }
   };
 
   return (

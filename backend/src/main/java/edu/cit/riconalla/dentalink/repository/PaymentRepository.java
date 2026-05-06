@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
-    Optional<Payment> findByAppointmentId(Long appointmentId);
+    Optional<Payment> findByAppointmentAppointmentId(Long appointmentId);
 
+    Optional<Payment> findByPaymongoIntentId(String paymongoIntentId);
 }
+

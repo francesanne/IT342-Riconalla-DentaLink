@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(
-        name = "appointment",
+        name = "appointments",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"dentist_id", "appointment_datetime"})
         }
@@ -44,4 +44,7 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status")
     private PaymentStatus paymentStatus;
+
+    @Column(name = "paymongo_intent_id")
+    private String paymongoIntentId;
 }
