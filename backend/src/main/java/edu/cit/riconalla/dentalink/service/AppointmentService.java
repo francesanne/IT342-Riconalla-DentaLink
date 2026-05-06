@@ -3,6 +3,7 @@ package edu.cit.riconalla.dentalink.service;
 import edu.cit.riconalla.dentalink.entity.*;
 import edu.cit.riconalla.dentalink.repository.AppointmentRepository;
 import edu.cit.riconalla.dentalink.repository.DentistRepository;
+import edu.cit.riconalla.dentalink.repository.PaymentRepository;
 import edu.cit.riconalla.dentalink.repository.ServiceRepository;
 import edu.cit.riconalla.dentalink.repository.UserRepository;
 import org.springframework.stereotype.Component;
@@ -18,15 +19,18 @@ public class AppointmentService {
     private final UserRepository userRepository;
     private final ServiceRepository serviceRepository;
     private final DentistRepository dentistRepository;
+    private final PaymentRepository paymentRepository;
 
     public AppointmentService(AppointmentRepository appointmentRepository,
                               UserRepository userRepository,
                               ServiceRepository serviceRepository,
-                              DentistRepository dentistRepository) {
+                              DentistRepository dentistRepository,
+                              PaymentRepository paymentRepository) {
         this.appointmentRepository = appointmentRepository;
         this.userRepository = userRepository;
         this.serviceRepository = serviceRepository;
         this.dentistRepository = dentistRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     /** Patient books an appointment */
@@ -93,34 +97,43 @@ public class AppointmentService {
     /** Admin dashboard stats */
     public java.util.Map<String, Object> getDashboardStats() {
         List<Appointment> all = appointmentRepository.findAll();
-        long total = all.size();
-        long pending = all.stream().filter(a -> a.getPaymentStatus() == PaymentStatus.UNPAID).count();
+        long total     = all.size();
+        long pending   = all.stream().filter(a -> a.getPaymentStatus() == PaymentStatus.UNPAID).count();
         long confirmed = all.stream().filter(a -> a.getAppointmentStatus() == AppointmentStatus.CONFIRMED).count();
 
-        java.math.BigDecimal revenue = all.stream()
-                .filter(a -> a.getPaymentStatus() == PaymentStatus.PAID)
-                .map(a -> {
-                    try {
-                        return serviceRepository.findById(a.getServiceId())
-                                .map(edu.cit.riconalla.dentalink.entity.Service::getServicePrice)
-                                .orElse(java.math.BigDecimal.ZERO);
-                    } catch (Exception e) {
-                        return java.math.BigDecimal.ZERO;
-                    }
-                })
+        // Revenue from payments table (payment_amount) — not service price
+        java.math.BigDecimal revenue = paymentRepository.findAll().stream()
+                .filter(p -> "PAID".equals(p.getPaymentStatus()))
+                .map(p -> p.getPaymentAmount() != null ? p.getPaymentAmount() : java.math.BigDecimal.ZERO)
                 .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
 
-        List<Appointment> recent = all.stream()
+        // Recent appointments — U-3 locked shape: {id, patientName, dentistName, appointmentDatetime, appointmentStatus}
+        List<java.util.Map<String, Object>> recent = all.stream()
                 .sorted((a, b) -> b.getAppointmentId().compareTo(a.getAppointmentId()))
                 .limit(5)
+                .map(a -> {
+                    String patientName = userRepository.findById(a.getPatientId())
+                            .map(u -> u.getFirstName() + " " + u.getLastName())
+                            .orElse("Unknown");
+                    String dentistName = dentistRepository.findById(a.getDentistId())
+                            .map(d -> d.getDentistName())
+                            .orElse("Unknown");
+                    java.util.Map<String, Object> item = new java.util.LinkedHashMap<>();
+                    item.put("id", a.getAppointmentId());
+                    item.put("patientName", patientName);
+                    item.put("dentistName", dentistName);
+                    item.put("appointmentDatetime", a.getAppointmentDatetime());
+                    item.put("appointmentStatus", a.getAppointmentStatus());
+                    return item;
+                })
                 .collect(java.util.stream.Collectors.toList());
 
         return java.util.Map.of(
-                "totalAppointments", total,
-                "pendingPayments", pending,
+                "totalAppointments",    total,
+                "pendingPayments",      pending,
                 "confirmedAppointments", confirmed,
-                "totalRevenue", revenue,
-                "recentAppointments", recent
+                "totalRevenue",         revenue,
+                "recentAppointments",   recent
         );
     }
 
