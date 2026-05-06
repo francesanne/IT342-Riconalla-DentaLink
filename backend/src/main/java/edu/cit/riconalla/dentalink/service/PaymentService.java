@@ -7,6 +7,7 @@ import edu.cit.riconalla.dentalink.dto.PaymentDto;
 import edu.cit.riconalla.dentalink.entity.*;
 import edu.cit.riconalla.dentalink.exception.ResourceNotFoundException;
 import edu.cit.riconalla.dentalink.repository.AppointmentRepository;
+import edu.cit.riconalla.dentalink.repository.DentistRepository;
 import edu.cit.riconalla.dentalink.repository.PaymentRepository;
 import edu.cit.riconalla.dentalink.repository.ServiceRepository;
 import edu.cit.riconalla.dentalink.repository.UserRepository;
@@ -34,6 +35,8 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
     private final ServiceRepository serviceRepository;
+    private final DentistRepository dentistRepository;
+    private final EmailService emailService;
 
     private final OkHttpClient httpClient = new OkHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -53,11 +56,15 @@ public class PaymentService {
     public PaymentService(AppointmentRepository appointmentRepository,
                           PaymentRepository paymentRepository,
                           UserRepository userRepository,
-                          ServiceRepository serviceRepository) {
+                          ServiceRepository serviceRepository,
+                          DentistRepository dentistRepository,
+                          EmailService emailService) {
         this.appointmentRepository = appointmentRepository;
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
         this.serviceRepository = serviceRepository;
+        this.dentistRepository = dentistRepository;
+        this.emailService = emailService;
     }
 
     // ============================================================
@@ -296,9 +303,21 @@ public class PaymentService {
         appointment.setAppointmentStatus(AppointmentStatus.CONFIRMED);
         appointmentRepository.save(appointment);
 
-        // 8. Send confirmation email
-        // TODO: wire EmailService when Email module is built (SDD §2.4 mandatory)
-        //       emailService.sendConfirmationEmail(patient.getEmail(), appointmentDetails);
+        // 8. Send confirmation email — SDD §2.4 (mandatory, non-blocking)
+        userRepository.findById(appointment.getPatientId()).ifPresent(patient -> {
+            String serviceName = serviceRepository.findById(appointment.getServiceId())
+                    .map(s -> s.getServiceName()).orElse("Dental Service");
+            String dentistName = dentistRepository.findById(appointment.getDentistId())
+                    .map(d -> d.getDentistName()).orElse("Your dentist");
+
+            emailService.sendConfirmationEmail(
+                    patient.getEmail(),
+                    patient.getFirstName(),
+                    serviceName,
+                    dentistName,
+                    appointment.getAppointmentDatetime()
+            );
+        });
     }
 
     /**

@@ -13,10 +13,14 @@ public class AuthService {
 
     private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final EmailService emailService;
 
-    public AuthService(UserService userService, JwtUtil jwtUtil) {
+    public AuthService(UserService userService,
+                       JwtUtil jwtUtil,
+                       EmailService emailService) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
+        this.emailService = emailService;
     }
 
     public AuthResponseDto authenticate(AuthStrategy strategy, Object request) {
@@ -36,6 +40,9 @@ public class AuthService {
                 user.getRole().name(),
                 user.getProfileImageUrl()
         );
+
+        // Send welcome email — SDD §2.4 (mandatory, non-blocking)
+        emailService.sendWelcomeEmail(user.getEmail(), user.getFirstName());
 
         return new AuthResponseDto(userDto, token);
     }
