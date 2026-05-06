@@ -33,6 +33,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/logout").permitAll()
                         // /auth/me REQUIRES a valid JWT — do NOT include it in permitAll
                         .requestMatchers(HttpMethod.GET, "/services", "/services/**").permitAll()
+                        // PayMongo webhook — no JWT, signature-verified inside service layer
+                        .requestMatchers(HttpMethod.POST, "/payments/webhook").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
