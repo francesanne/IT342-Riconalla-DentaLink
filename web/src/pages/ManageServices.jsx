@@ -8,6 +8,7 @@ const NAV_LINKS = [
     { to: '/admin/services', label: 'Manage Services' },
     { to: '/admin/dentists', label: 'Manage Dentists' },
     { to: '/admin/appointments', label: 'Manage Appointments' },
+    { to: '/admin/payments', label: 'Payments' },
 ];
 
 function formatPeso(n) {

@@ -7,6 +7,7 @@ import PatientDashboard from './pages/PatientDashboard';
 import Services from './pages/Services';
 import MyAppointments from './pages/MyAppointments';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminPayments from './pages/AdminPayments';
 import ManageServices from './pages/ManageServices';
 import ManageDentists from './pages/ManageDentists';
 import ManageAppointments from './pages/ManageAppointments';
@@ -45,6 +46,7 @@ function AppRoutes() {
       <Route path="/admin/services" element={<ProtectedRoute adminOnly><ManageServices /></ProtectedRoute>} />
       <Route path="/admin/dentists" element={<ProtectedRoute adminOnly><ManageDentists /></ProtectedRoute>} />
       <Route path="/admin/appointments" element={<ProtectedRoute adminOnly><ManageAppointments /></ProtectedRoute>} />
+      <Route path="/admin/payments"     element={<ProtectedRoute adminOnly><AdminPayments /></ProtectedRoute>} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
