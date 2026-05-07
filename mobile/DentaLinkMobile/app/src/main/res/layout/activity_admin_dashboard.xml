@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F7FA">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Admin Dashboard"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="Clinic overview"
+            android:textSize="13sp"
+            android:textColor="#888888"
+            android:layout_marginBottom="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- Stat row 1 -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout android:orientation="vertical" android:background="#FFFFFF"
+                android:padding="12dp" android:layout_weight="1" android:layout_marginEnd="6dp"
+                android:layout_width="0dp" android:layout_height="wrap_content">
+                <TextView android:text="Total Appts" android:textSize="11sp" android:textColor="#888888"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                <TextView android:id="@+id/tvTotalAppointments" android:text="0"
+                    android:textSize="22sp" android:textStyle="bold" android:textColor="#4A9B9D"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout android:orientation="vertical" android:background="#FFFFFF"
+                android:padding="12dp" android:layout_weight="1" android:layout_marginEnd="6dp"
+                android:layout_width="0dp" android:layout_height="wrap_content">
+                <TextView android:text="Pending Pay" android:textSize="11sp" android:textColor="#888888"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                <TextView android:id="@+id/tvPendingPayments" android:text="0"
+                    android:textSize="22sp" android:textStyle="bold" android:textColor="#FF9800"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout android:orientation="vertical" android:background="#FFFFFF"
+                android:padding="12dp" android:layout_weight="1"
+                android:layout_width="0dp" android:layout_height="wrap_content">
+                <TextView android:text="Confirmed" android:textSize="11sp" android:textColor="#888888"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                <TextView android:id="@+id/tvConfirmedAppointments" android:text="0"
+                    android:textSize="22sp" android:textStyle="bold" android:textColor="#4CAF50"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Revenue -->
+        <LinearLayout android:orientation="vertical" android:background="#FFFFFF"
+            android:padding="12dp" android:layout_marginBottom="20dp"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <TextView android:text="Total Revenue" android:textSize="12sp" android:textColor="#888888"
+                android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            <TextView android:id="@+id/tvTotalRevenue" android:text="P0.00"
+                android:textSize="26sp" android:textStyle="bold" android:textColor="#4A9B9D"
+                android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <!-- Nav buttons -->
+        <LinearLayout android:orientation="horizontal"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <Button android:id="@+id/btnAdminServices" android:text="Services"
+                android:layout_weight="1" android:layout_marginEnd="4dp"
+                android:layout_width="0dp" android:layout_height="wrap_content" />
+            <Button android:id="@+id/btnAdminDentists" android:text="Dentists"
+                android:layout_weight="1"
+                android:layout_width="0dp" android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout android:orientation="horizontal"
+            android:layout_marginBottom="20dp"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+            <Button android:id="@+id/btnAdminAppointments" android:text="Appointments"
+                android:layout_weight="1" android:layout_marginEnd="4dp"
+                android:layout_width="0dp" android:layout_height="wrap_content" />
+            <Button android:id="@+id/btnAdminPayments" android:text="Payments"
+                android:layout_weight="1"
+                android:layout_width="0dp" android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <!-- Recent appointments -->
+        <TextView android:text="Recent Appointments" android:textSize="16sp" android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+        <ListView android:id="@+id/lvRecentAppointments"
+            android:divider="#EEEEEE" android:dividerHeight="1dp"
+            android:layout_width="match_parent" android:layout_height="260dp" />
+
+        <Button android:id="@+id/btnAdminLogout" android:text="Log Out"
+            style="?attr/borderlessButtonStyle" android:textColor="#F44336"
+            android:layout_gravity="center_horizontal" android:layout_marginTop="16dp"
+            android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</ScrollView>
