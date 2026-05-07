@@ -44,4 +44,45 @@ interface ApiService {
 
     @PUT("users/me/profile")
     suspend fun updateProfile(@Body request: UpdateProfileRequest): Response<ApiResponse<UserData>>
+
+    // --- Admin dashboard ---
+
+    @GET("admin/dashboard")
+    suspend fun getAdminDashboard(): Response<ApiResponse<DashboardStats>>
+
+    // --- Admin: services ---
+
+    @POST("services")
+    suspend fun createService(@Body request: ServiceRequest): Response<ApiResponse<ServiceDto>>
+
+    @PUT("services/{id}")
+    suspend fun updateService(@Path("id") id: Long, @Body request: ServiceRequest): Response<ApiResponse<ServiceDto>>
+
+    @DELETE("services/{id}")
+    suspend fun deleteService(@Path("id") id: Long): Response<ApiResponse<String>>
+
+    // --- Admin: dentists ---
+
+    @POST("dentists")
+    suspend fun createDentist(@Body request: DentistRequest): Response<ApiResponse<DentistDto>>
+
+    @PUT("dentists/{id}")
+    suspend fun updateDentist(@Path("id") id: Long, @Body request: DentistRequest): Response<ApiResponse<DentistDto>>
+
+    @DELETE("dentists/{id}")
+    suspend fun deleteDentist(@Path("id") id: Long): Response<ApiResponse<String>>
+
+    // --- Admin: appointment status update ---
+    // Only COMPLETED and CANCELLED are accepted — CONFIRMED is webhook-only
+
+    @PUT("appointments/{id}/status")
+    suspend fun updateAppointmentStatus(
+        @Path("id") id: Long,
+        @Body request: UpdateStatusRequest
+    ): Response<ApiResponse<AppointmentItem>>
+
+    // --- Admin: payments (read-only) ---
+
+    @GET("payments")
+    suspend fun getPayments(): Response<ApiResponse<List<PaymentItem>>>
 }
