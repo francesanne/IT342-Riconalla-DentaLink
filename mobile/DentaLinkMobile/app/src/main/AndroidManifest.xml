@@ -34,6 +34,21 @@
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity
+            android:name=".AdminDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminServicesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminDentistsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminAppointmentsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminPaymentsActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

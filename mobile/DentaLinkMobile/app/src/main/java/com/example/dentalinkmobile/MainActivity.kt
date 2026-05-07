@@ -73,7 +73,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToDashboard() {
-        val intent = Intent(this, PatientDashboardActivity::class.java)
+        val role = sessionManager.getRole()
+        val target = if (role == "ADMIN") AdminDashboardActivity::class.java
+        else PatientDashboardActivity::class.java
+        val intent = Intent(this, target)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
         finish()
