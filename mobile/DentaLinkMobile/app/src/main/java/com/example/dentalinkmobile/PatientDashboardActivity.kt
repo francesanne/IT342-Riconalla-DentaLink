@@ -1,6 +1,7 @@
 package com.example.dentalinkmobile
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -44,6 +45,20 @@ class PatientDashboardActivity : AppCompatActivity() {
         }
         btnProfile.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
+        }
+
+        findViewById<Button>(R.id.btnClinicLocation).setOnClickListener {
+            // Opens Google Maps (or any installed maps app) at the clinic location.
+            // Coordinates match the web frontend: CLINIC_LAT, CLINIC_LNG.
+            val geoUri = Uri.parse("geo:10.24738412405074,123.8000086426953?q=10.24738412405074,123.8000086426953(DentaLink+Dental+Clinic)")
+            val mapIntent = Intent(Intent.ACTION_VIEW, geoUri)
+            if (mapIntent.resolveActivity(packageManager) != null) {
+                startActivity(mapIntent)
+            } else {
+                // Fallback: open in browser if no maps app is installed
+                val browserUri = Uri.parse("https://www.google.com/maps?q=10.24738412405074,123.8000086426953")
+                startActivity(Intent(Intent.ACTION_VIEW, browserUri))
+            }
         }
 
         loadDashboard(tvUpcoming, tvCompleted, tvPending, lvUpcoming, tvNoUpcoming)

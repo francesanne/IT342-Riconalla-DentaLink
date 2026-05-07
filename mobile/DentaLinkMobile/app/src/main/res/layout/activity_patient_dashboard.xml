@@ -149,6 +149,15 @@
 
         </LinearLayout>
 
+        <!-- Clinic location -->
+        <Button
+            android:id="@+id/btnClinicLocation"
+            android:text="Get Clinic Directions"
+            style="?attr/borderlessButtonStyle"
+            android:layout_marginBottom="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <!-- Upcoming appointments -->
         <TextView
             android:text="Upcoming Appointments"
