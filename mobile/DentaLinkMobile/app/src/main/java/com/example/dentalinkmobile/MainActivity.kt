@@ -9,7 +9,7 @@ import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.model.LoginRequest
 import com.example.dentalinkmobile.utils.SessionManager
 import kotlinx.coroutines.launch
-import com.example.dentalinkmobile.RegisterActivity
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
@@ -19,6 +19,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         sessionManager = SessionManager(this)
+
+        // If already logged in, skip directly to dashboard (Phase B wires this up)
+        if (sessionManager.isLoggedIn()) {
+            navigateToDashboard()
+            return
+        }
 
         val etEmail = findViewById<EditText>(R.id.etEmail)
         val etPassword = findViewById<EditText>(R.id.etPassword)
@@ -30,7 +36,7 @@ class MainActivity : AppCompatActivity() {
             val password = etPassword.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.error_fill_all_fields), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -41,23 +47,25 @@ class MainActivity : AppCompatActivity() {
                     )
 
                     if (response.isSuccessful) {
-                        val token = response.body()?.token
+                        // SDD §5.1 envelope: response.body() = ApiResponse<AuthResponseDto>
+                        // Locked Rule: field is "accessToken" (not "token")
+                        val body = response.body()
+                        val accessToken = body?.data?.accessToken
+                        val user = body?.data?.user
 
-                        if (token != null) {
-                            sessionManager.saveToken(token)
-
-                            Toast.makeText(this@MainActivity, "Login successful!", Toast.LENGTH_SHORT).show()
-
-                            // 👉 TEMP: just stay here or go to dashboard later
+                        if (accessToken != null && user != null) {
+                            sessionManager.saveToken(accessToken)
+                            sessionManager.saveUserInfo(user.role, user.firstName)
+                            navigateToDashboard()
                         } else {
-                            Toast.makeText(this@MainActivity, "Invalid response", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@MainActivity, getString(R.string.error_invalid_response), Toast.LENGTH_SHORT).show()
                         }
                     } else {
-                        Toast.makeText(this@MainActivity, "Invalid email or password", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, getString(R.string.error_invalid_credentials), Toast.LENGTH_SHORT).show()
                     }
 
                 } catch (e: Exception) {
-                    Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@MainActivity, getString(R.string.error_network_prefix) + e.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -65,5 +73,14 @@ class MainActivity : AppCompatActivity() {
         btnGoRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
+    }
+
+    /**
+     * Route to the correct dashboard based on role.
+     * Phase B will replace this stub with real Activity targets.
+     */
+    private fun navigateToDashboard() {
+        // TODO Phase B: replace with PatientDashboardActivity / AdminDashboardActivity
+        Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
     }
 }
