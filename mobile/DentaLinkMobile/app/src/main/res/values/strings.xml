@@ -1,3 +1,26 @@
 <resources>
-    <string name="app_name">DentaLinkMobile</string>
+    <string name="app_name">DentaLink</string>
+
+    <!-- Login screen -->
+    <string name="label_email">Email</string>
+    <string name="label_password">Password</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_go_register">Don\'t have an account? Register</string>
+    <string name="login_success">Login successful!</string>
+
+    <!-- Register screen -->
+    <string name="label_first_name">First Name</string>
+    <string name="label_last_name">Last Name</string>
+    <string name="label_confirm_password">Confirm Password</string>
+    <string name="btn_register">Create Account</string>
+    <string name="btn_go_login">Already have an account? Login</string>
+    <string name="register_success">Account created! Please log in.</string>
+
+    <!-- Validation / error messages -->
+    <string name="error_fill_all_fields">Please fill in all fields</string>
+    <string name="error_passwords_no_match">Passwords do not match</string>
+    <string name="error_invalid_credentials">Invalid email or password</string>
+    <string name="error_invalid_response">Unexpected response from server</string>
+    <string name="error_network_prefix">Network error: </string>
+    <string name="error_registration_failed">Registration failed. Please try again.</string>
 </resources>
