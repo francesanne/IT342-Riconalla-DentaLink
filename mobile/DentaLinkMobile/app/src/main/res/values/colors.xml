@@ -1,5 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Brand -->
+    <color name="primary">#6EC1C3</color>
+    <color name="primary_dark">#5DA9AB</color>
+    <color name="primary_light">#8EDFE1</color>
+    <color name="primary_container">#E0F5F5</color>
+
+    <!-- Surfaces -->
+    <color name="background">#F9FAFB</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F3F4F6</color>
+
+    <!-- Text -->
+    <color name="text_primary">#1F2937</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="text_muted">#9CA3AF</color>
+    <color name="text_on_primary">#FFFFFF</color>
+
+    <!-- Status -->
+    <color name="status_confirmed">#6EC1C3</color>
+    <color name="status_confirmed_bg">#E0F5F5</color>
+    <color name="status_completed">#10B981</color>
+    <color name="status_completed_bg">#D1FAE5</color>
+    <color name="status_pending">#F59E0B</color>
+    <color name="status_pending_bg">#FEF3C7</color>
+    <color name="status_cancelled">#EF4444</color>
+    <color name="status_cancelled_bg">#FEE2E2</color>
+
+    <!-- Divider and border -->
+    <color name="divider">#E5E7EB</color>
+    <color name="border">#D1D5DB</color>
+
+    <!-- Keep these for system use -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
