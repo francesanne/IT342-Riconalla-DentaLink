@@ -1,8 +1,11 @@
 package com.example.dentalinkmobile
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -16,9 +19,9 @@ class ServicesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_services)
 
-        val lvServices   = findViewById<ListView>(R.id.lvServices)
-        val tvEmpty      = findViewById<TextView>(R.id.tvServicesEmpty)
-        val progressBar  = findViewById<ProgressBar>(R.id.progressServices)
+        val lvServices  = findViewById<ListView>(R.id.lvServices)
+        val tvEmpty     = findViewById<TextView>(R.id.tvServicesEmpty)
+        val progressBar = findViewById<ProgressBar>(R.id.progressServices)
 
         progressBar.visibility = View.VISIBLE
 
@@ -36,17 +39,7 @@ class ServicesActivity : AppCompatActivity() {
                     } else {
                         tvEmpty.visibility    = View.GONE
                         lvServices.visibility = View.VISIBLE
-
-                        val labels = services.map { s ->
-                            "${s.name}\n${s.description ?: ""}\nP${String.format("%.2f", s.price)}"
-                        }
-
-                        lvServices.adapter = ArrayAdapter(
-                            this@ServicesActivity,
-                            android.R.layout.simple_list_item_1,
-                            labels
-                        )
-
+                        lvServices.adapter    = ServiceAdapter(this@ServicesActivity, services)
                         lvServices.setOnItemClickListener { _, _, position, _ ->
                             openBooking(services[position])
                         }
@@ -68,5 +61,22 @@ class ServicesActivity : AppCompatActivity() {
             putExtra("SERVICE_PRICE", service.price)
         }
         startActivity(intent)
+    }
+}
+
+private class ServiceAdapter(
+    context: Context,
+    private val items: List<ServiceDto>
+) : ArrayAdapter<ServiceDto>(context, 0, items) {
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val view = convertView ?: LayoutInflater.from(context)
+            .inflate(R.layout.item_service, parent, false)
+
+        val item = items[position]
+        view.findViewById<TextView>(R.id.tvServiceName).text        = item.name
+        view.findViewById<TextView>(R.id.tvServiceDescription).text = item.description ?: ""
+        view.findViewById<TextView>(R.id.tvServicePrice).text       = "P${String.format("%.2f", item.price)}"
+        return view
     }
 }

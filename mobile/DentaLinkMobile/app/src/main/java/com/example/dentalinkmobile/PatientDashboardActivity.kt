@@ -97,14 +97,10 @@ class PatientDashboardActivity : AppCompatActivity() {
                     } else {
                         tvNoUpcoming.visibility = View.GONE
                         lvUpcoming.visibility   = View.VISIBLE
-                        val items = upcomingList.take(3).map { a ->
-                            "${a.serviceName ?: "Service"} - ${a.dentistName ?: "Dentist"}\n${formatDatetime(a.appointmentDatetime)} | ${a.status}"
-                        }
-                        lvUpcoming.adapter = ArrayAdapter(
+                        lvUpcoming.adapter = AppointmentAdapter(
                             this@PatientDashboardActivity,
-                            android.R.layout.simple_list_item_1,
-                            items
-                        )
+                            upcomingList.take(3)
+                        ) { /* no tap action on dashboard preview */ }
                     }
                 }
             } catch (e: Exception) {

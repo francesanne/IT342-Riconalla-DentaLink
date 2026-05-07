@@ -1,11 +1,15 @@
 package com.example.dentalinkmobile
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.model.AppointmentItem
@@ -27,7 +31,6 @@ class MyAppointmentsActivity : AppCompatActivity() {
         lvAppointments = findViewById(R.id.lvAppointments)
         tvEmpty        = findViewById(R.id.tvAppointmentsEmpty)
 
-        // Filter buttons
         findViewById<Button>(R.id.btnFilterAll).setOnClickListener       { applyFilter("ALL") }
         findViewById<Button>(R.id.btnFilterConfirmed).setOnClickListener  { applyFilter("CONFIRMED") }
         findViewById<Button>(R.id.btnFilterPending).setOnClickListener    { applyFilter("PENDING_PAYMENT") }
@@ -66,23 +69,7 @@ class MyAppointmentsActivity : AppCompatActivity() {
 
         tvEmpty.visibility        = View.GONE
         lvAppointments.visibility = View.VISIBLE
-
-        val labels = filtered.map { a ->
-            val statusLabel   = a.status?.replace("_", " ") ?: "Unknown"
-            val paymentLabel  = a.paymentStatus ?: ""
-            val dateFormatted = formatDatetime(a.appointmentDatetime)
-            "${a.serviceName ?: "Service"}\n${a.dentistName ?: "Dentist"} | $dateFormatted\n$statusLabel | $paymentLabel" +
-                    if (a.paymentStatus == "UNPAID" && a.status != "CANCELLED") "  [Tap to Pay]" else ""
-        }
-
-        lvAppointments.adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            labels
-        )
-
-        lvAppointments.setOnItemClickListener { _, _, position, _ ->
-            val appointment = filtered[position]
+        lvAppointments.adapter    = AppointmentAdapter(this, filtered) { appointment ->
             if (appointment.paymentStatus == "UNPAID" && appointment.status != "CANCELLED") {
                 payForAppointment(appointment.id)
             }
@@ -110,13 +97,57 @@ class MyAppointmentsActivity : AppCompatActivity() {
             }
         }
     }
+}
+
+class AppointmentAdapter(
+    context: Context,
+    private val items: List<AppointmentItem>,
+    private val onItemClick: (AppointmentItem) -> Unit
+) : ArrayAdapter<AppointmentItem>(context, 0, items) {
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val view = convertView ?: LayoutInflater.from(context)
+            .inflate(R.layout.item_appointment, parent, false)
+
+        val item = items[position]
+
+        view.findViewById<TextView>(R.id.tvApptServiceName).text  = item.serviceName ?: "Service"
+        view.findViewById<TextView>(R.id.tvApptDentistName).text  = item.dentistName ?: ""
+        view.findViewById<TextView>(R.id.tvApptDatetime).text     = formatDatetime(item.appointmentDatetime)
+
+        val tvStatus = view.findViewById<TextView>(R.id.tvApptStatus)
+        val statusLabel = item.status?.replace("_", " ") ?: ""
+        tvStatus.text = statusLabel
+        val (textColor, bgColor) = statusColors(context, item.status)
+        tvStatus.setTextColor(textColor)
+        tvStatus.backgroundTintList = android.content.res.ColorStateList.valueOf(bgColor)
+
+        val tvPayment = view.findViewById<TextView>(R.id.tvApptPaymentStatus)
+        tvPayment.text = "Payment: ${item.paymentStatus ?: ""}"
+
+        val tvPayNow = view.findViewById<TextView>(R.id.tvPayNow)
+        tvPayNow.visibility = if (item.paymentStatus == "UNPAID" && item.status != "CANCELLED")
+            View.VISIBLE else View.GONE
+
+        view.setOnClickListener { onItemClick(item) }
+        return view
+    }
+
+    private fun statusColors(context: Context, status: String?): Pair<Int, Int> {
+        return when (status) {
+            "CONFIRMED"       -> Pair(ContextCompat.getColor(context, R.color.status_confirmed), ContextCompat.getColor(context, R.color.status_confirmed_bg))
+            "COMPLETED"       -> Pair(ContextCompat.getColor(context, R.color.status_completed), ContextCompat.getColor(context, R.color.status_completed_bg))
+            "PENDING_PAYMENT" -> Pair(ContextCompat.getColor(context, R.color.status_pending),   ContextCompat.getColor(context, R.color.status_pending_bg))
+            "CANCELLED"       -> Pair(ContextCompat.getColor(context, R.color.status_cancelled), ContextCompat.getColor(context, R.color.status_cancelled_bg))
+            else              -> Pair(ContextCompat.getColor(context, R.color.text_secondary),   ContextCompat.getColor(context, R.color.surface_variant))
+        }
+    }
 
     private fun formatDatetime(dt: String?): String {
         if (dt == null) return ""
         return try {
             val ldt = java.time.LocalDateTime.parse(dt.take(19))
-            val fmt = java.time.format.DateTimeFormatter.ofPattern("MMM d, yyyy h:mm a")
-            ldt.format(fmt)
+            ldt.format(java.time.format.DateTimeFormatter.ofPattern("MMM d, yyyy h:mm a"))
         } catch (e: Exception) { dt }
     }
 }
