@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText android:id="@+id/etDentistName"
+        android:hint="Full Name (e.g. Dr. Maria Cruz)"
+        android:inputType="textPersonName"
+        android:layout_marginBottom="8dp"
+        android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+    <EditText android:id="@+id/etDentistSpecialization"
+        android:hint="Specialization (e.g. General Dentistry)"
+        android:inputType="textCapSentences"
+        android:layout_marginBottom="8dp"
+        android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+    <TextView android:text="Status"
+        android:textSize="13sp" android:textStyle="bold"
+        android:layout_marginBottom="4dp"
+        android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+    <RadioGroup android:id="@+id/rgDentistStatus"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content" android:layout_height="wrap_content">
+
+        <RadioButton android:id="@+id/rbActive" android:text="Active"
+            android:layout_marginEnd="16dp"
+            android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+        <RadioButton android:id="@+id/rbInactive" android:text="Inactive"
+            android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+    </RadioGroup>
+
+</LinearLayout>
