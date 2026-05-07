@@ -6,15 +6,42 @@ import retrofit2.http.*
 
 interface ApiService {
 
-    /** POST /api/v1/auth/register — SDD §5.3 — returns ApiResponse<AuthResponseDto> (201) */
+    // --- Auth ---
+
     @POST("auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<ApiResponse<AuthResponseDto>>
 
-    /** POST /api/v1/auth/login — SDD §5.3 — returns ApiResponse<AuthResponseDto> (200) */
     @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): Response<ApiResponse<AuthResponseDto>>
 
-    /** GET /api/v1/auth/me — SDD §5.3 — Bearer JWT injected by OkHttp interceptor (Step 3) */
     @GET("auth/me")
     suspend fun getMe(): Response<ApiResponse<UserData>>
+
+    // --- Services (public, no token needed) ---
+
+    @GET("services")
+    suspend fun getServices(): Response<ApiResponse<List<ServiceDto>>>
+
+    // --- Dentists (requires JWT) ---
+
+    @GET("dentists")
+    suspend fun getDentists(): Response<ApiResponse<List<DentistDto>>>
+
+    // --- Appointments (requires JWT) ---
+
+    @POST("appointments")
+    suspend fun createAppointment(@Body request: CreateAppointmentRequest): Response<ApiResponse<AppointmentItem>>
+
+    @GET("appointments")
+    suspend fun getAppointments(): Response<ApiResponse<List<AppointmentItem>>>
+
+    // --- Payments (requires JWT) ---
+
+    @POST("payments/create-intent")
+    suspend fun createPaymentIntent(@Body request: CreateIntentRequest): Response<ApiResponse<CreateIntentResponse>>
+
+    // --- Profile (requires JWT) ---
+
+    @PUT("users/me/profile")
+    suspend fun updateProfile(@Body request: UpdateProfileRequest): Response<ApiResponse<UserData>>
 }

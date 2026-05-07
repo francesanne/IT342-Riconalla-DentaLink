@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F7FA">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvWelcome"
+            android:text="Welcome!"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="Here is your dental appointment overview"
+            android:textSize="13sp"
+            android:textColor="#888888"
+            android:layout_marginBottom="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- Stat cards -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="Upcoming"
+                    android:textSize="12sp"
+                    android:textColor="#888888"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tvUpcomingCount"
+                    android:text="0"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#4A9B9D"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="Completed"
+                    android:textSize="12sp"
+                    android:textColor="#888888"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tvCompletedCount"
+                    android:text="0"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#4CAF50"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="Pending Pay"
+                    android:textSize="12sp"
+                    android:textColor="#888888"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tvPendingCount"
+                    android:text="0"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF9800"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Quick actions -->
+        <Button
+            android:id="@+id/btnBookAppointment"
+            android:text="Book Appointment"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btnServices"
+                android:text="Services"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                style="?attr/borderlessButtonStyle" />
+
+            <Button
+                android:id="@+id/btnMyAppointments"
+                android:text="My Appointments"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                style="?attr/borderlessButtonStyle" />
+
+            <Button
+                android:id="@+id/btnProfile"
+                android:text="Profile"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                style="?attr/borderlessButtonStyle" />
+
+        </LinearLayout>
+
+        <!-- Upcoming appointments -->
+        <TextView
+            android:text="Upcoming Appointments"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvNoUpcoming"
+            android:text="No upcoming appointments"
+            android:textSize="13sp"
+            android:textColor="#AAAAAA"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ListView
+            android:id="@+id/lvUpcomingAppointments"
+            android:divider="#EEEEEE"
+            android:dividerHeight="1dp"
+            android:layout_width="match_parent"
+            android:layout_height="240dp" />
+
+    </LinearLayout>
+
+</ScrollView>

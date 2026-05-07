@@ -20,7 +20,6 @@ class MainActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(this)
 
-        // If already logged in, skip directly to dashboard (Phase B wires this up)
         if (sessionManager.isLoggedIn()) {
             navigateToDashboard()
             return
@@ -47,8 +46,6 @@ class MainActivity : AppCompatActivity() {
                     )
 
                     if (response.isSuccessful) {
-                        // SDD §5.1 envelope: response.body() = ApiResponse<AuthResponseDto>
-                        // Locked Rule: field is "accessToken" (not "token")
                         val body = response.body()
                         val accessToken = body?.data?.accessToken
                         val user = body?.data?.user
@@ -75,12 +72,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Route to the correct dashboard based on role.
-     * Phase B will replace this stub with real Activity targets.
-     */
     private fun navigateToDashboard() {
-        // TODO Phase B: replace with PatientDashboardActivity / AdminDashboardActivity
-        Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
+        val intent = Intent(this, PatientDashboardActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+        finish()
     }
 }
