@@ -6,7 +6,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
-import com.example.dentalinkmobile.model.LoginRequest
+import com.example.dentalinkmobile.features.auth.model.LoginRequest
 import com.example.dentalinkmobile.utils.SessionManager
 import kotlinx.coroutines.launch
 

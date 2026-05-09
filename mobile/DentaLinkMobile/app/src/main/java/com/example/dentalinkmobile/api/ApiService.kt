@@ -1,5 +1,10 @@
 package com.example.dentalinkmobile.api
 
+import com.example.dentalinkmobile.features.auth.model.ApiResponse
+import com.example.dentalinkmobile.features.auth.model.AuthResponseDto
+import com.example.dentalinkmobile.features.auth.model.LoginRequest
+import com.example.dentalinkmobile.features.auth.model.RegisterRequest
+import com.example.dentalinkmobile.features.auth.model.UserData
 import com.example.dentalinkmobile.model.*
 import retrofit2.Response
 import retrofit2.http.*
