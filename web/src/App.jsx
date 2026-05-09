@@ -1,19 +1,19 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import Landing from './pages/Landing';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import PatientDashboard from './pages/PatientDashboard';
-import Services from './pages/Services';
-import MyAppointments from './pages/MyAppointments';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminPayments from './pages/AdminPayments';
-import ManageServices from './pages/ManageServices';
-import ManageDentists from './pages/ManageDentists';
-import ManageAppointments from './pages/ManageAppointments';
-import PaymentSuccess from './pages/PaymentSuccess';
-import PaymentCancel from './pages/PaymentCancel';
-import Profile from './pages/Profile';
+import { AuthProvider, useAuth }  from '@/shared/context/AuthContext';
+import Landing from '@/pages/Landing';
+import Login from '@/features/auth/Login'
+import Register from '@/features/auth/Register'
+import PatientDashboard from '@/features/dashboard/PatientDashboard';
+import Services from '@/features/services/Services';
+import MyAppointments from '@/features/appointments/MyAppointments';
+import AdminDashboard from '@/features/dashboard/AdminDashboard';
+import AdminPayments from '@/features/payments/AdminPayments';
+ import ManageServices from '@/features/services/ManageServices';
+import ManageDentists from '@/features/dentists/ManageDentists'
+import ManageAppointments from '@/features/appointments/ManageAppointments';
+import PaymentSuccess from '@/features/payments/PaymentSuccess'
+import PaymentCancel from '@/features/payments/PaymentCancel';
+import Profile from '@/features/profile/Profile';
 
 function ProtectedRoute({ children, adminOnly = false }) {
   const { user, loading } = useAuth();

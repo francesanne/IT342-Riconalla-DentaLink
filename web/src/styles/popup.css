@@ -1,8 +1,3 @@
-/* ─── WelcomePopup ───────────────────────────────────────────────────────────
-   Drop this file at:  web/src/styles/popup.css
-   It uses the same CSS variables defined in global.css.
-─────────────────────────────────────────────────────────────────────────────── */
-
 .wp-overlay {
   position: fixed;
   inset: 0;
