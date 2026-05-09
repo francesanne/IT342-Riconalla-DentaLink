@@ -5,6 +5,7 @@ import com.example.dentalinkmobile.features.auth.model.AuthResponseDto
 import com.example.dentalinkmobile.features.auth.model.LoginRequest
 import com.example.dentalinkmobile.features.auth.model.RegisterRequest
 import com.example.dentalinkmobile.features.auth.model.UserData
+import com.example.dentalinkmobile.features.dashboard.model.DashboardStats
 import com.example.dentalinkmobile.model.*
 import retrofit2.Response
 import retrofit2.http.*
