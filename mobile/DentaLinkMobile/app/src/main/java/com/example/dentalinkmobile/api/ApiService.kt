@@ -11,6 +11,10 @@ import com.example.dentalinkmobile.features.auth.model.RegisterRequest
 import com.example.dentalinkmobile.features.auth.model.UserData
 import com.example.dentalinkmobile.features.dashboard.model.DashboardStats
 import com.example.dentalinkmobile.features.dentists.model.DentistDto
+import com.example.dentalinkmobile.features.payments.model.DentistRequest
+import com.example.dentalinkmobile.features.payments.model.PaymentItem
+import com.example.dentalinkmobile.features.payments.model.ServiceRequest
+import com.example.dentalinkmobile.features.payments.model.UpdateStatusRequest
 import com.example.dentalinkmobile.features.services.model.ServiceDto
 import com.example.dentalinkmobile.model.*
 import retrofit2.Response

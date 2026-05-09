@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.services.model.ServiceDto
-import com.example.dentalinkmobile.model.ServiceRequest
+import com.example.dentalinkmobile.features.payments.model.ServiceRequest
 import kotlinx.coroutines.launch
 
 class AdminServicesActivity : AppCompatActivity() {
