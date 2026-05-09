@@ -7,12 +7,12 @@ import PatientDashboard from '@/features/dashboard/PatientDashboard';
 import Services from '@/features/services/Services';
 import MyAppointments from '@/features/appointments/MyAppointments';
 import AdminDashboard from '@/features/dashboard/AdminDashboard';
- import AdminPayments from '@/pages/AdminPayments';
+import AdminPayments from '@/features/payments/AdminPayments';
  import ManageServices from '@/features/services/ManageServices';
 import ManageDentists from '@/features/dentists/ManageDentists'
 import ManageAppointments from '@/features/appointments/ManageAppointments';
-import PaymentSuccess from '@/pages/PaymentSuccess';
-import PaymentCancel from '@/pages/PaymentCancel';
+import PaymentSuccess from '@/features/payments/PaymentSuccess'
+import PaymentCancel from '@/features/payments/PaymentCancel';
 import Profile from '@/pages/Profile';
 
 function ProtectedRoute({ children, adminOnly = false }) {
