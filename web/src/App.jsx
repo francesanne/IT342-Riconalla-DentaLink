@@ -1,8 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth }  from '@/shared/context/AuthContext';
 import Landing from '@/pages/Landing';
-import Login from './pages/Login';
-import Register from '@/pages/Register';
+import Login from '@/features/auth/Login'
+import Register from '@/features/auth/Register'
 import PatientDashboard from '@/pages/PatientDashboard';
 import Services from '@/pages/Services';
 import MyAppointments from '@/pages/MyAppointments';
@@ -12,7 +12,7 @@ import MyAppointments from '@/pages/MyAppointments';
 import ManageDentists from '@/pages/ManageDentists';
 import ManageAppointments from '@/pages/ManageAppointments';
 import PaymentSuccess from '@/pages/PaymentSuccess';
-import PaymentCancel from './pages/PaymentCancel';
+import PaymentCancel from '@/pages/PaymentCancel';
 import Profile from '@/pages/Profile';
 
 function ProtectedRoute({ children, adminOnly = false }) {

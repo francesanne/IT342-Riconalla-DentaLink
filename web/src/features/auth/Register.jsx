@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "../styles/register.css";
+import "./styles/register.css";
 import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "@/shared/context/AuthContext";
 import { authAPI } from "@/shared/api/api";
