@@ -4,11 +4,11 @@ import Landing from '@/pages/Landing';
 import Login from '@/features/auth/Login'
 import Register from '@/features/auth/Register'
 import PatientDashboard from '@/features/dashboard/PatientDashboard';
-import Services from '@/pages/Services';
+import Services from '@/features/services/Services';
 import MyAppointments from '@/pages/MyAppointments';
 import AdminDashboard from '@/features/dashboard/AdminDashboard';
  import AdminPayments from '@/pages/AdminPayments';
- import ManageServices from '@/pages/ManageServices';
+ import ManageServices from '@/features/services/ManageServices';
 import ManageDentists from '@/pages/ManageDentists';
 import ManageAppointments from '@/pages/ManageAppointments';
 import PaymentSuccess from '@/pages/PaymentSuccess';
