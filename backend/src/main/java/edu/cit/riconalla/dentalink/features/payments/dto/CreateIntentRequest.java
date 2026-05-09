@@ -1,4 +1,4 @@
-package edu.cit.riconalla.dentalink.dto;
+package edu.cit.riconalla.dentalink.features.payments.dto;
 
 public class CreateIntentRequest {
 

@@ -1,10 +1,10 @@
-package edu.cit.riconalla.dentalink.controller;
+package edu.cit.riconalla.dentalink.features.payments.controller;
 
 import edu.cit.riconalla.dentalink.shared.dto.ApiResponse;
-import edu.cit.riconalla.dentalink.dto.CreateIntentRequest;
-import edu.cit.riconalla.dentalink.dto.CreateIntentResponse;
-import edu.cit.riconalla.dentalink.dto.PaymentDto;
-import edu.cit.riconalla.dentalink.service.PaymentService;
+import edu.cit.riconalla.dentalink.features.payments.dto.CreateIntentRequest;
+import edu.cit.riconalla.dentalink.features.payments.dto.CreateIntentResponse;
+import edu.cit.riconalla.dentalink.features.payments.dto.PaymentDto;
+import edu.cit.riconalla.dentalink.features.payments.service.PaymentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;

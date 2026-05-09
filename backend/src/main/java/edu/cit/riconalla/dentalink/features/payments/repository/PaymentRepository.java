@@ -1,6 +1,6 @@
-package edu.cit.riconalla.dentalink.repository;
+package edu.cit.riconalla.dentalink.features.payments.repository;
 
-import edu.cit.riconalla.dentalink.entity.Payment;
+import edu.cit.riconalla.dentalink.features.payments.entity.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

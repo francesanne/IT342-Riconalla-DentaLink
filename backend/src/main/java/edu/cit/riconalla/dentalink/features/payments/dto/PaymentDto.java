@@ -1,6 +1,6 @@
-package edu.cit.riconalla.dentalink.dto;
+package edu.cit.riconalla.dentalink.features.payments.dto;
 
-import edu.cit.riconalla.dentalink.entity.Payment;
+import edu.cit.riconalla.dentalink.features.payments.entity.Payment;
 import edu.cit.riconalla.dentalink.features.auth.entity.User;
 import edu.cit.riconalla.dentalink.features.dashboard.dto.PatientSummary;
 

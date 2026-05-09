@@ -1,4 +1,4 @@
-package edu.cit.riconalla.dentalink.entity;
+package edu.cit.riconalla.dentalink.features.payments.entity;
 
 import edu.cit.riconalla.dentalink.features.appointments.entity.Appointment;
 import jakarta.persistence.*;

@@ -1,12 +1,12 @@
 package edu.cit.riconalla.dentalink.features.appointments.service;
 
-import edu.cit.riconalla.dentalink.entity.*;
 import edu.cit.riconalla.dentalink.features.appointments.entity.Appointment;
 import edu.cit.riconalla.dentalink.features.appointments.entity.AppointmentStatus;
 import edu.cit.riconalla.dentalink.features.auth.entity.User;
 import edu.cit.riconalla.dentalink.features.appointments.repository.AppointmentRepository;
 import edu.cit.riconalla.dentalink.features.dentists.repository.DentistRepository;
-import edu.cit.riconalla.dentalink.repository.PaymentRepository;
+import edu.cit.riconalla.dentalink.features.payments.entity.PaymentStatus;
+import edu.cit.riconalla.dentalink.features.payments.repository.PaymentRepository;
 import edu.cit.riconalla.dentalink.features.services.repository.ServiceRepository;
 import edu.cit.riconalla.dentalink.features.auth.repository.UserRepository;
 import org.springframework.stereotype.Component;

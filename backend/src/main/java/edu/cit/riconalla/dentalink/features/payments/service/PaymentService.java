@@ -1,17 +1,18 @@
-package edu.cit.riconalla.dentalink.service;
+package edu.cit.riconalla.dentalink.features.payments.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.cit.riconalla.dentalink.dto.CreateIntentResponse;
-import edu.cit.riconalla.dentalink.dto.PaymentDto;
-import edu.cit.riconalla.dentalink.entity.*;
+import edu.cit.riconalla.dentalink.features.payments.dto.CreateIntentResponse;
+import edu.cit.riconalla.dentalink.features.payments.dto.PaymentDto;
 import edu.cit.riconalla.dentalink.features.appointments.entity.Appointment;
 import edu.cit.riconalla.dentalink.features.appointments.entity.AppointmentStatus;
 import edu.cit.riconalla.dentalink.features.auth.entity.User;
+import edu.cit.riconalla.dentalink.features.payments.entity.Payment;
+import edu.cit.riconalla.dentalink.features.payments.entity.PaymentStatus;
 import edu.cit.riconalla.dentalink.shared.exception.ResourceNotFoundException;
 import edu.cit.riconalla.dentalink.features.appointments.repository.AppointmentRepository;
 import edu.cit.riconalla.dentalink.features.dentists.repository.DentistRepository;
-import edu.cit.riconalla.dentalink.repository.PaymentRepository;
+import edu.cit.riconalla.dentalink.features.payments.repository.PaymentRepository;
 import edu.cit.riconalla.dentalink.features.services.repository.ServiceRepository;
 import edu.cit.riconalla.dentalink.features.auth.repository.UserRepository;
 import edu.cit.riconalla.dentalink.shared.service.EmailService;

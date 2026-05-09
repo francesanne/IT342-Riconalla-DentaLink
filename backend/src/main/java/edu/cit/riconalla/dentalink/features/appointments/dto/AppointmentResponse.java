@@ -1,7 +1,7 @@
 package edu.cit.riconalla.dentalink.features.appointments.dto;
 
 import edu.cit.riconalla.dentalink.features.appointments.entity.AppointmentStatus;
-import edu.cit.riconalla.dentalink.entity.PaymentStatus;
+import edu.cit.riconalla.dentalink.features.payments.entity.PaymentStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
