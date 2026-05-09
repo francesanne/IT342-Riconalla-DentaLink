@@ -1,11 +1,11 @@
-package edu.cit.riconalla.dentalink.strategy;
+package edu.cit.riconalla.dentalink.features.auth.strategy;
 
-import edu.cit.riconalla.dentalink.dto.AuthResponseDto;
-import edu.cit.riconalla.dentalink.dto.LoginRequest;
+import edu.cit.riconalla.dentalink.features.auth.dto.AuthResponseDto;
+import edu.cit.riconalla.dentalink.features.auth.dto.LoginRequest;
 import edu.cit.riconalla.dentalink.dto.UserDto;
-import edu.cit.riconalla.dentalink.entity.User;
+import edu.cit.riconalla.dentalink.features.auth.entity.User;
 import edu.cit.riconalla.dentalink.shared.exception.InvalidCredentialsException;
-import edu.cit.riconalla.dentalink.repository.UserRepository;
+import edu.cit.riconalla.dentalink.features.auth.repository.UserRepository;
 import edu.cit.riconalla.dentalink.shared.security.JwtUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;

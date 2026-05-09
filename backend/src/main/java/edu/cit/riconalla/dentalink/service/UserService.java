@@ -1,14 +1,14 @@
 package edu.cit.riconalla.dentalink.service;
 
-import edu.cit.riconalla.dentalink.dto.RegisterRequest;
+import edu.cit.riconalla.dentalink.features.auth.dto.RegisterRequest;
 import edu.cit.riconalla.dentalink.dto.UpdateProfileRequest;
 import edu.cit.riconalla.dentalink.dto.UserDto;
-import edu.cit.riconalla.dentalink.entity.Role;
-import edu.cit.riconalla.dentalink.entity.User;
+import edu.cit.riconalla.dentalink.features.auth.entity.Role;
+import edu.cit.riconalla.dentalink.features.auth.entity.User;
 import edu.cit.riconalla.dentalink.shared.exception.EmailAlreadyExistsException;
 import edu.cit.riconalla.dentalink.shared.exception.InvalidCredentialsException;
 import edu.cit.riconalla.dentalink.shared.exception.ResourceNotFoundException;
-import edu.cit.riconalla.dentalink.repository.UserRepository;
+import edu.cit.riconalla.dentalink.features.auth.repository.UserRepository;
 import edu.cit.riconalla.dentalink.shared.security.JwtUtil;
 import edu.cit.riconalla.dentalink.shared.service.SupabaseStorageService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

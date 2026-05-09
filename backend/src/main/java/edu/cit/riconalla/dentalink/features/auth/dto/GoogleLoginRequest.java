@@ -1,4 +1,4 @@
-package edu.cit.riconalla.dentalink.dto;
+package edu.cit.riconalla.dentalink.features.auth.dto;
 
 import lombok.Getter;
 import lombok.Setter;

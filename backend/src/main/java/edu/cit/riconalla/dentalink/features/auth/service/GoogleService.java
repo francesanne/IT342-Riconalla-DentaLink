@@ -1,15 +1,15 @@
-package edu.cit.riconalla.dentalink.service;
+package edu.cit.riconalla.dentalink.features.auth.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
 
-import edu.cit.riconalla.dentalink.dto.AuthResponseDto;
+import edu.cit.riconalla.dentalink.features.auth.dto.AuthResponseDto;
 import edu.cit.riconalla.dentalink.dto.UserDto;
-import edu.cit.riconalla.dentalink.entity.User;
-import edu.cit.riconalla.dentalink.entity.Role;
-import edu.cit.riconalla.dentalink.repository.UserRepository;
+import edu.cit.riconalla.dentalink.features.auth.entity.User;
+import edu.cit.riconalla.dentalink.features.auth.entity.Role;
+import edu.cit.riconalla.dentalink.features.auth.repository.UserRepository;
 import edu.cit.riconalla.dentalink.shared.security.JwtUtil;
 
 import org.springframework.stereotype.Service;

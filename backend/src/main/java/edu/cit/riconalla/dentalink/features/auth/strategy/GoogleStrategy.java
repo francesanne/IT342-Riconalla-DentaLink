@@ -1,8 +1,8 @@
-package edu.cit.riconalla.dentalink.strategy;
+package edu.cit.riconalla.dentalink.features.auth.strategy;
 
-import edu.cit.riconalla.dentalink.dto.AuthResponseDto;
-import edu.cit.riconalla.dentalink.dto.GoogleLoginRequest;
-import edu.cit.riconalla.dentalink.service.GoogleService;
+import edu.cit.riconalla.dentalink.features.auth.dto.AuthResponseDto;
+import edu.cit.riconalla.dentalink.features.auth.dto.GoogleLoginRequest;
+import edu.cit.riconalla.dentalink.features.auth.service.GoogleService;
 import org.springframework.stereotype.Component;
 
 @Component

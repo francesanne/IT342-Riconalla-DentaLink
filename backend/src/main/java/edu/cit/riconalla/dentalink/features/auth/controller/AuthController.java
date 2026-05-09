@@ -1,15 +1,15 @@
-package edu.cit.riconalla.dentalink.controller;
+package edu.cit.riconalla.dentalink.features.auth.controller;
 
 import edu.cit.riconalla.dentalink.shared.dto.ApiResponse;
-import edu.cit.riconalla.dentalink.dto.AuthResponseDto;
-import edu.cit.riconalla.dentalink.dto.GoogleLoginRequest;
-import edu.cit.riconalla.dentalink.dto.LoginRequest;
-import edu.cit.riconalla.dentalink.dto.RegisterRequest;
+import edu.cit.riconalla.dentalink.features.auth.dto.AuthResponseDto;
+import edu.cit.riconalla.dentalink.features.auth.dto.GoogleLoginRequest;
+import edu.cit.riconalla.dentalink.features.auth.dto.LoginRequest;
+import edu.cit.riconalla.dentalink.features.auth.dto.RegisterRequest;
 import edu.cit.riconalla.dentalink.dto.UserDto;
-import edu.cit.riconalla.dentalink.service.AuthService;
+import edu.cit.riconalla.dentalink.features.auth.service.AuthService;
 import edu.cit.riconalla.dentalink.service.UserService;
-import edu.cit.riconalla.dentalink.strategy.EmailPasswordStrategy;
-import edu.cit.riconalla.dentalink.strategy.GoogleStrategy;
+import edu.cit.riconalla.dentalink.features.auth.strategy.EmailPasswordStrategy;
+import edu.cit.riconalla.dentalink.features.auth.strategy.GoogleStrategy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

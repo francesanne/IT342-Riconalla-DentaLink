@@ -1,6 +1,6 @@
 package edu.cit.riconalla.dentalink.dto;
 
-import edu.cit.riconalla.dentalink.entity.User;
+import edu.cit.riconalla.dentalink.features.auth.entity.User;
 
 public class PatientSummary {
 
