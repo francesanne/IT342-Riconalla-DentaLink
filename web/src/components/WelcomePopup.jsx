@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import '../styles/popup.css';
+import '@/styles/popup.css';
 
 export default function WelcomePopup() {
   const location = useLocation();

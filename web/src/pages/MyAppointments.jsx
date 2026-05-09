@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
-import { appointmentsAPI, paymentsAPI } from '../services/api';
-import '../styles/dashboard.css';
+import Navbar from '@/components/Navbar';
+import { appointmentsAPI, paymentsAPI } from '@/services/api';
+import '@/styles/dashboard.css';
 
 const NAV_LINKS = [
   { to: '/dashboard', label: 'Dashboard' },

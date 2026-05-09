@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import { appointmentsAPI } from '../services/api';
-import { useAuth } from '../context/AuthContext';
-import WelcomePopup from '../components/WelcomePopup';
-import '../styles/dashboard.css';
+import Navbar from '@/components/Navbar';
+import { appointmentsAPI } from '@/services/api';
+import { useAuth } from '@/context/AuthContext';
+import WelcomePopup from '@/components/WelcomePopup';
+import '@/styles/dashboard.css';
 
 const NAV_LINKS = [
   { to: '/dashboard',       label: 'Dashboard' },

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import { adminAPI } from '../services/api';
-import WelcomePopup from '../components/WelcomePopup';
-import '../styles/dashboard.css';
+import Navbar from '@/components/Navbar';
+import { adminAPI } from '@/services/api';
+import WelcomePopup from '@/components/WelcomePopup';
+import '@/styles/dashboard.css';
 
 const NAV_LINKS = [
   { to: '/admin',                  label: 'Dashboard' },
