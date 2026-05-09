@@ -9,7 +9,7 @@ import edu.cit.riconalla.dentalink.shared.exception.ResourceNotFoundException;
 import edu.cit.riconalla.dentalink.repository.AppointmentRepository;
 import edu.cit.riconalla.dentalink.features.dentists.repository.DentistRepository;
 import edu.cit.riconalla.dentalink.repository.PaymentRepository;
-import edu.cit.riconalla.dentalink.repository.ServiceRepository;
+import edu.cit.riconalla.dentalink.features.services.repository.ServiceRepository;
 import edu.cit.riconalla.dentalink.repository.UserRepository;
 import edu.cit.riconalla.dentalink.shared.service.EmailService;
 import okhttp3.*;
@@ -111,7 +111,7 @@ public class PaymentService {
         }
 
         // Resolve service (for amount + name)
-        edu.cit.riconalla.dentalink.entity.Service service =
+        edu.cit.riconalla.dentalink.features.services.entity.Service service =
                 serviceRepository.findById(appointment.getServiceId())
                         .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
 

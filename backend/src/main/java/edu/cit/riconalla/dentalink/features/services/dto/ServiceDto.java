@@ -1,6 +1,6 @@
-package edu.cit.riconalla.dentalink.dto;
+package edu.cit.riconalla.dentalink.features.services.dto;
 
-import edu.cit.riconalla.dentalink.entity.Service;
+import edu.cit.riconalla.dentalink.features.services.entity.Service;
 
 import java.math.BigDecimal;
 

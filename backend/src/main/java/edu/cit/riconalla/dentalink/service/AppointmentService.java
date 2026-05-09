@@ -4,7 +4,7 @@ import edu.cit.riconalla.dentalink.entity.*;
 import edu.cit.riconalla.dentalink.repository.AppointmentRepository;
 import edu.cit.riconalla.dentalink.features.dentists.repository.DentistRepository;
 import edu.cit.riconalla.dentalink.repository.PaymentRepository;
-import edu.cit.riconalla.dentalink.repository.ServiceRepository;
+import edu.cit.riconalla.dentalink.features.services.repository.ServiceRepository;
 import edu.cit.riconalla.dentalink.repository.UserRepository;
 import org.springframework.stereotype.Component;
 import edu.cit.riconalla.dentalink.dto.AppointmentResponse;

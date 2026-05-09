@@ -1,9 +1,9 @@
-package edu.cit.riconalla.dentalink.controller;
+package edu.cit.riconalla.dentalink.features.services.controller;
 
 import edu.cit.riconalla.dentalink.shared.dto.ApiResponse;
-import edu.cit.riconalla.dentalink.dto.ServiceDto;
-import edu.cit.riconalla.dentalink.dto.ServiceRequest;
-import edu.cit.riconalla.dentalink.service.ServiceService;
+import edu.cit.riconalla.dentalink.features.services.dto.ServiceDto;
+import edu.cit.riconalla.dentalink.features.services.dto.ServiceRequest;
+import edu.cit.riconalla.dentalink.features.services.service.ServiceService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

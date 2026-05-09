@@ -1,9 +1,9 @@
-package edu.cit.riconalla.dentalink.service;
+package edu.cit.riconalla.dentalink.features.services.service;
 
-import edu.cit.riconalla.dentalink.dto.ServiceDto;
-import edu.cit.riconalla.dentalink.entity.Service;
+import edu.cit.riconalla.dentalink.features.services.dto.ServiceDto;
+import edu.cit.riconalla.dentalink.features.services.entity.Service;
 import edu.cit.riconalla.dentalink.shared.exception.ResourceNotFoundException;
-import edu.cit.riconalla.dentalink.repository.ServiceRepository;
+import edu.cit.riconalla.dentalink.features.services.repository.ServiceRepository;
 import edu.cit.riconalla.dentalink.shared.service.SupabaseStorageService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
