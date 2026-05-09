@@ -15,6 +15,7 @@ import com.example.dentalinkmobile.features.payments.model.DentistRequest
 import com.example.dentalinkmobile.features.payments.model.PaymentItem
 import com.example.dentalinkmobile.features.payments.model.ServiceRequest
 import com.example.dentalinkmobile.features.payments.model.UpdateStatusRequest
+import com.example.dentalinkmobile.features.profile.model.UpdateProfileRequest
 import com.example.dentalinkmobile.features.services.model.ServiceDto
 import com.example.dentalinkmobile.model.*
 import retrofit2.Response
