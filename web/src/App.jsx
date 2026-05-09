@@ -9,7 +9,7 @@ import MyAppointments from '@/pages/MyAppointments';
 import AdminDashboard from '@/features/dashboard/AdminDashboard';
  import AdminPayments from '@/pages/AdminPayments';
  import ManageServices from '@/features/services/ManageServices';
-import ManageDentists from '@/pages/ManageDentists';
+import ManageDentists from '@/features/dentists/ManageDentists'
 import ManageAppointments from '@/pages/ManageAppointments';
 import PaymentSuccess from '@/pages/PaymentSuccess';
 import PaymentCancel from '@/pages/PaymentCancel';
