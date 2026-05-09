@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
-import Navbar from '@/components/Navbar';
-import { usersAPI } from '@/services/api';
-import { useAuth } from '@/context/AuthContext';
+import Navbar from '@/shared/components/Navbar';
+import { usersAPI } from '@/shared/api/api';
+import { useAuth } from '@/shared/context/AuthContext';
 import '@/styles/dashboard.css';
 
 const NAV_LINKS = [

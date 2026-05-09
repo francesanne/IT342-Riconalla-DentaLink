@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { appointmentsAPI } from '@/services/api';
-import Navbar from '@/components/Navbar';
+import { appointmentsAPI } from '@/shared/api/api';
+import Navbar from '@/shared/components/Navbar';
 import '@/styles/dashboard.css';
 
 const NAV_LINKS = [

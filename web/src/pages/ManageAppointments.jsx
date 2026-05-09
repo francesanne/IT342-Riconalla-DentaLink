@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import Navbar from '@/components/Navbar';
-import { appointmentsAPI } from '@/services/api';
+import Navbar from '@/shared/components/Navbar';
+import { appointmentsAPI } from '@/shared/api/api';
 import '@/styles/dashboard.css';
 
 const NAV_LINKS = [
