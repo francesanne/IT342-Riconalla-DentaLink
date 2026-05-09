@@ -4,7 +4,7 @@ import Navbar from '@/shared/components/Navbar'
 import { appointmentsAPI } from '@/shared/api/api';
 import { useAuth } from '@/shared/context/AuthContext';
 import WelcomePopup from '@/shared/components/WelcomePopup';
-import '@/styles/dashboard.css';
+import './styles/dashboard.css'
 
 const NAV_LINKS = [
   { to: '/dashboard',       label: 'Dashboard' },

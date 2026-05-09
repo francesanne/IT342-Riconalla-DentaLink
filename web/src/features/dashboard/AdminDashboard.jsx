@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Navbar from '@/shared/components/Navbar';
 import { adminAPI } from '@/shared/api/api';
 import WelcomePopup from '@/shared/components/WelcomePopup';
-import '@/styles/dashboard.css';
+import './styles/dashboard.css';
 
 const NAV_LINKS = [
   { to: '/admin',                  label: 'Dashboard' },

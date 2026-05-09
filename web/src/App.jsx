@@ -3,10 +3,10 @@ import { AuthProvider, useAuth }  from '@/shared/context/AuthContext';
 import Landing from '@/pages/Landing';
 import Login from '@/features/auth/Login'
 import Register from '@/features/auth/Register'
-import PatientDashboard from '@/pages/PatientDashboard';
+import PatientDashboard from '@/features/dashboard/PatientDashboard';
 import Services from '@/pages/Services';
 import MyAppointments from '@/pages/MyAppointments';
- import AdminDashboard from '@/pages/AdminDashboard';
+import AdminDashboard from '@/features/dashboard/AdminDashboard';
  import AdminPayments from '@/pages/AdminPayments';
  import ManageServices from '@/pages/ManageServices';
 import ManageDentists from '@/pages/ManageDentists';

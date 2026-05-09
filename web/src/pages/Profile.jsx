@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { usersAPI } from '@/shared/api/api';
 import { useAuth } from '@/shared/context/AuthContext';
-import '@/styles/dashboard.css';
+import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
   { to: '/dashboard',        label: 'Dashboard' },

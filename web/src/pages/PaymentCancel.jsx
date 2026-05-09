@@ -1,6 +1,6 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/shared/components/Navbar';
-import '@/styles/dashboard.css';
+import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
   { to: '/dashboard', label: 'Dashboard' },
