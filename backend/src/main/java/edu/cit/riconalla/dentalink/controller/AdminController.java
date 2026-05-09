@@ -1,6 +1,6 @@
 package edu.cit.riconalla.dentalink.controller;
 
-import edu.cit.riconalla.dentalink.dto.ApiResponse;
+import edu.cit.riconalla.dentalink.shared.dto.ApiResponse;
 import edu.cit.riconalla.dentalink.service.AppointmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

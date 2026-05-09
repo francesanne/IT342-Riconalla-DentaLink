@@ -3,7 +3,7 @@ package edu.cit.riconalla.dentalink.service;
 import edu.cit.riconalla.dentalink.dto.DentistDto;
 import edu.cit.riconalla.dentalink.dto.DentistRequest;
 import edu.cit.riconalla.dentalink.entity.Dentist;
-import edu.cit.riconalla.dentalink.exception.ResourceNotFoundException;
+import edu.cit.riconalla.dentalink.shared.exception.ResourceNotFoundException;
 import edu.cit.riconalla.dentalink.repository.DentistRepository;
 import org.springframework.stereotype.Service;
 

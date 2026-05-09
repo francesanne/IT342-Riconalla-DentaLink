@@ -1,4 +1,4 @@
-package edu.cit.riconalla.dentalink.security;
+package edu.cit.riconalla.dentalink.shared.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,6 @@
 package edu.cit.riconalla.dentalink.controller;
 
-import edu.cit.riconalla.dentalink.dto.ApiResponse;
+import edu.cit.riconalla.dentalink.shared.dto.ApiResponse;
 import edu.cit.riconalla.dentalink.dto.ServiceDto;
 import edu.cit.riconalla.dentalink.dto.ServiceRequest;
 import edu.cit.riconalla.dentalink.service.ServiceService;

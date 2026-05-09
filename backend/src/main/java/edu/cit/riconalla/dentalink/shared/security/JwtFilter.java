@@ -1,4 +1,4 @@
-package edu.cit.riconalla.dentalink.security;
+package edu.cit.riconalla.dentalink.shared.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

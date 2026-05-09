@@ -1,4 +1,4 @@
-package edu.cit.riconalla.dentalink.security;
+package edu.cit.riconalla.dentalink.shared.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -10,7 +10,7 @@ import edu.cit.riconalla.dentalink.dto.UserDto;
 import edu.cit.riconalla.dentalink.entity.User;
 import edu.cit.riconalla.dentalink.entity.Role;
 import edu.cit.riconalla.dentalink.repository.UserRepository;
-import edu.cit.riconalla.dentalink.security.JwtUtil;
+import edu.cit.riconalla.dentalink.shared.security.JwtUtil;
 
 import org.springframework.stereotype.Service;
 

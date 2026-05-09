@@ -1,4 +1,4 @@
-package edu.cit.riconalla.dentalink.service;
+package edu.cit.riconalla.dentalink.shared.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;

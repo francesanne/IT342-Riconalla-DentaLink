@@ -4,7 +4,8 @@ import edu.cit.riconalla.dentalink.dto.AuthResponseDto;
 import edu.cit.riconalla.dentalink.dto.RegisterRequest;
 import edu.cit.riconalla.dentalink.dto.UserDto;
 import edu.cit.riconalla.dentalink.entity.User;
-import edu.cit.riconalla.dentalink.security.JwtUtil;
+import edu.cit.riconalla.dentalink.shared.security.JwtUtil;
+import edu.cit.riconalla.dentalink.shared.service.EmailService;
 import edu.cit.riconalla.dentalink.strategy.AuthStrategy;
 import org.springframework.stereotype.Service;
 

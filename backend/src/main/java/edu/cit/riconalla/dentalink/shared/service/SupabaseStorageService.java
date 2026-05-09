@@ -1,4 +1,4 @@
-package edu.cit.riconalla.dentalink.service;
+package edu.cit.riconalla.dentalink.shared.service;
 
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;

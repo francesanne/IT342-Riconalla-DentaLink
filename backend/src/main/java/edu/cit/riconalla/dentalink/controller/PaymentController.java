@@ -1,6 +1,6 @@
 package edu.cit.riconalla.dentalink.controller;
 
-import edu.cit.riconalla.dentalink.dto.ApiResponse;
+import edu.cit.riconalla.dentalink.shared.dto.ApiResponse;
 import edu.cit.riconalla.dentalink.dto.CreateIntentRequest;
 import edu.cit.riconalla.dentalink.dto.CreateIntentResponse;
 import edu.cit.riconalla.dentalink.dto.PaymentDto;

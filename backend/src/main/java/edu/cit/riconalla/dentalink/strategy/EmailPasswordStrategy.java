@@ -4,9 +4,9 @@ import edu.cit.riconalla.dentalink.dto.AuthResponseDto;
 import edu.cit.riconalla.dentalink.dto.LoginRequest;
 import edu.cit.riconalla.dentalink.dto.UserDto;
 import edu.cit.riconalla.dentalink.entity.User;
-import edu.cit.riconalla.dentalink.exception.InvalidCredentialsException;
+import edu.cit.riconalla.dentalink.shared.exception.InvalidCredentialsException;
 import edu.cit.riconalla.dentalink.repository.UserRepository;
-import edu.cit.riconalla.dentalink.security.JwtUtil;
+import edu.cit.riconalla.dentalink.shared.security.JwtUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 

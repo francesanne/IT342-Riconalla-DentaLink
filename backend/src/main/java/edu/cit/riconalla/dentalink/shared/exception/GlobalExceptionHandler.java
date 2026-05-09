@@ -1,6 +1,6 @@
-package edu.cit.riconalla.dentalink.exception;
+package edu.cit.riconalla.dentalink.shared.exception;
 
-import edu.cit.riconalla.dentalink.dto.ApiResponse;
+import edu.cit.riconalla.dentalink.shared.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

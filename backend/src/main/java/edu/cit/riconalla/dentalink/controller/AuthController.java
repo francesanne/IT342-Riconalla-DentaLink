@@ -1,6 +1,6 @@
 package edu.cit.riconalla.dentalink.controller;
 
-import edu.cit.riconalla.dentalink.dto.ApiResponse;
+import edu.cit.riconalla.dentalink.shared.dto.ApiResponse;
 import edu.cit.riconalla.dentalink.dto.AuthResponseDto;
 import edu.cit.riconalla.dentalink.dto.GoogleLoginRequest;
 import edu.cit.riconalla.dentalink.dto.LoginRequest;
