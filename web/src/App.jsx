@@ -5,12 +5,12 @@ import Login from '@/features/auth/Login'
 import Register from '@/features/auth/Register'
 import PatientDashboard from '@/features/dashboard/PatientDashboard';
 import Services from '@/features/services/Services';
-import MyAppointments from '@/pages/MyAppointments';
+import MyAppointments from '@/features/appointments/MyAppointments';
 import AdminDashboard from '@/features/dashboard/AdminDashboard';
  import AdminPayments from '@/pages/AdminPayments';
  import ManageServices from '@/features/services/ManageServices';
 import ManageDentists from '@/features/dentists/ManageDentists'
-import ManageAppointments from '@/pages/ManageAppointments';
+import ManageAppointments from '@/features/appointments/ManageAppointments';
 import PaymentSuccess from '@/pages/PaymentSuccess';
 import PaymentCancel from '@/pages/PaymentCancel';
 import Profile from '@/pages/Profile';

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/shared/components/Navbar';
-import BookingModal from '@/components/BookingModal';
+import BookingModal from '@/features/appointments/BookingModal';
 import { servicesAPI } from '@/shared/api/api';
 import '@/features/dashboard/styles/dashboard.css';
 
