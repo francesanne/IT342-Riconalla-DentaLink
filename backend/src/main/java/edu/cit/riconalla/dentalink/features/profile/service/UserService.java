@@ -1,8 +1,8 @@
-package edu.cit.riconalla.dentalink.service;
+package edu.cit.riconalla.dentalink.features.profile.service;
 
 import edu.cit.riconalla.dentalink.features.auth.dto.RegisterRequest;
-import edu.cit.riconalla.dentalink.dto.UpdateProfileRequest;
-import edu.cit.riconalla.dentalink.dto.UserDto;
+import edu.cit.riconalla.dentalink.features.profile.dto.UpdateProfileRequest;
+import edu.cit.riconalla.dentalink.features.profile.dto.UserDto;
 import edu.cit.riconalla.dentalink.features.auth.entity.Role;
 import edu.cit.riconalla.dentalink.features.auth.entity.User;
 import edu.cit.riconalla.dentalink.shared.exception.EmailAlreadyExistsException;

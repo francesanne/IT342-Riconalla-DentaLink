@@ -2,7 +2,7 @@ package edu.cit.riconalla.dentalink.features.auth.strategy;
 
 import edu.cit.riconalla.dentalink.features.auth.dto.AuthResponseDto;
 import edu.cit.riconalla.dentalink.features.auth.dto.LoginRequest;
-import edu.cit.riconalla.dentalink.dto.UserDto;
+import edu.cit.riconalla.dentalink.features.profile.dto.UserDto;
 import edu.cit.riconalla.dentalink.features.auth.entity.User;
 import edu.cit.riconalla.dentalink.shared.exception.InvalidCredentialsException;
 import edu.cit.riconalla.dentalink.features.auth.repository.UserRepository;

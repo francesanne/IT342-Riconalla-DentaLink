@@ -1,9 +1,9 @@
-package edu.cit.riconalla.dentalink.controller;
+package edu.cit.riconalla.dentalink.features.profile.controller;
 
 import edu.cit.riconalla.dentalink.shared.dto.ApiResponse;
-import edu.cit.riconalla.dentalink.dto.UpdateProfileRequest;
-import edu.cit.riconalla.dentalink.dto.UserDto;
-import edu.cit.riconalla.dentalink.service.UserService;
+import edu.cit.riconalla.dentalink.features.profile.dto.UpdateProfileRequest;
+import edu.cit.riconalla.dentalink.features.profile.dto.UserDto;
+import edu.cit.riconalla.dentalink.features.profile.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

@@ -6,7 +6,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
 
 import edu.cit.riconalla.dentalink.features.auth.dto.AuthResponseDto;
-import edu.cit.riconalla.dentalink.dto.UserDto;
+import edu.cit.riconalla.dentalink.features.profile.dto.UserDto;
 import edu.cit.riconalla.dentalink.features.auth.entity.User;
 import edu.cit.riconalla.dentalink.features.auth.entity.Role;
 import edu.cit.riconalla.dentalink.features.auth.repository.UserRepository;

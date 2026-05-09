@@ -1,6 +1,6 @@
 package edu.cit.riconalla.dentalink.features.auth.dto;
 
-import edu.cit.riconalla.dentalink.dto.UserDto;
+import edu.cit.riconalla.dentalink.features.profile.dto.UserDto;
 
 public class AuthResponseDto {
 
