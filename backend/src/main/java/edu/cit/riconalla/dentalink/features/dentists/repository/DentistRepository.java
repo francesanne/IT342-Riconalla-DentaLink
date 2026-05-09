@@ -1,6 +1,6 @@
-package edu.cit.riconalla.dentalink.repository;
+package edu.cit.riconalla.dentalink.features.dentists.repository;
 
-import edu.cit.riconalla.dentalink.entity.Dentist;
+import edu.cit.riconalla.dentalink.features.dentists.entity.Dentist;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

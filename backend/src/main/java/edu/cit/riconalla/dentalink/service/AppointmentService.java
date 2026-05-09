@@ -2,7 +2,7 @@ package edu.cit.riconalla.dentalink.service;
 
 import edu.cit.riconalla.dentalink.entity.*;
 import edu.cit.riconalla.dentalink.repository.AppointmentRepository;
-import edu.cit.riconalla.dentalink.repository.DentistRepository;
+import edu.cit.riconalla.dentalink.features.dentists.repository.DentistRepository;
 import edu.cit.riconalla.dentalink.repository.PaymentRepository;
 import edu.cit.riconalla.dentalink.repository.ServiceRepository;
 import edu.cit.riconalla.dentalink.repository.UserRepository;

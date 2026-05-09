@@ -1,10 +1,10 @@
-package edu.cit.riconalla.dentalink.service;
+package edu.cit.riconalla.dentalink.features.dentists.service;
 
-import edu.cit.riconalla.dentalink.dto.DentistDto;
-import edu.cit.riconalla.dentalink.dto.DentistRequest;
-import edu.cit.riconalla.dentalink.entity.Dentist;
+import edu.cit.riconalla.dentalink.features.dentists.dto.DentistDto;
+import edu.cit.riconalla.dentalink.features.dentists.dto.DentistRequest;
+import edu.cit.riconalla.dentalink.features.dentists.entity.Dentist;
 import edu.cit.riconalla.dentalink.shared.exception.ResourceNotFoundException;
-import edu.cit.riconalla.dentalink.repository.DentistRepository;
+import edu.cit.riconalla.dentalink.features.dentists.repository.DentistRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

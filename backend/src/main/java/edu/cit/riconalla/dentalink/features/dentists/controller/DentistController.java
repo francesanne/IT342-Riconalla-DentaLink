@@ -1,9 +1,9 @@
-package edu.cit.riconalla.dentalink.controller;
+package edu.cit.riconalla.dentalink.features.dentists.controller;
 
 import edu.cit.riconalla.dentalink.shared.dto.ApiResponse;
-import edu.cit.riconalla.dentalink.dto.DentistDto;
-import edu.cit.riconalla.dentalink.dto.DentistRequest;
-import edu.cit.riconalla.dentalink.service.DentistService;
+import edu.cit.riconalla.dentalink.features.dentists.dto.DentistDto;
+import edu.cit.riconalla.dentalink.features.dentists.dto.DentistRequest;
+import edu.cit.riconalla.dentalink.features.dentists.service.DentistService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

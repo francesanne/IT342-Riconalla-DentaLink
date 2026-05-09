@@ -1,6 +1,6 @@
-package edu.cit.riconalla.dentalink.dto;
+package edu.cit.riconalla.dentalink.features.dentists.dto;
 
-import edu.cit.riconalla.dentalink.entity.Dentist;
+import edu.cit.riconalla.dentalink.features.dentists.entity.Dentist;
 
 public class DentistDto {
 
