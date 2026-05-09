@@ -1,4 +1,4 @@
-package com.example.dentalinkmobile.model
+package com.example.dentalinkmobile.features.dentists.model
 
 data class DentistDto(
     val id: Long,

@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.appointments.model.CreateAppointmentRequest
 import com.example.dentalinkmobile.features.appointments.model.CreateIntentRequest
-import com.example.dentalinkmobile.model.DentistDto
+import com.example.dentalinkmobile.features.dentists.model.DentistDto
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
