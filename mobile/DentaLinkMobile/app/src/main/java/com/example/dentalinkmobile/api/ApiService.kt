@@ -1,5 +1,9 @@
 package com.example.dentalinkmobile.api
 
+import com.example.dentalinkmobile.features.appointments.model.AppointmentItem
+import com.example.dentalinkmobile.features.appointments.model.CreateAppointmentRequest
+import com.example.dentalinkmobile.features.appointments.model.CreateIntentRequest
+import com.example.dentalinkmobile.features.appointments.model.CreateIntentResponse
 import com.example.dentalinkmobile.features.auth.model.ApiResponse
 import com.example.dentalinkmobile.features.auth.model.AuthResponseDto
 import com.example.dentalinkmobile.features.auth.model.LoginRequest

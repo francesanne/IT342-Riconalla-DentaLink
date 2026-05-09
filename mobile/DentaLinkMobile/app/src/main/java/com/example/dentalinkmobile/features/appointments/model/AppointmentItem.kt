@@ -1,4 +1,4 @@
-package com.example.dentalinkmobile.model
+package com.example.dentalinkmobile.features.appointments.model
 
 data class AppointmentItem(
     val id: Long,
