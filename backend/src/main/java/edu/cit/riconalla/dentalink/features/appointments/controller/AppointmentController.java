@@ -1,15 +1,14 @@
-package edu.cit.riconalla.dentalink.controller;
+package edu.cit.riconalla.dentalink.features.appointments.controller;
 
-import edu.cit.riconalla.dentalink.entity.Appointment;
-import edu.cit.riconalla.dentalink.service.AppointmentService;
+import edu.cit.riconalla.dentalink.features.appointments.entity.Appointment;
+import edu.cit.riconalla.dentalink.features.appointments.service.AppointmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import edu.cit.riconalla.dentalink.dto.AppointmentResponse;
+import edu.cit.riconalla.dentalink.features.appointments.dto.AppointmentResponse;
 import java.time.LocalDateTime;
 import java.util.*;
 import org.springframework.security.access.prepost.PreAuthorize;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/appointments")

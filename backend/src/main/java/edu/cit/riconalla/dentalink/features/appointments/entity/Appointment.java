@@ -1,4 +1,5 @@
-package edu.cit.riconalla.dentalink.entity;
+package edu.cit.riconalla.dentalink.features.appointments.entity;
+import edu.cit.riconalla.dentalink.entity.PaymentStatus;
 import lombok.*;
 import jakarta.persistence.*;
 import lombok.Getter;

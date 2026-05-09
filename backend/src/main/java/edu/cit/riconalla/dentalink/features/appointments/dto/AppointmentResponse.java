@@ -1,6 +1,6 @@
-package edu.cit.riconalla.dentalink.dto;
+package edu.cit.riconalla.dentalink.features.appointments.dto;
 
-import edu.cit.riconalla.dentalink.entity.AppointmentStatus;
+import edu.cit.riconalla.dentalink.features.appointments.entity.AppointmentStatus;
 import edu.cit.riconalla.dentalink.entity.PaymentStatus;
 
 import java.math.BigDecimal;

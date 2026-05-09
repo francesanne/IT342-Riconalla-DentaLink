@@ -1,4 +1,4 @@
-package edu.cit.riconalla.dentalink.entity;
+package edu.cit.riconalla.dentalink.features.appointments.entity;
 
 public enum AppointmentStatus {
     PENDING_PAYMENT,

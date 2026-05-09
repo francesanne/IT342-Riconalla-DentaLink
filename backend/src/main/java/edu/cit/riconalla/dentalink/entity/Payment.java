@@ -1,5 +1,6 @@
 package edu.cit.riconalla.dentalink.entity;
 
+import edu.cit.riconalla.dentalink.features.appointments.entity.Appointment;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
