@@ -13,7 +13,7 @@ import ManageDentists from '@/features/dentists/ManageDentists'
 import ManageAppointments from '@/features/appointments/ManageAppointments';
 import PaymentSuccess from '@/features/payments/PaymentSuccess'
 import PaymentCancel from '@/features/payments/PaymentCancel';
-import Profile from '@/pages/Profile';
+import Profile from '@/features/profile/Profile';
 
 function ProtectedRoute({ children, adminOnly = false }) {
   const { user, loading } = useAuth();
