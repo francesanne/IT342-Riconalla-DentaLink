@@ -2,6 +2,7 @@ package edu.cit.riconalla.dentalink.dto;
 
 import edu.cit.riconalla.dentalink.entity.Payment;
 import edu.cit.riconalla.dentalink.features.auth.entity.User;
+import edu.cit.riconalla.dentalink.features.dashboard.dto.PatientSummary;
 
 import java.math.BigDecimal;
 

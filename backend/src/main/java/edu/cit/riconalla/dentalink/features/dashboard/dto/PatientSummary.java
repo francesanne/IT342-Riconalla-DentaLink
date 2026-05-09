@@ -1,4 +1,4 @@
-package edu.cit.riconalla.dentalink.dto;
+package edu.cit.riconalla.dentalink.features.dashboard.dto;
 
 import edu.cit.riconalla.dentalink.features.auth.entity.User;
 
