@@ -10,7 +10,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
-import com.example.dentalinkmobile.model.ServiceDto
+import com.example.dentalinkmobile.features.services.model.ServiceDto
 import kotlinx.coroutines.launch
 
 class ServicesActivity : AppCompatActivity() {

@@ -1,4 +1,6 @@
-package com.example.dentalinkmobile.model
+package com.example.dentalinkmobile.features.auth.model
+
+import com.example.dentalinkmobile.features.auth.model.UserData
 
 /**
  * AuthResponseDto — SDD §5.3 + Locked Rule

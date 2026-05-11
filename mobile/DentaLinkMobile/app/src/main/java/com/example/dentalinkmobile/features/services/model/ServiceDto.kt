@@ -1,4 +1,4 @@
-package com.example.dentalinkmobile.model
+package com.example.dentalinkmobile.features.services.model
 
 data class ServiceDto(
     val id: Long,
@@ -7,4 +7,3 @@ data class ServiceDto(
     val price: Double,
     val imageUrl: String?
 )
-

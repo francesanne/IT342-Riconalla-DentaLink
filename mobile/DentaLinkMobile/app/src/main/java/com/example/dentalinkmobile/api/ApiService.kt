@@ -1,6 +1,23 @@
 package com.example.dentalinkmobile.api
 
-import com.example.dentalinkmobile.model.*
+import com.example.dentalinkmobile.features.appointments.model.AppointmentItem
+import com.example.dentalinkmobile.features.appointments.model.CreateAppointmentRequest
+import com.example.dentalinkmobile.features.appointments.model.CreateIntentRequest
+import com.example.dentalinkmobile.features.appointments.model.CreateIntentResponse
+import com.example.dentalinkmobile.features.auth.model.ApiResponse
+import com.example.dentalinkmobile.features.auth.model.AuthResponseDto
+import com.example.dentalinkmobile.features.auth.model.LoginRequest
+import com.example.dentalinkmobile.features.auth.model.RegisterRequest
+import com.example.dentalinkmobile.features.auth.model.UserData
+import com.example.dentalinkmobile.features.dashboard.model.DashboardStats
+import com.example.dentalinkmobile.features.dentists.model.DentistDto
+import com.example.dentalinkmobile.features.payments.model.DentistRequest
+import com.example.dentalinkmobile.features.payments.model.PaymentItem
+import com.example.dentalinkmobile.features.payments.model.ServiceRequest
+import com.example.dentalinkmobile.features.payments.model.UpdateStatusRequest
+import com.example.dentalinkmobile.features.profile.model.UpdateProfileRequest
+import com.example.dentalinkmobile.features.services.model.ServiceDto
+//import com.example.dentalinkmobile.model.*
 import retrofit2.Response
 import retrofit2.http.*
 

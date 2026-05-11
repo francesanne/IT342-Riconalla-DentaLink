@@ -1,4 +1,4 @@
-package com.example.dentalinkmobile.model
+package com.example.dentalinkmobile.features.profile.model
 
 data class UpdateProfileRequest(
     val firstName: String,

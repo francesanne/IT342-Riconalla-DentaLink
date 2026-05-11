@@ -1,4 +1,4 @@
-package com.example.dentalinkmobile.model
+package com.example.dentalinkmobile.features.dashboard.model
 
 // Matches GET /admin/dashboard response data object
 data class DashboardStats(

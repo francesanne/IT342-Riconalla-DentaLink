@@ -1,4 +1,4 @@
-package com.example.dentalinkmobile.model
+package com.example.dentalinkmobile.features.payments.model
 
 // Request body for POST /services and PUT /services/{id}
 data class ServiceRequest(

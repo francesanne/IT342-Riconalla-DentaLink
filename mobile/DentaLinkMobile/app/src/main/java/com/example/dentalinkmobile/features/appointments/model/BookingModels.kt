@@ -1,4 +1,4 @@
-package com.example.dentalinkmobile.model
+package com.example.dentalinkmobile.features.appointments.model
 
 data class CreateAppointmentRequest(
     val serviceId: Long,

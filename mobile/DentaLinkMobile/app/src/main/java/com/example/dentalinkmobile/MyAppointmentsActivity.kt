@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
-import com.example.dentalinkmobile.model.AppointmentItem
-import com.example.dentalinkmobile.model.CreateIntentRequest
+import com.example.dentalinkmobile.features.appointments.model.AppointmentItem
+import com.example.dentalinkmobile.features.appointments.model.CreateIntentRequest
 import kotlinx.coroutines.launch
 
 class MyAppointmentsActivity : AppCompatActivity() {

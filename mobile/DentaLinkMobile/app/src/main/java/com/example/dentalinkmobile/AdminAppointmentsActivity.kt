@@ -7,8 +7,8 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
-import com.example.dentalinkmobile.model.AppointmentItem
-import com.example.dentalinkmobile.model.UpdateStatusRequest
+import com.example.dentalinkmobile.features.appointments.model.AppointmentItem
+import com.example.dentalinkmobile.features.payments.model.UpdateStatusRequest
 import kotlinx.coroutines.launch
 
 class AdminAppointmentsActivity : AppCompatActivity() {

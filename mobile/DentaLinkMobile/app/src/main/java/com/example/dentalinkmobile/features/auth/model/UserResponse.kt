@@ -1,4 +1,4 @@
-package com.example.dentalinkmobile.model
+package com.example.dentalinkmobile.features.auth.model
 
 /**
  * Generic API envelope — SDD §5.1
