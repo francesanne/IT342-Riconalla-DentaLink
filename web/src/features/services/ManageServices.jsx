@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { formatPeso } from '@/shared/utils/formatters';
 import { servicesAPI } from '@/shared/api/api';
@@ -25,6 +25,8 @@ export default function ManageServices() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
     const [deleteId, setDeleteId] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
+    const previewRef = useRef(null);
 
     const load = () => {
         setLoading(true);
@@ -36,7 +38,16 @@ export default function ManageServices() {
 
     useEffect(load, []);
 
+    const clearPreview = () => {
+        if (previewRef.current) {
+            URL.revokeObjectURL(previewRef.current);
+            previewRef.current = null;
+        }
+        setPreviewUrl(null);
+    };
+
     const openCreate = () => {
+        clearPreview();
         setForm(EMPTY_FORM);
         setEditing(null);
         setError('');
@@ -44,6 +55,7 @@ export default function ManageServices() {
     };
 
     const openEdit = (s) => {
+        clearPreview();
         setForm({
             name: s.name,
             description: s.description || '',
@@ -56,6 +68,7 @@ export default function ManageServices() {
     };
 
     const closeModal = () => {
+        clearPreview();
         setModal(null);
         setEditing(null);
         setError('');
@@ -212,14 +225,36 @@ export default function ManageServices() {
                                     <input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} required />
                                 </div>
 
-                                {/* ✅ FIXED IMAGE INPUT */}
                                 <div className="form-group">
                                     <label>Service Image</label>
                                     <input
                                         type="file"
                                         accept="image/*"
-                                        onChange={e => setForm(f => ({ ...f, imageFile: e.target.files[0] }))}
+                                        onChange={e => {
+                                            const file = e.target.files[0];
+                                            clearPreview();
+                                            if (file) {
+                                                const url = URL.createObjectURL(file);
+                                                previewRef.current = url;
+                                                setPreviewUrl(url);
+                                            }
+                                            setForm(f => ({ ...f, imageFile: file || null }));
+                                        }}
                                     />
+                                    {previewUrl && (
+                                        <img
+                                            src={previewUrl}
+                                            alt="Preview"
+                                            style={{
+                                                marginTop: 'var(--space-3)',
+                                                maxHeight: 120,
+                                                maxWidth: '100%',
+                                                borderRadius: 'var(--radius-lg)',
+                                                objectFit: 'cover',
+                                                border: '1px solid var(--gray-200)',
+                                            }}
+                                        />
+                                    )}
                                 </div>
 
                             </div>
