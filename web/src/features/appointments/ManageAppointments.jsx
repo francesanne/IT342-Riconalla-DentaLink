@@ -43,8 +43,9 @@ export default function ManageAppointments() {
   const handleStatusUpdate = async (id, newStatus) => {
     setUpdating(id); setOpenMenuId(null);
     try {
-      await appointmentsAPI.updateStatus(id, newStatus);
-      load();
+      const res = await appointmentsAPI.updateStatus(id, newStatus);
+      const updated = res.data.data;
+      setAppointments(prev => prev.map(a => a.id === id ? updated : a));
     } catch (err) {
       setError(err.response?.data?.error?.message || 'Failed to update status.');
     } finally { setUpdating(null); }
