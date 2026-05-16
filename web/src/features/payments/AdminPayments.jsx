@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
+import StatusBadge from '@/shared/components/StatusBadge';
+import { formatDate, formatPeso } from '@/shared/utils/formatters';
 import { paymentsAPI } from '@/shared/api/api';
 import '@/features/dashboard/styles/dashboard.css';
 
@@ -11,27 +13,6 @@ const NAV_LINKS = [
   { to: '/admin/payments',         label: 'Payments' },
 ];
 
-function formatPeso(amount) {
-  if (amount == null) return '—';
-  return `₱${Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
-}
-
-function formatDate(dt) {
-  if (!dt) return '—';
-  return new Date(dt).toLocaleDateString('en-PH', {
-    month: 'short', day: 'numeric', year: 'numeric',
-  });
-}
-
-function StatusBadge({ status }) {
-  const map = {
-    PAID:   ['badge-confirmed', 'Paid'],
-    FAILED: ['badge-cancelled', 'Failed'],
-    UNPAID: ['badge-pending',   'Unpaid'],
-  };
-  const [cls, label] = map[status] ?? ['badge-pending', status];
-  return <span className={`badge ${cls}`}>{label}</span>;
-}
 
 export default function AdminPayments() {
   const [payments, setPayments] = useState([]);

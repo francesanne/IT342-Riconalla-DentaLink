@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
+import { formatDate, formatTime } from '@/shared/utils/formatters';
 import { appointmentsAPI, paymentsAPI } from '@/shared/api/api';
 import '@/features/dashboard/styles/dashboard.css';
 
@@ -18,23 +19,6 @@ const FILTERS = [
   { key: 'CANCELLED', label: 'Cancelled' },
 ];
 
-function formatDate(dt) {
-  if (!dt) return '—';
-  return new Date(dt).toLocaleDateString('en-PH', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
-
-function formatTime(dt) {
-  if (!dt) return '';
-  return new Date(dt).toLocaleTimeString('en-PH', {
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-}
 
 export default function MyAppointments() {
   const [appointments, setAppointments] = useState([]);

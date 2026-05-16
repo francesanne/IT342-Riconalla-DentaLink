@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/shared/components/Navbar'
+import StatusBadge from '@/shared/components/StatusBadge';
+import { formatDate, formatTime } from '@/shared/utils/formatters';
 import { appointmentsAPI } from '@/shared/api/api';
 import { useAuth } from '@/shared/context/AuthContext';
 import WelcomePopup from '@/shared/components/WelcomePopup';
@@ -14,25 +16,6 @@ const NAV_LINKS = [
   { to: '/contact',         label: 'Contact' },
 ];
 
-function formatDate(dt) {
-  if (!dt) return '—';
-  return new Date(dt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-function formatTime(dt) {
-  if (!dt) return '';
-  return new Date(dt).toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit' });
-}
-
-function StatusBadge({ status }) {
-  const map = {
-    PENDING_PAYMENT: ['badge-pending', 'Pending Payment'],
-    CONFIRMED: ['badge-confirmed', 'Confirmed'],
-    COMPLETED: ['badge-completed', 'Completed'],
-    CANCELLED: ['badge-cancelled', 'Cancelled'],
-  };
-  const [cls, label] = map[status] || ['badge-pending', status];
-  return <span className={`badge ${cls}`}>{label}</span>;
-}
 
 export default function PatientDashboard() {
   const { user } = useAuth();

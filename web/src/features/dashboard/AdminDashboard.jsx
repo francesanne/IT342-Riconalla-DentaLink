@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/shared/components/Navbar';
+import StatusBadge from '@/shared/components/StatusBadge';
+import { formatDateTime as formatDate, formatPeso } from '@/shared/utils/formatters';
 import { adminAPI } from '@/shared/api/api';
 import WelcomePopup from '@/shared/components/WelcomePopup';
 import './styles/dashboard.css';
@@ -13,25 +15,6 @@ const NAV_LINKS = [
   { to: '/admin/payments',         label: 'Payments' },
 ];
 
-function StatusBadge({ status }) {
-  const map = {
-    PENDING_PAYMENT: ['badge-pending', 'Pending Payment'],
-    CONFIRMED: ['badge-confirmed', 'Confirmed'],
-    COMPLETED: ['badge-completed', 'Completed'],
-    CANCELLED: ['badge-cancelled', 'Cancelled'],
-  };
-  const [cls, label] = map[status] || ['badge-pending', status];
-  return <span className={`badge ${cls}`}>{label}</span>;
-}
-
-function formatDate(dt) {
-  if (!dt) return '—';
-  return new Date(dt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
-}
-function formatPeso(n) {
-  if (!n && n !== 0) return '₱0.00';
-  return `₱${Number(n).toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
-}
 
 export default function AdminDashboard() {
   const [stats, setStats]   = useState(null);

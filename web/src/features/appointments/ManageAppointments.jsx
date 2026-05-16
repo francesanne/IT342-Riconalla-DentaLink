@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
+import StatusBadge from '@/shared/components/StatusBadge';
+import { formatDateTime } from '@/shared/utils/formatters';
 import { appointmentsAPI } from '@/shared/api/api';
 import '@/features/dashboard/styles/dashboard.css';
 
@@ -19,23 +21,6 @@ const STATUS_FILTERS = [
   { key: 'CANCELLED', label: 'Cancelled' },
 ];
 
-function formatDateTime(dt) {
-  if (!dt) return '—';
-  const d = new Date(dt);
-  return d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' }) +
-    ' · ' + d.toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit' });
-}
-
-function StatusBadge({ status }) {
-  const map = {
-    PENDING_PAYMENT: ['badge-pending', 'Pending Payment'],
-    CONFIRMED: ['badge-confirmed', 'Confirmed'],
-    COMPLETED: ['badge-completed', 'Completed'],
-    CANCELLED: ['badge-cancelled', 'Cancelled'],
-  };
-  const [cls, label] = map[status] || ['badge-pending', status];
-  return <span className={`badge ${cls}`}>{label}</span>;
-}
 
 export default function ManageAppointments() {
   const [appointments, setAppointments] = useState([]);
