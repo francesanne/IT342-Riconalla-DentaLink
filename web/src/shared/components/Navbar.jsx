@@ -22,10 +22,11 @@ export default function Navbar({ links = [] }) {
       </Link>
 
       <div className="navbar-nav">
-        {links.map(({ to, label }) => (
+        {links.map(({ to, label, end }) => (
           <NavLink
             key={to}
             to={to}
+            end={end}
             className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
           >
             {label}

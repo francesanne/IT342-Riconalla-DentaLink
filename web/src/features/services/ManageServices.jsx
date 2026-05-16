@@ -5,7 +5,7 @@ import { servicesAPI } from '@/shared/api/api';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
-    { to: '/admin', label: 'Dashboard' },
+    { to: '/admin', label: 'Dashboard', end: true },
     { to: '/admin/services', label: 'Manage Services' },
     { to: '/admin/dentists', label: 'Manage Dentists' },
     { to: '/admin/appointments', label: 'Manage Appointments' },
