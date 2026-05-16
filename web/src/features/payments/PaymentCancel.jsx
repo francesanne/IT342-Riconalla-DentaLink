@@ -40,32 +40,17 @@ export default function PaymentCancel() {
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {appointmentId && (
-              <button
-                onClick={() => navigate('/my-appointments')}
-                style={{
-                  width: '100%', height: 44,
-                  background: 'var(--gradient-primary)',
-                  color: 'white', border: 'none',
-                  borderRadius: 10, fontWeight: 600,
-                  fontSize: 14, cursor: 'pointer',
-                }}
-              >
-                Go to My Appointments
-              </button>
-            )}
             <button
               onClick={() => navigate('/my-appointments')}
               style={{
                 width: '100%', height: 44,
-                background: 'white',
-                color: 'var(--gray-700)',
-                border: '1px solid var(--gray-300)',
+                background: 'var(--gradient-primary)',
+                color: 'white', border: 'none',
                 borderRadius: 10, fontWeight: 600,
                 fontSize: 14, cursor: 'pointer',
               }}
             >
-              View My Appointments
+              Go to My Appointments
             </button>
           </div>
         </div>
