@@ -105,7 +105,7 @@ export default function MyAppointments() {
             <div className="empty-text">Book your first appointment.</div>
           </div>
         ) : (
-          <div className="table-container">
+          <div className="table-container" style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ textAlign: 'left', borderBottom: '1px solid #ddd' }}>
