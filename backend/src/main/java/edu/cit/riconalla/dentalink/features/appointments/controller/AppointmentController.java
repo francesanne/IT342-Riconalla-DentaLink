@@ -41,7 +41,7 @@ public class AppointmentController {
             Authentication auth) {
 
         boolean isAdmin = auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(a -> a.getAuthority().equals("ADMIN"));
 
         List<Appointment> appointments = isAdmin
                 ? appointmentService.getAllAppointments(status)
