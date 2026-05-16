@@ -101,10 +101,14 @@ public class AppointmentService {
         return appointment;
     }
 
+    private static final java.util.Set<String> ADMIN_ALLOWED_STATUSES =
+            java.util.Set.of("COMPLETED", "CANCELLED");
+
     /** Admin updates status to COMPLETED or CANCELLED */
     public Appointment updateStatus(Long id, String status) {
-        if (status.equalsIgnoreCase("CONFIRMED")) {
-            throw new RuntimeException("Forbidden: Only PayMongo webhook can set CONFIRMED status");
+        if (status == null || !ADMIN_ALLOWED_STATUSES.contains(status.toUpperCase())) {
+            throw new IllegalArgumentException(
+                "Invalid status. Admin may only set: COMPLETED, CANCELLED");
         }
         Appointment a = getAppointmentById(id);
         a.setAppointmentStatus(AppointmentStatus.valueOf(status.toUpperCase()));
