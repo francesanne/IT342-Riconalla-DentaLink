@@ -8,7 +8,7 @@ import { useAuth } from '@/shared/context/AuthContext';
 import WelcomePopup from '@/shared/components/WelcomePopup';
 import {
   AlertCircle, CalendarDays, CheckCircle2, Clock,
-  Stethoscope, MapPin, UserRound, ClipboardList,
+  UserRound, ClipboardList,
 } from 'lucide-react';
 import './styles/dashboard.css'
 

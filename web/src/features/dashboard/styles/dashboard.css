@@ -37,6 +37,9 @@
   letter-spacing: -0.02em;
 }
 
+/* Brand SVG icon sits outside the text-clip, so color it explicitly */
+.navbar-brand svg { color: var(--primary); fill: var(--primary); }
+
 .navbar-nav {
   display: flex;
   align-items: center;
@@ -239,6 +242,9 @@
 .stat-icon.green  { background: var(--success-light);  color: var(--success); }
 .stat-icon.orange { background: var(--warning-light);  color: var(--warning); }
 .stat-icon.red    { background: var(--danger-light);   color: var(--danger); }
+
+/* Bolder stroke weight inside stat cards for stronger visual presence */
+.stat-icon svg { stroke-width: 2.5; }
 
 .stat-info { min-width: 0; }
 

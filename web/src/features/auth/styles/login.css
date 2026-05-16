@@ -26,6 +26,8 @@
   margin-bottom: var(--space-8);
 }
 
+.login-header .logo-text svg { color: var(--primary); fill: var(--primary); }
+
 .login-header .logo-text {
   font-size: var(--text-2xl);
   font-weight: var(--font-bold);

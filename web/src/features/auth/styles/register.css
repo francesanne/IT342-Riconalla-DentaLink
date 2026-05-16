@@ -25,6 +25,8 @@
   margin-bottom: var(--space-8);
 }
 
+.register-header .logo-text svg { color: var(--primary); fill: var(--primary); }
+
 .register-header .logo-text {
   font-size: var(--text-2xl);
   font-weight: var(--font-bold);

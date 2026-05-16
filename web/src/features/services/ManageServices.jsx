@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { formatPeso } from '@/shared/utils/formatters';
 import { servicesAPI } from '@/shared/api/api';
-import { AlertCircle, Pencil, Trash2, Stethoscope, X } from 'lucide-react';
+import { AlertCircle, Pencil, Trash2, X } from 'lucide-react';
+import ToothIcon from '@/shared/components/ToothIcon';
 import { toast } from 'sonner';
 import '@/features/dashboard/styles/dashboard.css';
 
@@ -162,7 +163,7 @@ export default function ManageServices() {
                     <div className="loading-container"><div className="spinner" /></div>
                 ) : services.length === 0 ? (
                     <div className="empty-state">
-                        <div className="empty-icon"><Stethoscope size={36} /></div>
+                        <div className="empty-icon"><ToothIcon size={36} /></div>
                         <div className="empty-title">No services yet</div>
                         <div className="empty-text">Create your first dental service to get started.</div>
                         <button onClick={openCreate} className="btn-sm btn-primary-sm" style={{ marginTop: 'var(--space-4)', height: 44, padding: '0 24px' }}>+ Add Service</button>
@@ -178,7 +179,7 @@ export default function ManageServices() {
                                             alt={s.name}
                                             onError={(e) => { e.target.src = '/tooth-icon.png'; }}
                                         />
-                                    ) : <Stethoscope size={36} color="var(--gray-300)" />}
+                                    ) : <ToothIcon size={36} color="var(--gray-300)" />}
                                 </div>
                                 <div className="service-card-body">
                                     <div className="service-name">{s.name}</div>

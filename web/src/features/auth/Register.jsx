@@ -4,7 +4,7 @@ import "./styles/register.css";
 import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "@/shared/context/AuthContext";
 import { authAPI } from "@/shared/api/api";
-import { Stethoscope } from 'lucide-react';
+import ToothIcon from '@/shared/components/ToothIcon';
 import { toast } from 'sonner';
 
 function Register() {
@@ -91,7 +91,7 @@ function Register() {
     <div className="register-container">
       <div className="register-card">
         <div className="register-header">
-          <Link to="/" className="logo-text" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Stethoscope size={18} /> DentaLink</Link>
+          <Link to="/" className="logo-text" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><ToothIcon size={18} /> DentaLink</Link>
           <h2>Create your account</h2>
           <p>Join us for better dental care</p>
         </div>

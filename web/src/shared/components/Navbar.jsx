@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
-import { Stethoscope, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import ToothIcon from '@/shared/components/ToothIcon';
 
 export default function Navbar({ links = [] }) {
   const { user, logout } = useAuth();
@@ -25,7 +26,7 @@ export default function Navbar({ links = [] }) {
   return (
     <nav className="navbar" ref={ref}>
       <Link to={user?.role === 'ADMIN' ? '/admin' : '/dashboard'} className="navbar-brand">
-        <Stethoscope size={18} /> DentaLink
+        <ToothIcon size={18} /> DentaLink
       </Link>
 
       <div className="navbar-nav">
