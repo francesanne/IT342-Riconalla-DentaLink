@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { dentistsAPI } from '@/shared/api/api';
-import { AlertCircle, Pencil, X } from 'lucide-react';
+import { AlertCircle, Pencil, X, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import '@/features/dashboard/styles/dashboard.css';
 
@@ -121,9 +121,15 @@ export default function ManageDentists() {
                 </thead>
                 <tbody>
                   {dentists.length === 0 ? (
-                    <tr><td colSpan={5} style={{ textAlign: 'center', padding: 'var(--space-12)', color: 'var(--gray-400)' }}>
-                      No dentists yet. Add your first dentist.
-                    </td></tr>
+                    <tr>
+                      <td colSpan={5}>
+                        <div className="empty-state" style={{ padding: 'var(--space-10) var(--space-8)' }}>
+                          <div className="empty-icon"><Users size={28} /></div>
+                          <div className="empty-title" style={{ fontSize: 'var(--text-base)' }}>No dentists yet</div>
+                          <div className="empty-text">Add your first dentist to get started.</div>
+                        </div>
+                      </td>
+                    </tr>
                   ) : dentists.map((d, i) => (
                     <tr key={d.id}>
                       <td style={{ color: 'var(--gray-400)', fontSize: 'var(--text-sm)', width: 40 }}>{i + 1}</td>

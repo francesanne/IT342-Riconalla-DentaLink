@@ -54,7 +54,46 @@ export default function AdminDashboard() {
         )}
 
         {loading ? (
-          <div className="loading-container"><div className="spinner" /></div>
+          <>
+            <div className="stats-grid">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="stat-card">
+                  <div className="skeleton skeleton-icon" />
+                  <div className="stat-info">
+                    <div className="skeleton skeleton-text-sm" style={{ width: '62%', marginBottom: 8 }} />
+                    <div className="skeleton skeleton-text-lg" style={{ width: '42%' }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="card">
+              <div className="card-header">
+                <div className="skeleton skeleton-text" style={{ width: 180 }} />
+              </div>
+              <div className="table-wrapper">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Patient</th><th>Service</th>
+                      <th className="col-hide-tablet">Dentist</th>
+                      <th>Date & Time</th><th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...Array(5)].map((_, i) => (
+                      <tr key={i}>
+                        <td><div className="skeleton skeleton-text" style={{ width: '75%' }} /></td>
+                        <td><div className="skeleton skeleton-text" style={{ width: '65%' }} /></td>
+                        <td className="col-hide-tablet"><div className="skeleton skeleton-text" style={{ width: '55%' }} /></td>
+                        <td><div className="skeleton skeleton-text" style={{ width: '60%' }} /></td>
+                        <td><div className="skeleton skeleton-badge" /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
         ) : (
           <>
             {/* Stats */}
@@ -110,7 +149,15 @@ export default function AdminDashboard() {
                   </thead>
                   <tbody>
                     {(stats?.recentAppointments ?? []).length === 0 ? (
-                      <tr><td colSpan={5} style={{ textAlign: 'center', padding: 'var(--space-8)', color: 'var(--gray-400)' }}>No appointments yet</td></tr>
+                      <tr>
+                        <td colSpan={5}>
+                          <div className="empty-state" style={{ padding: 'var(--space-10) var(--space-8)' }}>
+                            <div className="empty-icon"><CalendarDays size={28} /></div>
+                            <div className="empty-title" style={{ fontSize: 'var(--text-base)' }}>No appointments yet</div>
+                            <div className="empty-text">Appointments will appear here once patients start booking.</div>
+                          </div>
+                        </td>
+                      </tr>
                     ) : (stats?.recentAppointments ?? []).map(a => (
                       <tr key={a.id}>
                         <td>

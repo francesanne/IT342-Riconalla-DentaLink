@@ -119,9 +119,21 @@ export default function PatientDashboard() {
                 View All
               </Link>
             </div>
-            <div className="card-body" style={{ padding: upcoming.length ? 'var(--space-4)' : 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+            <div className="card-body" style={{ padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
               {loading ? (
-                <div className="loading-container"><div className="spinner" /></div>
+                [...Array(3)].map((_, i) => (
+                  <div key={i} className="upcoming-card">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-2)' }}>
+                      <div className="skeleton skeleton-text" style={{ width: '55%' }} />
+                      <div className="skeleton skeleton-badge" />
+                    </div>
+                    <div className="skeleton skeleton-text-sm" style={{ width: '42%', marginTop: 'var(--space-2)' }} />
+                    <div style={{ display: 'flex', gap: 'var(--space-3)', marginTop: 'var(--space-2)' }}>
+                      <div className="skeleton skeleton-text-sm" style={{ width: 90 }} />
+                      <div className="skeleton skeleton-text-sm" style={{ width: 70 }} />
+                    </div>
+                  </div>
+                ))
               ) : upcoming.length === 0 ? (
                 <div className="empty-state">
                   <div className="empty-icon"><CalendarDays size={36} /></div>
@@ -152,9 +164,17 @@ export default function PatientDashboard() {
                 View All
               </Link>
             </div>
-            <div className="card-body" style={{ padding: past.length ? 'var(--space-4)' : 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+            <div className="card-body" style={{ padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
               {loading ? (
-                <div className="loading-container"><div className="spinner" /></div>
+                [...Array(4)].map((_, i) => (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 'var(--space-3)', borderBottom: '1px solid var(--gray-100)' }}>
+                    <div>
+                      <div className="skeleton skeleton-text" style={{ width: 140, marginBottom: 6 }} />
+                      <div className="skeleton skeleton-text-sm" style={{ width: 100 }} />
+                    </div>
+                    <div className="skeleton skeleton-badge" />
+                  </div>
+                ))
               ) : past.length === 0 ? (
                 <div className="empty-state">
                   <div className="empty-icon"><ClipboardList size={36} /></div>

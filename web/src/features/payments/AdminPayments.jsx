@@ -71,38 +71,52 @@ export default function AdminPayments() {
 
         {/* Table */}
         <div className="card">
-          {loading && (
-            <div className="loading-container"><div className="spinner" /></div>
-          )}
-
-          {!loading && error && (
+          {error && (
             <div style={{ padding: 'var(--space-6)' }}>
               <div className="error-banner"><AlertCircle size={16} /> {error}</div>
             </div>
           )}
 
-          {!loading && !error && (
-            <div className="table-wrapper">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th className="col-hide-tablet">Payment ID</th>
-                    <th>Appointment</th>
-                    <th>Patient</th>
-                    <th>Amount</th>
-                    <th className="col-hide-tablet">PayMongo Ref</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {payments.length === 0 ? (
-                    <tr>
-                      <td colSpan={7} style={{ textAlign: 'center', padding: 'var(--space-8)', color: 'var(--gray-400)' }}>
-                        No payment records yet.
+          <div className="table-wrapper">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th className="col-hide-tablet">Payment ID</th>
+                  <th>Appointment</th>
+                  <th>Patient</th>
+                  <th>Amount</th>
+                  <th className="col-hide-tablet">PayMongo Ref</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  [...Array(5)].map((_, i) => (
+                    <tr key={i}>
+                      <td className="col-hide-tablet"><div className="skeleton skeleton-text-sm" style={{ width: 50 }} /></td>
+                      <td>
+                        <div className="skeleton skeleton-text" style={{ width: '65%', marginBottom: 5 }} />
+                        <div className="skeleton skeleton-text-sm" style={{ width: '42%' }} />
                       </td>
+                      <td><div className="skeleton skeleton-text" style={{ width: '60%' }} /></td>
+                      <td><div className="skeleton skeleton-text" style={{ width: 70 }} /></td>
+                      <td className="col-hide-tablet"><div className="skeleton skeleton-text-sm" style={{ width: '75%' }} /></td>
+                      <td><div className="skeleton skeleton-badge" /></td>
+                      <td><div className="skeleton skeleton-text" style={{ width: 80 }} /></td>
                     </tr>
-                  ) : (
+                  ))
+                ) : payments.length === 0 ? (
+                  <tr>
+                    <td colSpan={7}>
+                      <div className="empty-state" style={{ padding: 'var(--space-10) var(--space-8)' }}>
+                        <div className="empty-icon"><CreditCard size={28} /></div>
+                        <div className="empty-title" style={{ fontSize: 'var(--text-base)' }}>No payment records yet</div>
+                        <div className="empty-text">Payments will appear here once patients complete checkout.</div>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
                     payments.map(p => (
                       <tr key={p.id}>
                         <td className="col-hide-tablet" style={{ color: 'var(--gray-400)', fontSize: 'var(--text-sm)', fontFamily: 'monospace' }}>
@@ -139,7 +153,6 @@ export default function AdminPayments() {
                 </tbody>
               </table>
             </div>
-          )}
         </div>
       </main>
     </div>

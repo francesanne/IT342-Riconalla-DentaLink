@@ -4,7 +4,7 @@ import StatusBadge from '@/shared/components/StatusBadge';
 import { formatDateTime } from '@/shared/utils/formatters';
 import { appointmentsAPI } from '@/shared/api/api';
 import { toast } from 'sonner';
-import { Check, X } from 'lucide-react';
+import { Check, X, CalendarDays } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -77,29 +77,47 @@ export default function ManageAppointments() {
           </div>
         </div>
 
-        {loading ? (
-          <div className="loading-container"><div className="spinner" /></div>
-        ) : (
-          <div className="card">
-            <div className="table-wrapper">
-              <table className="data-table">
-                <thead>
+        <div className="card">
+          <div className="table-wrapper">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Patient</th>
+                  <th>Service</th>
+                  <th className="col-hide-tablet">Dentist</th>
+                  <th>Date & Time</th>
+                  <th>Status</th>
+                  <th>Payment</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  [...Array(6)].map((_, i) => (
+                    <tr key={i}>
+                      <td>
+                        <div className="skeleton skeleton-text" style={{ width: '70%', marginBottom: 5 }} />
+                        <div className="skeleton skeleton-text-sm" style={{ width: '55%' }} />
+                      </td>
+                      <td><div className="skeleton skeleton-text" style={{ width: '65%' }} /></td>
+                      <td className="col-hide-tablet"><div className="skeleton skeleton-text" style={{ width: '58%' }} /></td>
+                      <td><div className="skeleton skeleton-text" style={{ width: '62%' }} /></td>
+                      <td><div className="skeleton skeleton-badge" /></td>
+                      <td><div className="skeleton skeleton-badge" /></td>
+                      <td><div className="skeleton skeleton-text" style={{ width: 100 }} /></td>
+                    </tr>
+                  ))
+                ) : appointments.length === 0 ? (
                   <tr>
-                    <th>Patient</th>
-                    <th>Service</th>
-                    <th className="col-hide-tablet">Dentist</th>
-                    <th>Date & Time</th>
-                    <th>Status</th>
-                    <th>Payment</th>
-                    <th>Action</th>
+                    <td colSpan={7}>
+                      <div className="empty-state" style={{ padding: 'var(--space-10) var(--space-8)' }}>
+                        <div className="empty-icon"><CalendarDays size={28} /></div>
+                        <div className="empty-title" style={{ fontSize: 'var(--text-base)' }}>No appointments found</div>
+                        <div className="empty-text">Try a different status filter or check back later.</div>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {appointments.length === 0 ? (
-                    <tr><td colSpan={7} style={{ textAlign: 'center', padding: 'var(--space-12)', color: 'var(--gray-400)' }}>
-                      No appointments found.
-                    </td></tr>
-                  ) : appointments.map(a => (
+                ) : appointments.map(a => (
                     <tr key={a.id}>
                       <td>
                         <div style={{ fontWeight: 'var(--font-medium)', color: 'var(--primary)' }}>
@@ -164,7 +182,6 @@ export default function ManageAppointments() {
               </table>
             </div>
           </div>
-        )}
       </main>
 
       {/* Close dropdown on outside click */}

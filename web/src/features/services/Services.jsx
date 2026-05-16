@@ -55,7 +55,20 @@ export default function Services() {
         )}
 
         {loading ? (
-          <div className="loading-container"><div className="spinner" /></div>
+          <div className="services-grid">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="service-card">
+                <div className="skeleton skeleton-service-img" />
+                <div className="service-card-body">
+                  <div className="skeleton skeleton-text-lg" style={{ width: '72%', marginBottom: 10 }} />
+                  <div className="skeleton skeleton-text-sm" style={{ width: '100%', marginBottom: 5 }} />
+                  <div className="skeleton skeleton-text-sm" style={{ width: '80%', marginBottom: 16 }} />
+                  <div className="skeleton skeleton-text-lg" style={{ width: 80, marginBottom: 16 }} />
+                  <div className="skeleton" style={{ height: 44, borderRadius: 'var(--radius-lg)' }} />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : services.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon"><ToothIcon size={36} /></div>
