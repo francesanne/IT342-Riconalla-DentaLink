@@ -387,10 +387,15 @@ public class PaymentService {
 
     public List<PaymentDto> getAllPayments() {
         return paymentRepository.findAll().stream()
-                .flatMap(payment -> userRepository.findById(
-                        payment.getAppointment().getPatientId())
-                        .map(patient -> java.util.stream.Stream.of(PaymentDto.from(payment, patient)))
-                        .orElse(java.util.stream.Stream.empty()))
+                .flatMap(payment -> {
+                    String serviceName = serviceRepository
+                            .findById(payment.getAppointment().getServiceId())
+                            .map(s -> s.getServiceName())
+                            .orElse("Dental Service");
+                    return userRepository.findById(payment.getAppointment().getPatientId())
+                            .map(patient -> java.util.stream.Stream.of(PaymentDto.from(payment, patient, serviceName)))
+                            .orElse(java.util.stream.Stream.empty());
+                })
                 .collect(Collectors.toList());
     }
 }

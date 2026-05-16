@@ -103,8 +103,13 @@ export default function AdminPayments() {
                         <td style={{ color: 'var(--gray-400)', fontSize: 'var(--text-sm)', fontFamily: 'monospace' }}>
                           #{p.id}
                         </td>
-                        <td style={{ color: 'var(--gray-600)' }}>
-                          Appt #{p.appointmentId}
+                        <td style={{ color: 'var(--gray-700)' }}>
+                          <div style={{ fontWeight: 'var(--font-medium)' }}>
+                            {p.serviceName || 'Dental Service'}
+                          </div>
+                          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--gray-400)' }}>
+                            Appt #{p.appointmentId}
+                          </div>
                         </td>
                         <td>
                           <div style={{ fontWeight: 'var(--font-medium)' }}>

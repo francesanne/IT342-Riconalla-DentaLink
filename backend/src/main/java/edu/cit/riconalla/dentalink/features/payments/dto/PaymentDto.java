@@ -10,17 +10,19 @@ public class PaymentDto {
 
     private Long id;
     private Long appointmentId;
+    private String serviceName;
     private String paymongoPaymentId;   // C-6: admin list field name
     private BigDecimal paymentAmount;
     private String paymentStatus;
     private String paymentCreatedAt;
     private PatientSummary patient;
 
-    public PaymentDto(Long id, Long appointmentId, String paymongoPaymentId,
+    public PaymentDto(Long id, Long appointmentId, String serviceName, String paymongoPaymentId,
                       BigDecimal paymentAmount, String paymentStatus,
                       String paymentCreatedAt, PatientSummary patient) {
         this.id = id;
         this.appointmentId = appointmentId;
+        this.serviceName = serviceName;
         this.paymongoPaymentId = paymongoPaymentId;
         this.paymentAmount = paymentAmount;
         this.paymentStatus = paymentStatus;
@@ -32,10 +34,11 @@ public class PaymentDto {
      * Maps Payment entity to PaymentDto.
      * Requires the patient User resolved by service layer from appointment.patientId.
      */
-    public static PaymentDto from(Payment payment, User patient) {
+    public static PaymentDto from(Payment payment, User patient, String serviceName) {
         return new PaymentDto(
                 payment.getPaymentId(),
                 payment.getAppointment().getAppointmentId(),
+                serviceName,
                 payment.getPaymongoPaymentId(),
                 payment.getPaymentAmount(),
                 payment.getPaymentStatus(),
@@ -48,6 +51,7 @@ public class PaymentDto {
 
     public Long getId()                     { return id; }
     public Long getAppointmentId()          { return appointmentId; }
+    public String getServiceName()          { return serviceName; }
     public String getPaymongoPaymentId()    { return paymongoPaymentId; }
     public BigDecimal getPaymentAmount()    { return paymentAmount; }
     public String getPaymentStatus()        { return paymentStatus; }
