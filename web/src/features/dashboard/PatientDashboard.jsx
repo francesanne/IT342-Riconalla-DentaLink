@@ -58,15 +58,7 @@ export default function PatientDashboard() {
     <div className="app-layout">
       <Navbar links={NAV_LINKS} />
       <main className="page-container">
-        <div style={{
-          background: '#fef2f2',
-          border: '1px solid #fecaca',
-          borderRadius: '8px',
-          padding: '16px 20px',
-          color: '#dc2626',
-          fontSize: '14px',
-          marginTop: '24px'
-        }}>
+        <div className="error-banner" style={{ marginTop: 'var(--space-6)' }}>
           <AlertCircle size={16} /> {error}
         </div>
       </main>

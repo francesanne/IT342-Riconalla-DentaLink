@@ -4,6 +4,7 @@ import StatusBadge from '@/shared/components/StatusBadge';
 import { formatDateTime } from '@/shared/utils/formatters';
 import { appointmentsAPI } from '@/shared/api/api';
 import { toast } from 'sonner';
+import { Check, X } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -140,21 +141,17 @@ export default function ManageAppointments() {
                               }}>
                                 {a.status !== 'COMPLETED' && (
                                   <button
-                                    style={{ display: 'block', width: '100%', padding: 'var(--space-3) var(--space-4)', textAlign: 'left', border: 'none', background: 'none', cursor: 'pointer', fontSize: 'var(--text-sm)', color: 'var(--gray-700)', transition: 'background 0.15s' }}
-                                    onMouseEnter={e => e.currentTarget.style.background = 'var(--success-light)'}
-                                    onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                                    className="dropdown-action dropdown-action-success"
                                     onClick={() => handleStatusUpdate(a.id, 'COMPLETED')}
                                   >
-                                    ✓ Mark Completed
+                                    <Check size={13} /> Mark Completed
                                   </button>
                                 )}
                                 <button
-                                  style={{ display: 'block', width: '100%', padding: 'var(--space-3) var(--space-4)', textAlign: 'left', border: 'none', background: 'none', cursor: 'pointer', fontSize: 'var(--text-sm)', color: 'var(--danger)', transition: 'background 0.15s' }}
-                                  onMouseEnter={e => e.currentTarget.style.background = 'var(--danger-light)'}
-                                  onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                                  className="dropdown-action dropdown-action-danger"
                                   onClick={() => handleStatusUpdate(a.id, 'CANCELLED')}
                                 >
-                                  ✕ Mark Cancelled
+                                  <X size={13} /> Mark Cancelled
                                 </button>
                               </div>
                             )}

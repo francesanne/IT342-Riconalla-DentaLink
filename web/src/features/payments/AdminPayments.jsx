@@ -3,7 +3,7 @@ import Navbar from '@/shared/components/Navbar';
 import StatusBadge from '@/shared/components/StatusBadge';
 import { formatDate, formatPeso } from '@/shared/utils/formatters';
 import { paymentsAPI } from '@/shared/api/api';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, CreditCard, CheckCircle2, Banknote } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -45,21 +45,26 @@ export default function AdminPayments() {
         </div>
 
         {/* Summary stats */}
-        <div className="stats-grid" style={{ marginBottom: 24 }}>
+        <div className="stats-grid" style={{ marginBottom: 'var(--space-6)' }}>
           <div className="stat-card">
-            <div className="stat-label">Total Payments</div>
-            <div className="stat-value">{payments.length}</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-label">Paid</div>
-            <div className="stat-value" style={{ color: 'var(--primary)' }}>
-              {payments.filter(p => p.paymentStatus === 'PAID').length}
+            <div className="stat-icon blue"><CreditCard size={20} /></div>
+            <div className="stat-info">
+              <div className="stat-label">Total Payments</div>
+              <div className="stat-value">{payments.length}</div>
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-label">Total Revenue</div>
-            <div className="stat-value" style={{ color: 'var(--primary)' }}>
-              {formatPeso(totalRevenue)}
+            <div className="stat-icon green"><CheckCircle2 size={20} /></div>
+            <div className="stat-info">
+              <div className="stat-label">Paid</div>
+              <div className="stat-value">{payments.filter(p => p.paymentStatus === 'PAID').length}</div>
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon teal"><Banknote size={20} /></div>
+            <div className="stat-info">
+              <div className="stat-label">Total Revenue</div>
+              <div className="stat-value" style={{ fontSize: 'var(--text-xl)' }}>{formatPeso(totalRevenue)}</div>
             </div>
           </div>
         </div>
@@ -67,14 +72,13 @@ export default function AdminPayments() {
         {/* Table */}
         <div className="card">
           {loading && (
-            <div style={{ padding: 40, textAlign: 'center' }}>
-              <div className="spinner" style={{ margin: '0 auto 12px' }} />
-              <p style={{ color: 'var(--gray-400)' }}>Loading payment records…</p>
-            </div>
+            <div className="loading-container"><div className="spinner" /></div>
           )}
 
           {!loading && error && (
-            <div className="error-banner"><AlertCircle size={16} /> {error}</div>
+            <div style={{ padding: 'var(--space-6)' }}>
+              <div className="error-banner"><AlertCircle size={16} /> {error}</div>
+            </div>
           )}
 
           {!loading && !error && (

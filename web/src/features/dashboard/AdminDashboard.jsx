@@ -48,15 +48,7 @@ export default function AdminDashboard() {
         </div>
 
         {error && (
-          <div style={{
-            background: '#fef2f2',
-            border: '1px solid #fecaca',
-            borderRadius: '8px',
-            padding: '16px 20px',
-            color: '#dc2626',
-            fontSize: '14px',
-            marginBottom: '16px'
-          }}>
+          <div className="error-banner">
             <AlertCircle size={16} /> {error}
           </div>
         )}
