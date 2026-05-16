@@ -43,6 +43,7 @@ export default function ManageAppointments() {
   const [statusFilter, setStatusFilter] = useState('');
   const [updating, setUpdating] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [error, setError] = useState('');
 
   const load = () => {
     setLoading(true);
@@ -60,7 +61,7 @@ export default function ManageAppointments() {
       await appointmentsAPI.updateStatus(id, newStatus);
       load();
     } catch (err) {
-      alert(err.response?.data?.error?.message || 'Failed to update status.');
+      setError(err.response?.data?.error?.message || 'Failed to update status.');
     } finally { setUpdating(null); }
   };
 
@@ -87,6 +88,12 @@ export default function ManageAppointments() {
             ))}
           </div>
         </div>
+
+        {error && (
+          <div className="error-banner" style={{ marginBottom: 'var(--space-4)' }}>
+            <span>⚠</span> {error}
+          </div>
+        )}
 
         {loading ? (
           <div className="loading-container"><div className="spinner" /></div>

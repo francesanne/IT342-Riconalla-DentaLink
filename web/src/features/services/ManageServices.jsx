@@ -115,7 +115,7 @@ export default function ManageServices() {
             setDeleteId(null);
             load();
         } catch (err) {
-            alert(err.response?.data?.error?.message || 'Failed to delete service.');
+            setError(err.response?.data?.error?.message || 'Failed to delete service.');
         }
     };
 
@@ -257,6 +257,7 @@ export default function ManageServices() {
                             <button className="modal-close" onClick={() => setDeleteId(null)}>×</button>
                         </div>
                         <div className="modal-body">
+                            {error && <div className="error-banner"><span>⚠</span> {error}</div>}
                             <p style={{ color: 'var(--gray-600)' }}>
                                 Are you sure you want to delete this service? This action cannot be undone.
                             </p>

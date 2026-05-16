@@ -68,7 +68,7 @@ export default function ManageDentists() {
 
   const handleDelete = async (id) => {
     try { await dentistsAPI.delete(id); setDeleteId(null); load(); }
-    catch (err) { alert(err.response?.data?.error?.message || 'Failed to delete.'); }
+    catch (err) { setError(err.response?.data?.error?.message || 'Failed to delete.'); }
   };
 
   return (
@@ -216,6 +216,7 @@ export default function ManageDentists() {
               <button className="modal-close" onClick={() => setDeleteId(null)}>×</button>
             </div>
             <div className="modal-body">
+              {error && <div className="error-banner"><span>⚠</span> {error}</div>}
               <p style={{ color: 'var(--gray-600)' }}>Are you sure you want to remove this dentist record? This cannot be undone.</p>
             </div>
             <div className="modal-footer" style={{ padding: '0 var(--space-6) var(--space-6)' }}>
