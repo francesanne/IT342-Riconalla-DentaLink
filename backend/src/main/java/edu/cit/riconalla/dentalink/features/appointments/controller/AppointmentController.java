@@ -20,6 +20,7 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
+    @PreAuthorize("hasAuthority('PATIENT')")
     @PostMapping
     public ResponseEntity<Map<String, Object>> createAppointment(@RequestBody Map<String, Object> body,
                                                                  Authentication auth) {
