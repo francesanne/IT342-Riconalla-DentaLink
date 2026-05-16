@@ -51,7 +51,7 @@ export default function PaymentCancel() {
                   fontSize: 14, cursor: 'pointer',
                 }}
               >
-                Pay Now
+                Go to My Appointments
               </button>
             )}
             <button
