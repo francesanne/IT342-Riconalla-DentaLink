@@ -4,16 +4,8 @@ import "./styles/register.css";
 import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "@/shared/context/AuthContext";
 import { authAPI } from "@/shared/api/api";
-import { Stethoscope, AlertCircle, CheckCircle2 } from 'lucide-react';
-
-function SuccessToast({ message }) {
-  return (
-    <div className="success-toast">
-      <CheckCircle2 size={16} />
-      {message}
-    </div>
-  );
-}
+import { Stethoscope } from 'lucide-react';
+import { toast } from 'sonner';
 
 function Register() {
   const navigate = useNavigate();
@@ -26,9 +18,7 @@ function Register() {
     password: "",
     confirmPassword: "",
   });
-  const [isLoading, setIsLoading]   = useState(false);
-  const [error, setError]           = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,15 +27,13 @@ function Register() {
   // ── Email / Password registration ───────────────────────────────────────────
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccessMsg("");
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match.");
+      toast.error("Passwords do not match.");
       return;
     }
     if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters.");
+      toast.error("Password must be at least 6 characters.");
       return;
     }
 
@@ -67,11 +55,11 @@ function Register() {
       );
     } catch (err) {
       if (err.response?.status === 409) {
-        setError("This email is already registered. Please log in instead.");
+        toast.error("This email is already registered. Please log in instead.");
       } else if (err.response?.data?.error?.message) {
-        setError(err.response.data.error.message);
+        toast.error(err.response.data.error.message);
       } else {
-        setError("Registration failed. Please try again.");
+        toast.error("Registration failed. Please try again.");
       }
     } finally {
       setIsLoading(false);
@@ -82,12 +70,9 @@ function Register() {
   // The backend auto-creates a PATIENT account for new Google users,
   // or logs in an existing one — same endpoint as Login.
   const handleGoogleSuccess = async (credentialResponse) => {
-    setError("");
-    setSuccessMsg("");
     try {
       const idToken  = credentialResponse.credential;
       const response = await authAPI.googleLogin({ idToken });
-
       if (response.data && response.data.data) {
         const { accessToken, user } = response.data.data;
         localStorage.setItem("token", accessToken);
@@ -98,7 +83,7 @@ function Register() {
         );
       }
     } catch (_) {
-      setError("Google sign-up failed. Please try again.");
+      toast.error("Google sign-up failed. Please try again.");
     }
   };
 
@@ -110,13 +95,6 @@ function Register() {
           <h2>Create your account</h2>
           <p>Join us for better dental care</p>
         </div>
-
-        {successMsg && <SuccessToast message={successMsg} />}
-        {error && (
-          <div className="error-banner">
-            <AlertCircle size={16} /> {error}
-          </div>
-        )}
 
         <form onSubmit={handleRegister} className="register-form">
           <div className="form-row">
@@ -203,7 +181,7 @@ function Register() {
         <div className="google-btn-wrapper">
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
-            onError={() => setError("Google sign-up failed. Please try again.")}
+            onError={() => toast.error("Google sign-up failed. Please try again.")}
             width="100%"
             text="signup_with"
             shape="rectangular"

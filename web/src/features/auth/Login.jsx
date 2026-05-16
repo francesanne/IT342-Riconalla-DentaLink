@@ -4,7 +4,8 @@ import "./styles/login.css";
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from "@/shared/context/AuthContext";
 import { authAPI } from "@/shared/api/api";
-import { Stethoscope, AlertCircle } from 'lucide-react';
+import { Stethoscope } from 'lucide-react';
+import { toast } from 'sonner';
 
 function Login() {
   const navigate = useNavigate();
@@ -13,7 +14,6 @@ function Login() {
   const [email, setEmail]         = useState("");
   const [password, setPassword]   = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError]         = useState("");
 
   // Set user then navigate WITH a state flag so the destination page
   // can show the success popup. We do NOT try to show the popup here
@@ -31,37 +31,33 @@ function Login() {
   // ── Email / Password ────────────────────────────────────────────────────────
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
 
     const trimmedEmail    = email.trim();
     const trimmedPassword = password.trim();
 
     if (!trimmedEmail || !trimmedPassword) {
-      setError("Please enter both email and password");
+      toast.error("Please enter both email and password.");
       return;
     }
 
     setIsLoading(true);
     try {
-      const response = await authAPI.login(
-        { email: trimmedEmail, password: trimmedPassword }
-      );
-
+      const response = await authAPI.login({ email: trimmedEmail, password: trimmedPassword });
       if (response.data && response.data.data) {
         const { accessToken, user } = response.data.data;
         finishLogin(accessToken, user);
       }
     } catch (err) {
       if (err.response) {
-        setError(
+        toast.error(
           err.response.data?.error?.message ||
           err.response.data?.message ||
-          "Invalid email or password"
+          "Invalid email or password."
         );
       } else if (err.request) {
-        setError("Cannot connect to server. Please check if the backend is running.");
+        toast.error("Cannot connect to server. Please check if the backend is running.");
       } else {
-        setError("An error occurred. Please try again.");
+        toast.error("An error occurred. Please try again.");
       }
     } finally {
       setIsLoading(false);
@@ -70,17 +66,15 @@ function Login() {
 
   // ── Google ──────────────────────────────────────────────────────────────────
   const handleGoogleSuccess = async (credentialResponse) => {
-    setError("");
     try {
       const idToken  = credentialResponse.credential;
       const response = await authAPI.googleLogin({ idToken });
-
       if (response.data && response.data.data) {
         const { accessToken, user } = response.data.data;
         finishLogin(accessToken, user);
       }
     } catch (_) {
-      setError("Google login failed. Please try again.");
+      toast.error("Google login failed. Please try again.");
     }
   };
 
@@ -92,12 +86,6 @@ function Login() {
           <h2>Sign in to your account</h2>
           <p>Welcome back! Please enter your details.</p>
         </div>
-
-        {error && (
-          <div className="error-banner">
-            <AlertCircle size={16} /> {error}
-          </div>
-        )}
 
         <form onSubmit={handleLogin} className="login-form">
           <div className="form-group">
@@ -140,7 +128,7 @@ function Login() {
         <div className="google-btn-wrapper">
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
-            onError={() => setError("Google login failed. Please try again.")}
+            onError={() => toast.error("Google login failed. Please try again.")}
             width="100%"
             text="signin_with"
             shape="rectangular"

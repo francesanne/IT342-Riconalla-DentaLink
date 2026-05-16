@@ -3,6 +3,7 @@ import Navbar from '@/shared/components/Navbar';
 import { formatPeso } from '@/shared/utils/formatters';
 import { servicesAPI } from '@/shared/api/api';
 import { AlertCircle, Pencil, Trash2, Stethoscope, X } from 'lucide-react';
+import { toast } from 'sonner';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -107,14 +108,14 @@ export default function ManageServices() {
                 const imageForm = new FormData();
                 imageForm.append('file', form.imageFile);
                 const imgRes = await servicesAPI.uploadImage(savedService.id, imageForm);
-                // Update the saved service with the returned imageUrl
                 savedService.imageUrl = imgRes.data.data?.imageUrl || savedService.imageUrl;
             }
 
+            toast.success(modal === 'create' ? 'Service created successfully.' : 'Service updated successfully.');
             closeModal();
             load();
         } catch (err) {
-            setError(err.response?.data?.error?.message || 'Failed to save service.');
+            toast.error(err.response?.data?.error?.message || 'Failed to save service.');
         } finally {
             setSaving(false);
         }
@@ -125,8 +126,10 @@ export default function ManageServices() {
             await servicesAPI.delete(id);
             setDeleteId(null);
             load();
+            toast.success('Service deleted successfully.');
         } catch (err) {
-            setError(err.response?.data?.error?.message || 'Failed to delete service.');
+            setDeleteId(null);
+            toast.error(err.response?.data?.error?.message || 'Failed to delete service.');
         }
     };
 
@@ -290,7 +293,6 @@ export default function ManageServices() {
                             <button className="modal-close" onClick={() => setDeleteId(null)}><X size={18} /></button>
                         </div>
                         <div className="modal-body">
-                            {error && <div className="error-banner"><AlertCircle size={16} /> {error}</div>}
                             <p style={{ color: 'var(--gray-600)' }}>
                                 Are you sure you want to delete this service? This action cannot be undone.
                             </p>

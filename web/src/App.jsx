@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { AuthProvider, useAuth }  from '@/shared/context/AuthContext';
 import Landing from '@/pages/Landing';
 import Login from '@/features/auth/Login'
@@ -59,6 +60,7 @@ function App() {
   return (
     <AuthProvider>
       <AppRoutes />
+      <Toaster position="top-right" richColors duration={3500} closeButton />
     </AuthProvider>
   );
 }

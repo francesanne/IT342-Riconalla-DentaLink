@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { usersAPI } from '@/shared/api/api';
 import { useAuth } from '@/shared/context/AuthContext';
-import { AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -24,14 +24,10 @@ export default function Profile() {
     currentPassword: '',
     newPassword:     '',
   });
-  const [saving,        setSaving]        = useState(false);
-  const [profileMsg,    setProfileMsg]    = useState('');
-  const [profileError,  setProfileError]  = useState('');
+  const [saving,    setSaving]    = useState(false);
 
   // Picture upload state
-  const [uploading,     setUploading]     = useState(false);
-  const [pictureMsg,    setPictureMsg]    = useState('');
-  const [pictureError,  setPictureError]  = useState('');
+  const [uploading, setUploading] = useState(false);
   const [previewUrl,    setPreviewUrl]    = useState(user?.profileImageUrl || null);
 
   const initials = `${user?.firstName?.[0] || ''}${user?.lastName?.[0] || ''}`.toUpperCase();
@@ -39,11 +35,9 @@ export default function Profile() {
   // ── Handle profile text update ───────────────────────────────────────────
   const handleProfileSave = async (e) => {
     e.preventDefault();
-    setProfileMsg('');
-    setProfileError('');
 
     if (!form.currentPassword) {
-      setProfileError('Current password is required to save changes.');
+      toast.error('Current password is required to save changes.');
       return;
     }
 
@@ -61,15 +55,11 @@ export default function Profile() {
       const res = await usersAPI.updateProfile(payload);
       const updated = res.data.data;
 
-      // Update auth context so Navbar reflects new name immediately
       setUser(prev => ({ ...prev, firstName: updated.firstName, lastName: updated.lastName }));
-
       setForm(f => ({ ...f, currentPassword: '', newPassword: '' }));
-      setProfileMsg('Profile updated successfully.');
+      toast.success('Profile updated successfully.');
     } catch (err) {
-      setProfileError(
-        err.response?.data?.error?.message || 'Failed to update profile. Please try again.'
-      );
+      toast.error(err.response?.data?.error?.message || 'Failed to update profile. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -80,18 +70,15 @@ export default function Profile() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Client-side pre-validation
     if (!['image/jpeg', 'image/png'].includes(file.type)) {
-      setPictureError('Only JPEG and PNG files are allowed.');
+      toast.error('Only JPEG and PNG files are allowed.');
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      setPictureError('File size must be 5 MB or less.');
+      toast.error('File size must be 5 MB or less.');
       return;
     }
 
-    setPictureMsg('');
-    setPictureError('');
     setUploading(true);
 
     // Show local preview immediately
@@ -105,15 +92,12 @@ export default function Profile() {
       const res = await usersAPI.uploadProfilePicture(formData);
       const remoteUrl = res.data.data?.profileImageUrl;
 
-      // Replace local blob URL with the real Supabase URL
       setPreviewUrl(remoteUrl);
       setUser(prev => ({ ...prev, profileImageUrl: remoteUrl }));
-      setPictureMsg('Profile picture updated.');
+      toast.success('Profile picture updated.');
     } catch (err) {
       setPreviewUrl(user?.profileImageUrl || null);
-      setPictureError(
-        err.response?.data?.error?.message || 'Upload failed. Please try again.'
-      );
+      toast.error(err.response?.data?.error?.message || 'Upload failed. Please try again.');
     } finally {
       setUploading(false);
       // Reset input so same file can be re-selected if needed
@@ -176,8 +160,6 @@ export default function Profile() {
                 style={{ display: 'none' }}
                 onChange={handleFileChange}
               />
-              {pictureMsg   && <p style={{ fontSize: 13, color: 'green',          marginTop: 6 }}>{pictureMsg}</p>}
-              {pictureError && <p style={{ fontSize: 13, color: 'var(--error)',    marginTop: 6 }}>{pictureError}</p>}
             </div>
           </div>
         </div>
@@ -189,9 +171,6 @@ export default function Profile() {
           </h2>
 
           <form onSubmit={handleProfileSave}>
-
-            {profileMsg   && <div style={{ padding: '10px 14px', background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 8, color: '#166534', fontSize: 13, marginBottom: 16 }}>{profileMsg}</div>}
-            {profileError && <div className="error-banner"><AlertCircle size={16} /> {profileError}</div>}
 
             {/* Read-only email */}
             <div className="form-group">

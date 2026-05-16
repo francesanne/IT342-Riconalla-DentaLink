@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { dentistsAPI, appointmentsAPI, paymentsAPI } from '@/shared/api/api';
-import { AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
 const TIME_SLOTS = [
   '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
@@ -19,7 +19,6 @@ export default function BookingModal({ service, onClose, onSuccess }) {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   // Min date = today
   const today = new Date().toISOString().split('T')[0];
@@ -32,8 +31,10 @@ export default function BookingModal({ service, onClose, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    if (!dentistId || !date || !time) { setError('Please fill in all fields.'); return; }
+    if (!dentistId || !date || !time) {
+      toast.error('Please fill in all fields.');
+      return;
+    }
     setLoading(true);
     try {
       const appointmentDatetime = `${date}T${time}:00`;
@@ -57,7 +58,7 @@ export default function BookingModal({ service, onClose, onSuccess }) {
       }
     } catch (err) {
       const msg = err.response?.data?.error?.message || err.response?.data?.message || 'Booking failed. Please try again.';
-      setError(msg);
+      toast.error(msg);
       setLoading(false);
     }
   };
@@ -95,8 +96,6 @@ export default function BookingModal({ service, onClose, onSuccess }) {
 
         <form onSubmit={handleSubmit}>
           <div className="modal-body" style={{ paddingTop: 0 }}>
-            {error && <div className="error-banner"><span>⚠</span> {error}</div>}
-
             {/* Dentist select */}
             <div className="form-group">
               <label>Select Dentist</label>

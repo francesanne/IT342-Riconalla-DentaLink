@@ -3,7 +3,7 @@ import Navbar from '@/shared/components/Navbar';
 import StatusBadge from '@/shared/components/StatusBadge';
 import { formatDateTime } from '@/shared/utils/formatters';
 import { appointmentsAPI } from '@/shared/api/api';
-import { AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -29,13 +29,12 @@ export default function ManageAppointments() {
   const [statusFilter, setStatusFilter] = useState('');
   const [updating, setUpdating] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
-  const [error, setError] = useState('');
 
   const load = () => {
     setLoading(true);
     appointmentsAPI.getAll(statusFilter || undefined)
       .then(r => setAppointments(r.data.data || []))
-      .catch(() => setError('Failed to load appointments. Please refresh.'))
+      .catch(() => toast.error('Failed to load appointments. Please refresh.'))
       .finally(() => setLoading(false));
   };
 
@@ -47,8 +46,9 @@ export default function ManageAppointments() {
       const res = await appointmentsAPI.updateStatus(id, newStatus);
       const updated = res.data.data;
       setAppointments(prev => prev.map(a => a.id === id ? updated : a));
+      toast.success(`Appointment marked as ${newStatus.toLowerCase()}.`);
     } catch (err) {
-      setError(err.response?.data?.error?.message || 'Failed to update status.');
+      toast.error(err.response?.data?.error?.message || 'Failed to update appointment status.');
     } finally { setUpdating(null); }
   };
 
@@ -75,12 +75,6 @@ export default function ManageAppointments() {
             ))}
           </div>
         </div>
-
-        {error && (
-          <div className="error-banner" style={{ marginBottom: 'var(--space-4)' }}>
-            <AlertCircle size={16} /> {error}
-          </div>
-        )}
 
         {loading ? (
           <div className="loading-container"><div className="spinner" /></div>

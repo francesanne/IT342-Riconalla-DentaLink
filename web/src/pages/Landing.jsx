@@ -94,16 +94,6 @@ function Landing() {
                 </Link>
               </div>
 
-              <div className="hero-stats">
-                <div>
-                  <span className="stats-number">4,000+</span>
-                  <span>Patients</span>
-                </div>
-                <div className="stars">
-                  <span>★★★★★</span>
-                </div>
-                <span className="verified">Verified Reviews</span>
-              </div>
             </div>
           </div>
 

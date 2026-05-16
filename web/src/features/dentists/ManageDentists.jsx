@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { dentistsAPI } from '@/shared/api/api';
 import { AlertCircle, Pencil, X } from 'lucide-react';
+import { toast } from 'sonner';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -61,15 +62,23 @@ export default function ManageDentists() {
     try {
       if (!editing) await dentistsAPI.create({ name: form.name.trim(), specialization: form.specialization.trim(), status: form.status });
       else await dentistsAPI.update(editing.id, { name: form.name.trim(), specialization: form.specialization.trim(), status: form.status });
+      toast.success(editing ? 'Dentist updated successfully.' : 'Dentist added successfully.');
       closeModal(); load();
     } catch (err) {
-      setError(err.response?.data?.error?.message || 'Failed to save dentist.');
+      toast.error(err.response?.data?.error?.message || 'Failed to save dentist.');
     } finally { setSaving(false); }
   };
 
   const handleDelete = async (id) => {
-    try { await dentistsAPI.delete(id); setDeleteId(null); load(); }
-    catch (err) { setError(err.response?.data?.error?.message || 'Failed to delete.'); }
+    try {
+      await dentistsAPI.delete(id);
+      setDeleteId(null);
+      load();
+      toast.success('Dentist deleted successfully.');
+    } catch (err) {
+      setDeleteId(null);
+      toast.error(err.response?.data?.error?.message || 'Failed to delete dentist.');
+    }
   };
 
   return (
@@ -217,7 +226,6 @@ export default function ManageDentists() {
               <button className="modal-close" onClick={() => setDeleteId(null)}><X size={18} /></button>
             </div>
             <div className="modal-body">
-              {error && <div className="error-banner"><AlertCircle size={16} /> {error}</div>}
               <p style={{ color: 'var(--gray-600)' }}>Are you sure you want to remove this dentist record? This cannot be undone.</p>
             </div>
             <div className="modal-footer" style={{ padding: '0 var(--space-6) var(--space-6)' }}>

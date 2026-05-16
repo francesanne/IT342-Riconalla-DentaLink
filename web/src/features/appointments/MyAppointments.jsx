@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { formatDate, formatTime } from '@/shared/utils/formatters';
 import { appointmentsAPI, paymentsAPI } from '@/shared/api/api';
-import { AlertCircle, CalendarDays } from 'lucide-react';
+import { CalendarDays } from 'lucide-react';
+import { toast } from 'sonner';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -26,13 +27,12 @@ export default function MyAppointments() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ALL');
-  const [error, setError] = useState('');
 
   useEffect(() => {
     appointmentsAPI
       .getAll()
       .then(res => setAppointments(res.data.data || []))
-      .catch(() => setError('Failed to load appointments. Please refresh the page.'))
+      .catch(() => toast.error('Failed to load appointments. Please refresh the page.'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -49,7 +49,7 @@ export default function MyAppointments() {
         window.location.href = checkoutUrl;
       }
     } catch (err) {
-      setError(err.response?.data?.error?.message || 'Failed to initiate payment. Please try again.');
+      toast.error(err.response?.data?.error?.message || 'Failed to initiate payment. Please try again.');
     }
   };
 
@@ -82,20 +82,6 @@ export default function MyAppointments() {
             </button>
           ))}
         </div>
-
-        {error && (
-          <div style={{
-            background: '#fef2f2',
-            border: '1px solid #fecaca',
-            borderRadius: '8px',
-            padding: '16px 20px',
-            color: '#dc2626',
-            fontSize: '14px',
-            marginBottom: '16px'
-          }}>
-            <AlertCircle size={16} /> {error}
-          </div>
-        )}
 
         {/* CONTENT */}
         {loading ? (
