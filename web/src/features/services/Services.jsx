@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '@/shared/components/Navbar';
 import BookingModal from '@/features/appointments/BookingModal';
 import { servicesAPI } from '@/shared/api/api';
+import { Stethoscope } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -57,7 +58,7 @@ export default function Services() {
           <div className="loading-container"><div className="spinner" /></div>
         ) : services.length === 0 ? (
           <div className="empty-state">
-            <span className="empty-icon">🦷</span>
+            <div className="empty-icon"><Stethoscope size={36} /></div>
             <div className="empty-title">No services available</div>
             <div className="empty-text">Check back soon for available dental services.</div>
           </div>
@@ -69,7 +70,7 @@ export default function Services() {
                   {service.imageUrl ? (
                     <img src={service.imageUrl} alt={service.name} />
                   ) : (
-                    <span>🦷</span>
+                    <Stethoscope size={36} color="var(--gray-300)" />
                   )}
                 </div>
                 <div className="service-card-body">

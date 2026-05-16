@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useRef } from "react";
+import { Stethoscope, MapPin } from "lucide-react";
 import "../styles/landing.css";
 
 // Clinic coordinates — fixed per SDD AC-7
@@ -73,7 +74,7 @@ function Landing() {
           {/* Left Column */}
           <div className="left-column">
             <div className="logo-section">
-              <span className="logo-icon">🦷</span>
+              <span className="logo-icon"><Stethoscope size={24} /></span>
               <span className="logo-text">DentaLink</span>
             </div>
 
@@ -117,7 +118,7 @@ function Landing() {
 
               <a href={mapsUrl} target="_blank" rel="noopener noreferrer">
                 <button className="btn btn-outline" style={{ marginTop: "12px", width: "100%" }}>
-                  📍 Get Directions
+                  <MapPin size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} /> Get Directions
                 </button>
               </a>
             </div>

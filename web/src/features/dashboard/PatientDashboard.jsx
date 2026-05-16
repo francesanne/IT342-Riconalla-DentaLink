@@ -6,6 +6,10 @@ import { formatDate, formatTime } from '@/shared/utils/formatters';
 import { appointmentsAPI } from '@/shared/api/api';
 import { useAuth } from '@/shared/context/AuthContext';
 import WelcomePopup from '@/shared/components/WelcomePopup';
+import {
+  AlertCircle, CalendarDays, CheckCircle2, Clock,
+  Stethoscope, MapPin, UserRound, ClipboardList,
+} from 'lucide-react';
 import './styles/dashboard.css'
 
 const NAV_LINKS = [
@@ -63,7 +67,7 @@ export default function PatientDashboard() {
           fontSize: '14px',
           marginTop: '24px'
         }}>
-          ⚠️ {error}
+          <AlertCircle size={16} /> {error}
         </div>
       </main>
     </div>
@@ -79,53 +83,37 @@ export default function PatientDashboard() {
 
         {/* Hero banner */}
         <div className="dashboard-hero">
-          <div className="hero-greeting">{greeting()}, 🌟</div>
+          <div className="hero-greeting">{greeting()}</div>
           <div className="hero-name">{user?.firstName} {user?.lastName}</div>
           <div className="hero-subtitle">Ready for your dental visit?</div>
           <Link to="/services" className="hero-action">
-            📅 Book Appointment
+            <CalendarDays size={16} /> Book Appointment
           </Link>
         </div>
 
         {/* Stats */}
         <div className="stats-grid" style={{ marginBottom: 'var(--space-8)' }}>
           <div className="stat-card">
-            <div className="stat-icon blue">📋</div>
+            <div className="stat-icon blue"><CalendarDays size={20} /></div>
             <div className="stat-info">
               <div className="stat-label">Upcoming Appointments</div>
               <div className="stat-value">{upcoming.length}</div>
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon green">✓</div>
+            <div className="stat-icon green"><CheckCircle2 size={20} /></div>
             <div className="stat-info">
               <div className="stat-label">Completed Visits</div>
               <div className="stat-value">{completedCount}</div>
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon orange">⏳</div>
+            <div className="stat-icon orange"><Clock size={20} /></div>
             <div className="stat-info">
               <div className="stat-label">Pending Payments</div>
               <div className="stat-value">{pendingCount}</div>
             </div>
           </div>
-        </div>
-
-        {/* Quick actions */}
-        <div className="quick-actions" style={{ marginBottom: 'var(--space-8)' }}>
-          <Link to="/services" className="quick-action-btn">
-            <div className="quick-action-icon">🦷</div>
-            <span className="quick-action-label">Services</span>
-          </Link>
-          <Link to="/my-appointments" className="quick-action-btn">
-            <div className="quick-action-icon">📅</div>
-            <span className="quick-action-label">Appointments</span>
-          </Link>
-          <Link to="/contact" className="quick-action-btn">
-            <div className="quick-action-icon">💬</div>
-            <span className="quick-action-label">Contact</span>
-          </Link>
         </div>
 
         {/* Two-column layout */}
@@ -144,7 +132,7 @@ export default function PatientDashboard() {
                 <div className="loading-container"><div className="spinner" /></div>
               ) : upcoming.length === 0 ? (
                 <div className="empty-state">
-                  <span className="empty-icon">📅</span>
+                  <div className="empty-icon"><CalendarDays size={36} /></div>
                   <div className="empty-title">No upcoming appointments</div>
                   <div className="empty-text">Book a service to get started</div>
                 </div>
@@ -154,10 +142,10 @@ export default function PatientDashboard() {
                     <div style={{ fontWeight: 'var(--font-semibold)', color: 'var(--gray-900)', fontSize: 'var(--text-sm)' }}>{a.serviceName}</div>
                     <StatusBadge status={a.status} />
                   </div>
-                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--gray-500)' }}>👨‍⚕️ {a.dentistName}</div>
+                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--gray-500)', display: 'flex', alignItems: 'center', gap: 4 }}><UserRound size={13} /> {a.dentistName}</div>
                   <div style={{ fontSize: 'var(--text-xs)', color: 'var(--gray-400)', marginTop: 'var(--space-2)', display: 'flex', gap: 'var(--space-3)' }}>
-                    <span>📅 {formatDate(a.appointmentDatetime)}</span>
-                    <span>⏰ {formatTime(a.appointmentDatetime)}</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><CalendarDays size={13} /> {formatDate(a.appointmentDatetime)}</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><Clock size={13} /> {formatTime(a.appointmentDatetime)}</span>
                   </div>
                 </div>
               ))}
@@ -177,7 +165,7 @@ export default function PatientDashboard() {
                 <div className="loading-container"><div className="spinner" /></div>
               ) : past.length === 0 ? (
                 <div className="empty-state">
-                  <span className="empty-icon">📋</span>
+                  <div className="empty-icon"><ClipboardList size={36} /></div>
                   <div className="empty-title">No history yet</div>
                   <div className="empty-text">Your completed visits will appear here</div>
                 </div>
@@ -186,7 +174,7 @@ export default function PatientDashboard() {
                   <div>
                     <div style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)', color: 'var(--gray-800)' }}>{a.serviceName}</div>
                     <div style={{ fontSize: 'var(--text-xs)', color: 'var(--gray-500)', marginTop: '2px' }}>
-                      👨‍⚕️ {a.dentistName} · {formatDate(a.appointmentDatetime)}
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}><UserRound size={13} /> {a.dentistName}</span> · {formatDate(a.appointmentDatetime)}
                     </div>
                   </div>
                   <StatusBadge status={a.status} />

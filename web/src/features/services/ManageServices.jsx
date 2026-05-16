@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { formatPeso } from '@/shared/utils/formatters';
 import { servicesAPI } from '@/shared/api/api';
+import { AlertCircle, Pencil, Trash2, Stethoscope, X } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -158,7 +159,7 @@ export default function ManageServices() {
                     <div className="loading-container"><div className="spinner" /></div>
                 ) : services.length === 0 ? (
                     <div className="empty-state">
-                        <span className="empty-icon">🦷</span>
+                        <div className="empty-icon"><Stethoscope size={36} /></div>
                         <div className="empty-title">No services yet</div>
                         <div className="empty-text">Create your first dental service to get started.</div>
                         <button onClick={openCreate} className="btn-sm btn-primary-sm" style={{ marginTop: 'var(--space-4)', height: 44, padding: '0 24px' }}>+ Add Service</button>
@@ -174,7 +175,7 @@ export default function ManageServices() {
                                             alt={s.name}
                                             onError={(e) => { e.target.src = '/tooth-icon.png'; }}
                                         />
-                                    ) : <span>🦷</span>}
+                                    ) : <Stethoscope size={36} color="var(--gray-300)" />}
                                 </div>
                                 <div className="service-card-body">
                                     <div className="service-name">{s.name}</div>
@@ -182,10 +183,10 @@ export default function ManageServices() {
                                     <div className="service-price">{formatPeso(s.price)}</div>
                                     <div style={{ display: 'flex', gap: 'var(--space-3)', marginTop: 'auto' }}>
                                         <button className="btn-sm btn-outline-sm" style={{ flex: 1, justifyContent: 'center' }} onClick={() => openEdit(s)}>
-                                            ✏ Edit
+                                            <Pencil size={14} /> Edit
                                         </button>
                                         <button className="btn-sm btn-danger-sm" style={{ flex: 1, justifyContent: 'center' }} onClick={() => setDeleteId(s.id)}>
-                                            🗑 Delete
+                                            <Trash2 size={14} /> Delete
                                         </button>
                                     </div>
                                 </div>
@@ -203,12 +204,12 @@ export default function ManageServices() {
                             <div>
                                 <div className="modal-title">{modal === 'create' ? 'Add New Service' : 'Edit Service'}</div>
                             </div>
-                            <button className="modal-close" onClick={closeModal}>×</button>
+                            <button className="modal-close" onClick={closeModal}><X size={18} /></button>
                         </div>
 
                         <form onSubmit={handleSave}>
                             <div className="modal-body">
-                                {error && <div className="error-banner"><span>⚠</span> {error}</div>}
+                                {error && <div className="error-banner"><AlertCircle size={16} /> {error}</div>}
 
                                 <div className="form-group">
                                     <label>Service Name</label>
@@ -286,10 +287,10 @@ export default function ManageServices() {
                     <div className="modal" style={{ maxWidth: 400 }}>
                         <div className="modal-header">
                             <div className="modal-title">Delete Service</div>
-                            <button className="modal-close" onClick={() => setDeleteId(null)}>×</button>
+                            <button className="modal-close" onClick={() => setDeleteId(null)}><X size={18} /></button>
                         </div>
                         <div className="modal-body">
-                            {error && <div className="error-banner"><span>⚠</span> {error}</div>}
+                            {error && <div className="error-banner"><AlertCircle size={16} /> {error}</div>}
                             <p style={{ color: 'var(--gray-600)' }}>
                                 Are you sure you want to delete this service? This action cannot be undone.
                             </p>

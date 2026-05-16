@@ -4,6 +4,7 @@ import "./styles/login.css";
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from "@/shared/context/AuthContext";
 import { authAPI } from "@/shared/api/api";
+import { Stethoscope, AlertCircle } from 'lucide-react';
 
 function Login() {
   const navigate = useNavigate();
@@ -87,14 +88,14 @@ function Login() {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <Link to="/" className="logo-text">🦷 DentaLink</Link>
+          <Link to="/" className="logo-text" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Stethoscope size={18} /> DentaLink</Link>
           <h2>Sign in to your account</h2>
           <p>Welcome back! Please enter your details.</p>
         </div>
 
         {error && (
           <div className="error-banner">
-            <span>⚠</span> {error}
+            <AlertCircle size={16} /> {error}
           </div>
         )}
 

@@ -4,11 +4,12 @@ import "./styles/register.css";
 import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "@/shared/context/AuthContext";
 import { authAPI } from "@/shared/api/api";
+import { Stethoscope, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 function SuccessToast({ message }) {
   return (
     <div className="success-toast">
-      <span className="success-toast-icon">✓</span>
+      <CheckCircle2 size={16} />
       {message}
     </div>
   );
@@ -105,7 +106,7 @@ function Register() {
     <div className="register-container">
       <div className="register-card">
         <div className="register-header">
-          <Link to="/" className="logo-text">🦷 DentaLink</Link>
+          <Link to="/" className="logo-text" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Stethoscope size={18} /> DentaLink</Link>
           <h2>Create your account</h2>
           <p>Join us for better dental care</p>
         </div>
@@ -113,7 +114,7 @@ function Register() {
         {successMsg && <SuccessToast message={successMsg} />}
         {error && (
           <div className="error-banner">
-            <span>⚠</span> {error}
+            <AlertCircle size={16} /> {error}
           </div>
         )}
 

@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { usersAPI } from '@/shared/api/api';
 import { useAuth } from '@/shared/context/AuthContext';
+import { AlertCircle } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -190,7 +191,7 @@ export default function Profile() {
           <form onSubmit={handleProfileSave}>
 
             {profileMsg   && <div style={{ padding: '10px 14px', background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 8, color: '#166534', fontSize: 13, marginBottom: 16 }}>{profileMsg}</div>}
-            {profileError && <div className="error-banner"><span>⚠</span> {profileError}</div>}
+            {profileError && <div className="error-banner"><AlertCircle size={16} /> {profileError}</div>}
 
             {/* Read-only email */}
             <div className="form-group">

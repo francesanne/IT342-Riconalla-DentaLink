@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { appointmentsAPI } from '@/shared/api/api';
 import Navbar from '@/shared/components/Navbar';
+import { CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -97,7 +98,7 @@ export default function PaymentSuccess() {
 
           {!loading && status === 'confirmed' && (
             <>
-              <div style={{ fontSize: 64, marginBottom: 16 }}>✅</div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}><CheckCircle2 size={64} color="var(--success)" /></div>
               <h2 style={{ color: 'var(--primary)', marginBottom: 8 }}>Payment Confirmed!</h2>
               <p style={{ color: 'var(--gray-500)', marginBottom: 24, fontSize: '14px' }}>
                 Your appointment has been confirmed. See you soon!
@@ -142,7 +143,7 @@ export default function PaymentSuccess() {
 
           {!loading && status === 'pending' && (
             <>
-              <div style={{ fontSize: 64, marginBottom: 16 }}>⏳</div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}><Clock size={64} color="var(--warning)" /></div>
               <h2 style={{ color: 'var(--gray-700)', marginBottom: 8 }}>Payment Received</h2>
               <p style={{ color: 'var(--gray-500)', marginBottom: 24, fontSize: '14px' }}>
                 Your payment was received. Your appointment confirmation may take a moment to process.
@@ -165,7 +166,7 @@ export default function PaymentSuccess() {
 
           {!loading && status === 'error' && (
             <>
-              <div style={{ fontSize: 64, marginBottom: 16 }}>⚠️</div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}><AlertTriangle size={64} color="var(--warning)" /></div>
               <h2 style={{ color: 'var(--gray-700)', marginBottom: 8 }}>Something went wrong</h2>
               <p style={{ color: 'var(--gray-500)', marginBottom: 24, fontSize: '14px' }}>
                 We couldn't retrieve your appointment details. Please check My Appointments.

@@ -3,6 +3,7 @@ import Navbar from '@/shared/components/Navbar';
 import StatusBadge from '@/shared/components/StatusBadge';
 import { formatDate, formatPeso } from '@/shared/utils/formatters';
 import { paymentsAPI } from '@/shared/api/api';
+import { AlertCircle } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -73,7 +74,7 @@ export default function AdminPayments() {
           )}
 
           {!loading && error && (
-            <div className="error-banner"><span>⚠</span> {error}</div>
+            <div className="error-banner"><AlertCircle size={16} /> {error}</div>
           )}
 
           {!loading && !error && (

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { dentistsAPI } from '@/shared/api/api';
+import { AlertCircle, Pencil, X } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -131,7 +132,7 @@ export default function ManageDentists() {
                       </td>
                       <td>
                         <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-                          <button className="btn-sm btn-outline-sm" onClick={() => openEdit(d)}>✏</button>
+                          <button className="btn-sm btn-outline-sm" onClick={() => openEdit(d)}><Pencil size={14} /></button>
                     
                         </div>
                       </td>
@@ -150,11 +151,11 @@ export default function ManageDentists() {
           <div className="modal">
             <div className="modal-header">
               <div className="modal-title">{editing ? 'Edit Dentist' : 'Add Dentist'}</div>
-              <button className="modal-close" onClick={closeModal}>×</button>
+              <button className="modal-close" onClick={closeModal}><X size={18} /></button>
             </div>
             <form onSubmit={handleSave}>
               <div className="modal-body">
-                {error && <div className="error-banner"><span>⚠</span> {error}</div>}
+                {error && <div className="error-banner"><AlertCircle size={16} /> {error}</div>}
                 <div className="form-group">
                   <label>Full Name</label>
                   <input type="text" placeholder="e.g., Dr. Maria Cruz" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
@@ -213,10 +214,10 @@ export default function ManageDentists() {
           <div className="modal" style={{ maxWidth: 400 }}>
             <div className="modal-header">
               <div className="modal-title">Delete Dentist</div>
-              <button className="modal-close" onClick={() => setDeleteId(null)}>×</button>
+              <button className="modal-close" onClick={() => setDeleteId(null)}><X size={18} /></button>
             </div>
             <div className="modal-body">
-              {error && <div className="error-banner"><span>⚠</span> {error}</div>}
+              {error && <div className="error-banner"><AlertCircle size={16} /> {error}</div>}
               <p style={{ color: 'var(--gray-600)' }}>Are you sure you want to remove this dentist record? This cannot be undone.</p>
             </div>
             <div className="modal-footer" style={{ padding: '0 var(--space-6) var(--space-6)' }}>

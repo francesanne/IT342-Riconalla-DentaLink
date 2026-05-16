@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { dentistsAPI, appointmentsAPI, paymentsAPI } from '@/shared/api/api';
+import { AlertCircle } from 'lucide-react';
 
 const TIME_SLOTS = [
   '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',

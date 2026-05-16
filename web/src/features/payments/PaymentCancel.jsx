@@ -1,5 +1,6 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/shared/components/Navbar';
+import { XCircle } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -29,7 +30,7 @@ export default function PaymentCancel() {
           width: '100%',
           textAlign: 'center',
         }}>
-          <div style={{ fontSize: 64, marginBottom: 16 }}>❌</div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}><XCircle size={64} color="var(--danger)" /></div>
           <h2 style={{ color: 'var(--gray-700)', marginBottom: 8 }}>Payment Cancelled</h2>
           <p style={{ color: 'var(--gray-500)', marginBottom: 8, fontSize: '14px' }}>
             You cancelled the payment. Your appointment has been saved with a

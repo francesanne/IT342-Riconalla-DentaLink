@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
+import { Stethoscope } from 'lucide-react';
 
 export default function Navbar({ links = [] }) {
   const { user, logout } = useAuth();
@@ -18,7 +19,7 @@ export default function Navbar({ links = [] }) {
   return (
     <nav className="navbar">
       <Link to={user?.role === 'ADMIN' ? '/admin' : '/dashboard'} className="navbar-brand">
-        🦷 DentaLink
+        <Stethoscope size={18} /> DentaLink
       </Link>
 
       <div className="navbar-nav">

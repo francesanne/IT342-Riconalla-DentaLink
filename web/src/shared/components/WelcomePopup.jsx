@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { ShieldCheck, User } from 'lucide-react';
 import '@/styles/popup.css';
 
 export default function WelcomePopup() {
@@ -36,13 +37,15 @@ export default function WelcomePopup() {
         <h3 className="wp-title">Welcome back!</h3>
 
         {firstName && (
-          <p className="wp-name">Hello, {firstName} 👋</p>
+          <p className="wp-name">Hello, {firstName}</p>
         )}
 
         <p className="wp-sub">You have successfully signed in to DentaLink.</p>
 
         <span className="wp-badge">
-          {role === 'ADMIN' ? '🛡️ Administrator' : '🦷 Patient'}
+          {role === 'ADMIN'
+            ? <><ShieldCheck size={14} /> Administrator</>
+            : <><User size={14} /> Patient</>}
         </span>
 
         {/* Progress bar that drains over 3 s */}

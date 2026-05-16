@@ -100,7 +100,7 @@ export default function Contact() {
                   cursor: 'pointer',
                 }}
               >
-                📍 Get Directions
+                Get Directions
               </button>
             </a>
           </div>

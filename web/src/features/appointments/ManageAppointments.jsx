@@ -3,6 +3,7 @@ import Navbar from '@/shared/components/Navbar';
 import StatusBadge from '@/shared/components/StatusBadge';
 import { formatDateTime } from '@/shared/utils/formatters';
 import { appointmentsAPI } from '@/shared/api/api';
+import { AlertCircle } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -77,7 +78,7 @@ export default function ManageAppointments() {
 
         {error && (
           <div className="error-banner" style={{ marginBottom: 'var(--space-4)' }}>
-            <span>⚠</span> {error}
+            <AlertCircle size={16} /> {error}
           </div>
         )}
 

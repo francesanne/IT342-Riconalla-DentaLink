@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { AlertCircle, CalendarDays, Clock, CheckCircle2, Banknote } from 'lucide-react';
 import Navbar from '@/shared/components/Navbar';
 import StatusBadge from '@/shared/components/StatusBadge';
 import { formatDateTime as formatDate, formatPeso } from '@/shared/utils/formatters';
@@ -56,7 +57,7 @@ export default function AdminDashboard() {
             fontSize: '14px',
             marginBottom: '16px'
           }}>
-            ⚠️ {error}
+            <AlertCircle size={16} /> {error}
           </div>
         )}
 
@@ -67,28 +68,28 @@ export default function AdminDashboard() {
             {/* Stats */}
             <div className="stats-grid">
               <div className="stat-card">
-                <div className="stat-icon blue">📋</div>
+                <div className="stat-icon blue"><CalendarDays size={20} /></div>
                 <div className="stat-info">
                   <div className="stat-label">Total Appointments</div>
                   <div className="stat-value">{stats?.totalAppointments ?? 0}</div>
                 </div>
               </div>
               <div className="stat-card">
-                <div className="stat-icon orange">⏳</div>
+                <div className="stat-icon orange"><Clock size={20} /></div>
                 <div className="stat-info">
                   <div className="stat-label">Pending Payments</div>
                   <div className="stat-value">{stats?.pendingPayments ?? 0}</div>
                 </div>
               </div>
               <div className="stat-card">
-                <div className="stat-icon teal">✓</div>
+                <div className="stat-icon teal"><CheckCircle2 size={20} /></div>
                 <div className="stat-info">
                   <div className="stat-label">Confirmed (Total)</div>
                   <div className="stat-value">{stats?.confirmedAppointments ?? 0}</div>
                 </div>
               </div>
               <div className="stat-card">
-                <div className="stat-icon green">₱</div>
+                <div className="stat-icon green"><Banknote size={20} /></div>
                 <div className="stat-info">
                   <div className="stat-label">Total Revenue</div>
                   <div className="stat-value" style={{ fontSize: 'var(--text-xl)' }}>{formatPeso(stats?.totalRevenue)}</div>

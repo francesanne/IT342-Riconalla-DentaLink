@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { formatDate, formatTime } from '@/shared/utils/formatters';
 import { appointmentsAPI, paymentsAPI } from '@/shared/api/api';
+import { AlertCircle, CalendarDays } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -92,7 +93,7 @@ export default function MyAppointments() {
             fontSize: '14px',
             marginBottom: '16px'
           }}>
-            ⚠️ {error}
+            <AlertCircle size={16} /> {error}
           </div>
         )}
 
@@ -101,7 +102,7 @@ export default function MyAppointments() {
           <p>Loading...</p>
         ) : filtered.length === 0 ? (
           <div className="empty-state">
-            <span className="empty-icon">📅</span>
+            <div className="empty-icon"><CalendarDays size={36} /></div>
             <div className="empty-title">No appointments yet</div>
             <div className="empty-text">Book your first appointment.</div>
           </div>
