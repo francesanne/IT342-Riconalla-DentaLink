@@ -122,10 +122,10 @@ export default function PatientDashboard() {
             <div className="quick-action-icon">📅</div>
             <span className="quick-action-label">Appointments</span>
           </Link>
-          <a href="mailto:dentalink@clinic.com" className="quick-action-btn">
+          <Link to="/contact" className="quick-action-btn">
             <div className="quick-action-icon">💬</div>
             <span className="quick-action-label">Contact</span>
-          </a>
+          </Link>
         </div>
 
         {/* Two-column layout */}

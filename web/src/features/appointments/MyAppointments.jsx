@@ -24,12 +24,13 @@ export default function MyAppointments() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ALL');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     appointmentsAPI
       .getAll()
       .then(res => setAppointments(res.data.data || []))
-      .catch(() => {})
+      .catch(() => setError('Failed to load appointments. Please refresh the page.'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -46,7 +47,7 @@ export default function MyAppointments() {
         window.location.href = checkoutUrl;
       }
     } catch (err) {
-      alert(err.response?.data?.error?.message || 'Failed to initiate payment. Please try again.');
+      setError(err.response?.data?.error?.message || 'Failed to initiate payment. Please try again.');
     }
   };
 
@@ -79,6 +80,20 @@ export default function MyAppointments() {
             </button>
           ))}
         </div>
+
+        {error && (
+          <div style={{
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: '8px',
+            padding: '16px 20px',
+            color: '#dc2626',
+            fontSize: '14px',
+            marginBottom: '16px'
+          }}>
+            ⚠️ {error}
+          </div>
+        )}
 
         {/* CONTENT */}
         {loading ? (

@@ -34,7 +34,7 @@ export default function ManageAppointments() {
     setLoading(true);
     appointmentsAPI.getAll(statusFilter || undefined)
       .then(r => setAppointments(r.data.data || []))
-      .catch(() => {})
+      .catch(() => setError('Failed to load appointments. Please refresh.'))
       .finally(() => setLoading(false));
   };
 
