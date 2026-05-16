@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,9 +21,8 @@ import java.util.List;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(
-            "dentalink-secret-key-dentalink-secret-key".getBytes()
-    );
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -34,8 +34,9 @@ public class JwtFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             try {
+                SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
                 Claims claims = Jwts.parser()
-                        .verifyWith(SECRET_KEY)
+                        .verifyWith(key)
                         .build()
                         .parseSignedClaims(token)
                         .getPayload();
