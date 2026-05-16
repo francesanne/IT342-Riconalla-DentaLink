@@ -234,11 +234,6 @@
   color: var(--primary);
 }
 
-.back-link::before {
-  content: "←";
-  font-size: var(--text-base);
-}
-
 @keyframes slideUp {
   from {
     opacity: 0;

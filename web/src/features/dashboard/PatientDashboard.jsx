@@ -109,14 +109,14 @@ export default function PatientDashboard() {
         </div>
 
         {/* Two-column layout */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-6)' }} className="dashboard-cols">
+        <div className="dashboard-cols">
 
           {/* Upcoming */}
           <div className="card">
             <div className="card-header">
               <span className="card-title">Upcoming Appointments</span>
               <Link to="/my-appointments" style={{ fontSize: 'var(--text-sm)', color: 'var(--primary)', fontWeight: 'var(--font-medium)' }}>
-                View All →
+                View All
               </Link>
             </div>
             <div className="card-body" style={{ padding: upcoming.length ? 'var(--space-4)' : 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
@@ -149,7 +149,7 @@ export default function PatientDashboard() {
             <div className="card-header">
               <span className="card-title">Recent History</span>
               <Link to="/my-appointments" style={{ fontSize: 'var(--text-sm)', color: 'var(--primary)', fontWeight: 'var(--font-medium)' }}>
-                View All →
+                View All
               </Link>
             </div>
             <div className="card-body" style={{ padding: past.length ? 'var(--space-4)' : 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
@@ -178,11 +178,6 @@ export default function PatientDashboard() {
 
       </main>
 
-      <style>{`
-        @media (max-width: 768px) {
-          .dashboard-cols { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </div>
   );
 }

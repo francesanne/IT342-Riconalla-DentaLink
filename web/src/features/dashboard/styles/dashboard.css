@@ -918,6 +918,58 @@
 .dropdown-action-danger { color: var(--danger); }
 .dropdown-action-danger:hover { background: var(--danger-light); }
 
+/* ─── Navbar hamburger (mobile only) ─── */
+.navbar-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  color: var(--gray-600);
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+.navbar-hamburger:hover  { background: var(--gray-100); color: var(--gray-900); }
+.navbar-hamburger:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* ─── Mobile nav panel ─── */
+.navbar-mobile-nav {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  background: white;
+  border-bottom: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-lg);
+  z-index: 99;
+  padding: var(--space-2) var(--space-4) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  animation: dropIn 0.15s ease;
+}
+
+.navbar-mobile-nav .nav-link {
+  padding: var(--space-3) var(--space-2);
+  border-radius: var(--radius-md);
+  border-bottom: 1px solid var(--gray-100);
+  display: block;
+  white-space: normal;
+}
+.navbar-mobile-nav .nav-link:last-child { border-bottom: none; }
+
+/* ─── Dashboard two-column layout ─── */
+.dashboard-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+}
+
+/* ─── Responsive table column visibility utilities ─── */
+/* Applied to <th> and matching <td> to hide columns at breakpoints */
+
 /* ─── Animations ─── */
 @keyframes spin     { to { transform: rotate(360deg); } }
 @keyframes dropIn   { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
@@ -931,16 +983,49 @@
 }
 
 @media (max-width: 768px) {
+  /* Navbar */
   .navbar { padding: 0 var(--space-4); }
-  .navbar-nav .nav-link { display: none; }
+  .navbar-nav { display: none; }
+  .navbar-hamburger { display: flex; }
+  .user-name { display: none; }
+
+  /* Layout */
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .services-grid { grid-template-columns: 1fr; }
   .quick-actions { grid-template-columns: repeat(3, 1fr); }
+  .dashboard-cols { grid-template-columns: 1fr; }
   .page-container { padding: var(--space-4); }
+
+  /* Tables */
+  .data-table th,
+  .data-table td { padding: var(--space-3); }
+  .col-hide-tablet { display: none; }
+
+  /* Modals */
+  .modal-overlay { padding: var(--space-2); }
+  .modal-header  { padding: var(--space-4) var(--space-4) 0; }
+  .modal-body    { padding: 0 var(--space-4) var(--space-4); }
+}
+
+@media (max-width: 640px) {
+  .col-hide-md { display: none; }
 }
 
 @media (max-width: 480px) {
+  /* Layout */
   .stats-grid { grid-template-columns: 1fr; }
-  .quick-actions { grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+  .quick-actions { grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+  .quick-action-btn { padding: var(--space-4) var(--space-3); }
+  .quick-action-icon { width: 40px; height: 40px; }
+  .quick-action-label { font-size: var(--text-xs); }
   .modal { max-width: 100%; }
+
+  /* Tables */
+  .data-table th,
+  .data-table td { padding: var(--space-2) var(--space-3); font-size: var(--text-xs); }
+  .col-hide-mobile { display: none; }
+
+  /* Typography */
+  .page-title { font-size: var(--text-2xl); }
+  .page-subtitle { font-size: var(--text-sm); }
 }

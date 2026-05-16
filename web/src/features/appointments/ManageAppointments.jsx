@@ -87,7 +87,7 @@ export default function ManageAppointments() {
                   <tr>
                     <th>Patient</th>
                     <th>Service</th>
-                    <th>Dentist</th>
+                    <th className="col-hide-tablet">Dentist</th>
                     <th>Date & Time</th>
                     <th>Status</th>
                     <th>Payment</th>
@@ -110,7 +110,7 @@ export default function ManageAppointments() {
                         </div>
                       </td>
                       <td style={{ color: 'var(--gray-700)' }}>{a.serviceName || `Service #${a.serviceId}`}</td>
-                      <td style={{ color: 'var(--gray-700)' }}>{a.dentistName || `Dentist #${a.dentistId}`}</td>
+                      <td className="col-hide-tablet" style={{ color: 'var(--gray-700)' }}>{a.dentistName || `Dentist #${a.dentistId}`}</td>
                       <td style={{ fontSize: 'var(--text-sm)', color: 'var(--gray-600)' }}>{formatDateTime(a.appointmentDatetime)}</td>
                       <td><StatusBadge status={a.status} /></td>
                       <td>

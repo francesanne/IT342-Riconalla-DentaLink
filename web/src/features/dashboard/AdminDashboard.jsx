@@ -103,7 +103,7 @@ export default function AdminDashboard() {
                     <tr>
                       <th>Patient</th>
                       <th>Service</th>
-                      <th>Dentist</th>
+                      <th className="col-hide-tablet">Dentist</th>
                       <th>Date & Time</th>
                       <th>Status</th>
                     </tr>
@@ -119,7 +119,7 @@ export default function AdminDashboard() {
                           </div>
                         </td>
                         <td style={{ color: 'var(--gray-700)' }}>{a.serviceName ?? '—'}</td>
-                        <td style={{ color: 'var(--gray-700)' }}>{a.dentistName}</td>
+                        <td className="col-hide-tablet" style={{ color: 'var(--gray-700)' }}>{a.dentistName}</td>
                         <td style={{ color: 'var(--gray-600)', fontSize: 'var(--text-sm)' }}>{formatDate(a.appointmentDatetime)}</td>
                         <td><StatusBadge status={a.appointmentStatus} /></td>
                       </tr>

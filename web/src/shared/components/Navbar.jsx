@@ -1,15 +1,21 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
-import { Stethoscope } from 'lucide-react';
+import { Stethoscope, Menu, X } from 'lucide-react';
 
 export default function Navbar({ links = [] }) {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const ref = useRef(null);
 
   useEffect(() => {
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpen(false);
+        setMobileOpen(false);
+      }
+    };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
@@ -17,7 +23,7 @@ export default function Navbar({ links = [] }) {
   const initials = user ? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase() : '?';
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" ref={ref}>
       <Link to={user?.role === 'ADMIN' ? '/admin' : '/dashboard'} className="navbar-brand">
         <Stethoscope size={18} /> DentaLink
       </Link>
@@ -36,7 +42,15 @@ export default function Navbar({ links = [] }) {
       </div>
 
       <div className="navbar-right">
-        <div className="user-menu" ref={ref}>
+        <button
+          className="navbar-hamburger"
+          onClick={() => setMobileOpen(p => !p)}
+          aria-label="Toggle navigation"
+        >
+          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+
+        <div className="user-menu">
           <button className="user-menu-btn" onClick={() => setOpen(p => !p)}>
             <div className="user-avatar">{initials}</div>
             <span className="user-name">{user?.firstName}</span>
@@ -56,6 +70,22 @@ export default function Navbar({ links = [] }) {
           )}
         </div>
       </div>
+
+      {mobileOpen && (
+        <div className="navbar-mobile-nav">
+          {links.map(({ to, label, end }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+              onClick={() => setMobileOpen(false)}
+            >
+              {label}
+            </NavLink>
+          ))}
+        </div>
+      )}
     </nav>
   );
 }

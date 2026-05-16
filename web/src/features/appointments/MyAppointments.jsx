@@ -95,9 +95,9 @@ export default function MyAppointments() {
                 <thead>
                   <tr>
                     <th>Service</th>
-                    <th>Dentist</th>
+                    <th className="col-hide-md">Dentist</th>
                     <th>Date</th>
-                    <th>Time</th>
+                    <th className="col-hide-md">Time</th>
                     <th>Status</th>
                     <th>Payment</th>
                     <th>Action</th>
@@ -109,9 +109,9 @@ export default function MyAppointments() {
                       <td>
                         <div style={{ fontWeight: 'var(--font-medium)', color: 'var(--gray-900)' }}>{a.serviceName}</div>
                       </td>
-                      <td style={{ color: 'var(--gray-700)' }}>Dr. {a.dentistName}</td>
+                      <td className="col-hide-md" style={{ color: 'var(--gray-700)' }}>Dr. {a.dentistName}</td>
                       <td style={{ color: 'var(--gray-600)' }}>{formatDate(a.appointmentDatetime)}</td>
-                      <td style={{ color: 'var(--gray-600)' }}>{formatTime(a.appointmentDatetime)}</td>
+                      <td className="col-hide-md" style={{ color: 'var(--gray-600)' }}>{formatTime(a.appointmentDatetime)}</td>
                       <td><StatusBadge status={a.status} /></td>
                       <td><StatusBadge status={a.paymentStatus} /></td>
                       <td>

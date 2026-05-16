@@ -86,11 +86,11 @@ export default function AdminPayments() {
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Payment ID</th>
+                    <th className="col-hide-tablet">Payment ID</th>
                     <th>Appointment</th>
                     <th>Patient</th>
                     <th>Amount</th>
-                    <th>PayMongo Ref</th>
+                    <th className="col-hide-tablet">PayMongo Ref</th>
                     <th>Status</th>
                     <th>Date</th>
                   </tr>
@@ -105,7 +105,7 @@ export default function AdminPayments() {
                   ) : (
                     payments.map(p => (
                       <tr key={p.id}>
-                        <td style={{ color: 'var(--gray-400)', fontSize: 'var(--text-sm)', fontFamily: 'monospace' }}>
+                        <td className="col-hide-tablet" style={{ color: 'var(--gray-400)', fontSize: 'var(--text-sm)', fontFamily: 'monospace' }}>
                           #{p.id}
                         </td>
                         <td style={{ color: 'var(--gray-700)' }}>
@@ -124,7 +124,7 @@ export default function AdminPayments() {
                         <td style={{ fontWeight: 'var(--font-semibold)', color: 'var(--gray-800)' }}>
                           {formatPeso(p.paymentAmount)}
                         </td>
-                        <td style={{ fontSize: 'var(--text-xs)', fontFamily: 'monospace', color: 'var(--gray-500)', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <td className="col-hide-tablet" style={{ fontSize: 'var(--text-xs)', fontFamily: 'monospace', color: 'var(--gray-500)', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {p.paymongoPaymentId || '—'}
                         </td>
                         <td>
