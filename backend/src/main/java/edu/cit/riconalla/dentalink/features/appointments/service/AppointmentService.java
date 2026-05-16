@@ -87,6 +87,20 @@ public class AppointmentService {
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
     }
 
+    public Appointment getAppointmentByIdForCaller(Long id, String callerEmail, boolean isAdmin) {
+        Appointment appointment = getAppointmentById(id);
+
+        if (!isAdmin) {
+            User caller = userRepository.findByEmail(callerEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            if (!appointment.getPatientId().equals(caller.getUserId())) {
+                throw new RuntimeException("Access denied: you can only view your own appointments");
+            }
+        }
+
+        return appointment;
+    }
+
     /** Admin updates status to COMPLETED or CANCELLED */
     public Appointment updateStatus(Long id, String status) {
         if (status.equalsIgnoreCase("CONFIRMED")) {

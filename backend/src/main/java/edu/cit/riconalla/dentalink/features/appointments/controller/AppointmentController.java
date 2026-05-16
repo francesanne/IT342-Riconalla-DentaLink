@@ -55,8 +55,12 @@ public class AppointmentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getAppointment(@PathVariable Long id) {
-        Appointment a = appointmentService.getAppointmentById(id);
+    public ResponseEntity<Map<String, Object>> getAppointment(@PathVariable Long id,
+                                                              Authentication auth) {
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+
+        Appointment a = appointmentService.getAppointmentByIdForCaller(id, auth.getName(), isAdmin);
 
         return ResponseEntity.ok(Map.of("success", true, "data", appointmentService.toResponse(a)));
     }
