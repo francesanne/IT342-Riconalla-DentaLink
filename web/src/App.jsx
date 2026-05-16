@@ -14,6 +14,7 @@ import ManageAppointments from '@/features/appointments/ManageAppointments';
 import PaymentSuccess from '@/features/payments/PaymentSuccess'
 import PaymentCancel from '@/features/payments/PaymentCancel';
 import Profile from '@/features/profile/Profile';
+import Contact from '@/pages/Contact';
 
 function ProtectedRoute({ children, adminOnly = false }) {
   const { user, loading } = useAuth();
@@ -41,6 +42,7 @@ function AppRoutes() {
       <Route path="/profile"         element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/payment/success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
       <Route path="/payment/cancel"  element={<ProtectedRoute><PaymentCancel /></ProtectedRoute>} />
+      <Route path="/contact"         element={<ProtectedRoute><Contact /></ProtectedRoute>} />
 
       <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
       <Route path="/admin/services" element={<ProtectedRoute adminOnly><ManageServices /></ProtectedRoute>} />

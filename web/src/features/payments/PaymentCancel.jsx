@@ -6,6 +6,7 @@ const NAV_LINKS = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/services', label: 'Services' },
   { to: '/my-appointments', label: 'My Appointments' },
+  { to: '/contact',         label: 'Contact' },
 ];
 
 export default function PaymentCancel() {

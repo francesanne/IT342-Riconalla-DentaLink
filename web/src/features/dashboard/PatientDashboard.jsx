@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { to: '/services',        label: 'Services' },
   { to: '/my-appointments', label: 'My Appointments' },
   { to: '/profile',         label: 'Profile' },
+  { to: '/contact',         label: 'Contact' },
 ];
 
 function formatDate(dt) {
