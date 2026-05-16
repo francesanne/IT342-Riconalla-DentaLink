@@ -85,7 +85,7 @@ export default function AdminDashboard() {
               <div className="stat-card">
                 <div className="stat-icon teal">✓</div>
                 <div className="stat-info">
-                  <div className="stat-label">Confirmed Today</div>
+                  <div className="stat-label">Confirmed (Total)</div>
                   <div className="stat-value">{stats?.confirmedAppointments ?? 0}</div>
                 </div>
               </div>
