@@ -387,12 +387,10 @@ public class PaymentService {
 
     public List<PaymentDto> getAllPayments() {
         return paymentRepository.findAll().stream()
-                .map(payment -> {
-                    User patient = userRepository.findById(
-                            payment.getAppointment().getPatientId()
-                    ).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
-                    return PaymentDto.from(payment, patient);
-                })
+                .flatMap(payment -> userRepository.findById(
+                        payment.getAppointment().getPatientId())
+                        .map(patient -> java.util.stream.Stream.of(PaymentDto.from(payment, patient)))
+                        .orElse(java.util.stream.Stream.empty()))
                 .collect(Collectors.toList());
     }
 }
