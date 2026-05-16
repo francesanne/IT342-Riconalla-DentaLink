@@ -183,14 +183,19 @@ public class AppointmentService {
             r.setDentistSpecialization(d.getDentistSpecialization());
         });
 
-        userRepository.findById(a.getPatientId()).ifPresent(u -> {
-            java.util.Map<String, Object> patient = new java.util.LinkedHashMap<>();
-            patient.put("id", u.getUserId());
-            patient.put("firstName", u.getFirstName());
-            patient.put("lastName", u.getLastName());
-            patient.put("email", u.getEmail());
-            r.setPatient(patient);
+        java.util.Map<String, Object> patientMap = new java.util.LinkedHashMap<>();
+        userRepository.findById(a.getPatientId()).ifPresentOrElse(u -> {
+            patientMap.put("id",        u.getUserId());
+            patientMap.put("firstName", u.getFirstName()  != null ? u.getFirstName()  : "");
+            patientMap.put("lastName",  u.getLastName()   != null ? u.getLastName()   : "");
+            patientMap.put("email",     u.getEmail()      != null ? u.getEmail()      : "");
+        }, () -> {
+            patientMap.put("id",        a.getPatientId());
+            patientMap.put("firstName", "Unknown");
+            patientMap.put("lastName",  "Patient");
+            patientMap.put("email",     "");
         });
+        r.setPatient(patientMap);
 
         return r;
     }

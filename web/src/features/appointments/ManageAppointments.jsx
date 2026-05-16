@@ -106,9 +106,11 @@ export default function ManageAppointments() {
                     <tr key={a.id}>
                       <td>
                         <div style={{ fontWeight: 'var(--font-medium)', color: 'var(--primary)' }}>
-                          {a.patient?.firstName} {a.patient?.lastName}
+                          {[a.patient?.firstName, a.patient?.lastName].filter(Boolean).join(' ') || '—'}
                         </div>
-                        <div style={{ fontSize: 'var(--text-xs)', color: 'var(--gray-400)' }}>{a.patient?.email}</div>
+                        <div style={{ fontSize: 'var(--text-xs)', color: 'var(--gray-400)' }}>
+                          {a.patient?.email || ''}
+                        </div>
                       </td>
                       <td style={{ color: 'var(--gray-700)' }}>{a.serviceName || `Service #${a.serviceId}`}</td>
                       <td style={{ color: 'var(--gray-700)' }}>{a.dentistName || `Dentist #${a.dentistId}`}</td>
