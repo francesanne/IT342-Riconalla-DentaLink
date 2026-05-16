@@ -38,11 +38,12 @@ export default function PatientDashboard() {
   const { user } = useAuth();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     appointmentsAPI.getAll()
       .then(res => setAppointments(res.data.data || []))
-      .catch(() => {})
+      .catch(() => setError('Unable to load your appointments. Please refresh the page.'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -65,6 +66,25 @@ export default function PatientDashboard() {
     if (h < 18) return 'Good afternoon';
     return 'Good evening';
   };
+
+  if (error) return (
+    <div className="app-layout">
+      <Navbar links={NAV_LINKS} />
+      <main className="page-container">
+        <div style={{
+          background: '#fef2f2',
+          border: '1px solid #fecaca',
+          borderRadius: '8px',
+          padding: '16px 20px',
+          color: '#dc2626',
+          fontSize: '14px',
+          marginTop: '24px'
+        }}>
+          ⚠️ {error}
+        </div>
+      </main>
+    </div>
+  );
 
   return (
     <div className="app-layout">

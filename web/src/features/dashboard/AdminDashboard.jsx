@@ -36,11 +36,12 @@ function formatPeso(n) {
 export default function AdminDashboard() {
   const [stats, setStats]   = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     adminAPI.dashboard()
       .then(res => setStats(res.data.data))
-      .catch(() => {})
+      .catch(() => setError('Unable to load dashboard data. Please refresh the page.'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -61,6 +62,20 @@ export default function AdminDashboard() {
             <p className="page-subtitle">{today}</p>
           </div>
         </div>
+
+        {error && (
+          <div style={{
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: '8px',
+            padding: '16px 20px',
+            color: '#dc2626',
+            fontSize: '14px',
+            marginBottom: '16px'
+          }}>
+            ⚠️ {error}
+          </div>
+        )}
 
         {loading ? (
           <div className="loading-container"><div className="spinner" /></div>
