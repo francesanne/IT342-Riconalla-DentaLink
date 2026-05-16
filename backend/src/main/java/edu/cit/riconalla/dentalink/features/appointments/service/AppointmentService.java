@@ -121,9 +121,13 @@ public class AppointmentService {
                     String dentistName = dentistRepository.findById(a.getDentistId())
                             .map(d -> d.getDentistName())
                             .orElse("Unknown");
+                    String serviceName = serviceRepository.findById(a.getServiceId())
+                            .map(s -> s.getServiceName())
+                            .orElse("Unknown Service");
                     java.util.Map<String, Object> item = new java.util.LinkedHashMap<>();
                     item.put("id", a.getAppointmentId());
                     item.put("patientName", patientName);
+                    item.put("serviceName", serviceName);
                     item.put("dentistName", dentistName);
                     item.put("appointmentDatetime", a.getAppointmentDatetime());
                     item.put("appointmentStatus", a.getAppointmentStatus());

@@ -111,6 +111,7 @@ export default function AdminDashboard() {
                   <thead>
                     <tr>
                       <th>Patient</th>
+                      <th>Service</th>
                       <th>Dentist</th>
                       <th>Date & Time</th>
                       <th>Status</th>
@@ -118,7 +119,7 @@ export default function AdminDashboard() {
                   </thead>
                   <tbody>
                     {(stats?.recentAppointments ?? []).length === 0 ? (
-                      <tr><td colSpan={4} style={{ textAlign: 'center', padding: 'var(--space-8)', color: 'var(--gray-400)' }}>No appointments yet</td></tr>
+                      <tr><td colSpan={5} style={{ textAlign: 'center', padding: 'var(--space-8)', color: 'var(--gray-400)' }}>No appointments yet</td></tr>
                     ) : (stats?.recentAppointments ?? []).map(a => (
                       <tr key={a.id}>
                         <td>
@@ -126,6 +127,7 @@ export default function AdminDashboard() {
                             {a.patientName}
                           </div>
                         </td>
+                        <td style={{ color: 'var(--gray-700)' }}>{a.serviceName ?? '—'}</td>
                         <td style={{ color: 'var(--gray-700)' }}>{a.dentistName}</td>
                         <td style={{ color: 'var(--gray-600)', fontSize: 'var(--text-sm)' }}>{formatDate(a.appointmentDatetime)}</td>
                         <td><StatusBadge status={a.appointmentStatus} /></td>
