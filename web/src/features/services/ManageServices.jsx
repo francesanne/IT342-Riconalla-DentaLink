@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
+import { formatPeso } from '@/shared/utils/formatters';
 import { servicesAPI } from '@/shared/api/api';
 import '@/features/dashboard/styles/dashboard.css';
 
@@ -11,10 +12,6 @@ const NAV_LINKS = [
     { to: '/admin/payments', label: 'Payments' },
 ];
 
-function formatPeso(n) {
-    if (!n) return '₱0.00';
-    return `₱${Number(n).toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
-}
 
 // ✅ CHANGED
 const EMPTY_FORM = { name: '', description: '', price: '', imageFile: null };
