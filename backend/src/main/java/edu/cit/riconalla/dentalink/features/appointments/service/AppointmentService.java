@@ -11,6 +11,7 @@ import edu.cit.riconalla.dentalink.features.services.repository.ServiceRepositor
 import edu.cit.riconalla.dentalink.features.auth.repository.UserRepository;
 import org.springframework.stereotype.Component;
 import edu.cit.riconalla.dentalink.features.appointments.dto.AppointmentResponse;
+import edu.cit.riconalla.dentalink.shared.exception.BookingConflictException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,7 +52,7 @@ public class AppointmentService {
 
         // Double-booking check
         if (appointmentRepository.existsByDentistIdAndAppointmentDatetime(dentistId, appointmentDatetime)) {
-            throw new RuntimeException("Conflict: This dentist is already booked at the selected date and time");
+            throw new BookingConflictException("Conflict: This dentist is already booked at the selected date and time");
         }
 
         Appointment a = Appointment.builder()
@@ -118,9 +119,12 @@ public class AppointmentService {
     /** Admin dashboard stats */
     public java.util.Map<String, Object> getDashboardStats() {
         List<Appointment> all = appointmentRepository.findAll();
-        long total     = all.size();
-        long pending   = all.stream().filter(a -> a.getPaymentStatus() == PaymentStatus.UNPAID).count();
-        long confirmed = all.stream().filter(a -> a.getAppointmentStatus() == AppointmentStatus.CONFIRMED).count();
+        long total          = all.size();
+        long pending        = all.stream().filter(a -> a.getPaymentStatus() == PaymentStatus.UNPAID).count();
+        long confirmed      = all.stream().filter(a -> a.getAppointmentStatus() == AppointmentStatus.CONFIRMED).count();
+        long completed      = all.stream().filter(a -> a.getAppointmentStatus() == AppointmentStatus.COMPLETED).count();
+        long cancelled      = all.stream().filter(a -> a.getAppointmentStatus() == AppointmentStatus.CANCELLED).count();
+        long pendingPayAppt = all.stream().filter(a -> a.getAppointmentStatus() == AppointmentStatus.PENDING_PAYMENT).count();
 
         // Revenue from payments table (payment_amount) — not service price
         java.math.BigDecimal revenue = paymentRepository.findAll().stream()
@@ -154,11 +158,14 @@ public class AppointmentService {
                 .collect(java.util.stream.Collectors.toList());
 
         return java.util.Map.of(
-                "totalAppointments",    total,
-                "pendingPayments",      pending,
-                "confirmedAppointments", confirmed,
-                "totalRevenue",         revenue,
-                "recentAppointments",   recent
+                "totalAppointments",          total,
+                "pendingPayments",            pending,
+                "confirmedAppointments",      confirmed,
+                "completedAppointments",      completed,
+                "cancelledAppointments",      cancelled,
+                "pendingPaymentAppointments", pendingPayAppt,
+                "totalRevenue",               revenue,
+                "recentAppointments",         recent
         );
     }
 

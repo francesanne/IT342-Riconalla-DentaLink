@@ -5,7 +5,7 @@ import Navbar from '@/shared/components/Navbar';
 import StatusBadge from '@/shared/components/StatusBadge';
 import { formatDateTime as formatDate, formatPeso } from '@/shared/utils/formatters';
 import { adminAPI } from '@/shared/api/api';
-import WelcomePopup from '@/shared/components/WelcomePopup';
+import AppointmentStatusChart from './AppointmentStatusChart';
 import './styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -33,9 +33,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="app-layout">
-      {/* ── Welcome popup — only shows once right after login ── */}
-      <WelcomePopup />
-
       <Navbar links={NAV_LINKS} />
       <main className="page-container">
 
@@ -55,6 +52,7 @@ export default function AdminDashboard() {
 
         {loading ? (
           <>
+            {/* Skeleton stats */}
             <div className="stats-grid">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="stat-card">
@@ -66,31 +64,51 @@ export default function AdminDashboard() {
                 </div>
               ))}
             </div>
-            <div className="card">
-              <div className="card-header">
-                <div className="skeleton skeleton-text" style={{ width: 180 }} />
-              </div>
-              <div className="table-wrapper">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Patient</th><th>Service</th>
-                      <th className="col-hide-tablet">Dentist</th>
-                      <th>Date & Time</th><th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[...Array(5)].map((_, i) => (
-                      <tr key={i}>
-                        <td><div className="skeleton skeleton-text" style={{ width: '75%' }} /></td>
-                        <td><div className="skeleton skeleton-text" style={{ width: '65%' }} /></td>
-                        <td className="col-hide-tablet"><div className="skeleton skeleton-text" style={{ width: '55%' }} /></td>
-                        <td><div className="skeleton skeleton-text" style={{ width: '60%' }} /></td>
-                        <td><div className="skeleton skeleton-badge" /></td>
-                      </tr>
+
+            {/* Skeleton chart + table row */}
+            <div className="dashboard-chart-row">
+              <div className="card">
+                <div className="card-header">
+                  <div className="skeleton skeleton-text" style={{ width: 160 }} />
+                </div>
+                <div style={{ padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-5)' }}>
+                  <div className="skeleton" style={{ width: 160, height: 160, borderRadius: '50%' }} />
+                  <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0' }}>
+                        <div className="skeleton skeleton-text" style={{ width: '55%' }} />
+                        <div className="skeleton skeleton-text-sm" style={{ width: 40 }} />
+                      </div>
                     ))}
-                  </tbody>
-                </table>
+                  </div>
+                </div>
+              </div>
+              <div className="card">
+                <div className="card-header">
+                  <div className="skeleton skeleton-text" style={{ width: 180 }} />
+                </div>
+                <div className="table-wrapper">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Patient</th><th>Service</th>
+                        <th className="col-hide-tablet">Dentist</th>
+                        <th>Date & Time</th><th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...Array(5)].map((_, i) => (
+                        <tr key={i}>
+                          <td><div className="skeleton skeleton-text" style={{ width: '75%' }} /></td>
+                          <td><div className="skeleton skeleton-text" style={{ width: '65%' }} /></td>
+                          <td className="col-hide-tablet"><div className="skeleton skeleton-text" style={{ width: '55%' }} /></td>
+                          <td><div className="skeleton skeleton-text" style={{ width: '60%' }} /></td>
+                          <td><div className="skeleton skeleton-badge" /></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </>
@@ -128,51 +146,55 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Recent Appointments */}
-            <div className="card">
-              <div className="card-header">
-                <span className="card-title">Recent Appointments</span>
-                <Link to="/admin/appointments" style={{ fontSize: 'var(--text-sm)', color: 'var(--primary)', fontWeight: 'var(--font-medium)' }}>
-                  View All →
-                </Link>
-              </div>
-              <div className="table-wrapper">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Patient</th>
-                      <th>Service</th>
-                      <th className="col-hide-tablet">Dentist</th>
-                      <th>Date & Time</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(stats?.recentAppointments ?? []).length === 0 ? (
+            {/* Chart + Recent Appointments */}
+            <div className="dashboard-chart-row">
+              <AppointmentStatusChart stats={stats} />
+
+              <div className="card">
+                <div className="card-header">
+                  <span className="card-title">Recent Appointments</span>
+                  <Link to="/admin/appointments" style={{ fontSize: 'var(--text-sm)', color: 'var(--primary)', fontWeight: 'var(--font-medium)' }}>
+                    View All →
+                  </Link>
+                </div>
+                <div className="table-wrapper">
+                  <table className="data-table">
+                    <thead>
                       <tr>
-                        <td colSpan={5}>
-                          <div className="empty-state" style={{ padding: 'var(--space-10) var(--space-8)' }}>
-                            <div className="empty-icon"><CalendarDays size={28} /></div>
-                            <div className="empty-title" style={{ fontSize: 'var(--text-base)' }}>No appointments yet</div>
-                            <div className="empty-text">Appointments will appear here once patients start booking.</div>
-                          </div>
-                        </td>
+                        <th>Patient</th>
+                        <th>Service</th>
+                        <th className="col-hide-tablet">Dentist</th>
+                        <th>Date & Time</th>
+                        <th>Status</th>
                       </tr>
-                    ) : (stats?.recentAppointments ?? []).map(a => (
-                      <tr key={a.id}>
-                        <td>
-                          <div style={{ fontWeight: 'var(--font-medium)', color: 'var(--gray-900)' }}>
-                            {a.patientName}
-                          </div>
-                        </td>
-                        <td style={{ color: 'var(--gray-700)' }}>{a.serviceName ?? '—'}</td>
-                        <td className="col-hide-tablet" style={{ color: 'var(--gray-700)' }}>{a.dentistName}</td>
-                        <td style={{ color: 'var(--gray-600)', fontSize: 'var(--text-sm)' }}>{formatDate(a.appointmentDatetime)}</td>
-                        <td><StatusBadge status={a.appointmentStatus} /></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {(stats?.recentAppointments ?? []).length === 0 ? (
+                        <tr>
+                          <td colSpan={5}>
+                            <div className="empty-state" style={{ padding: 'var(--space-10) var(--space-8)' }}>
+                              <div className="empty-icon"><CalendarDays size={28} /></div>
+                              <div className="empty-title" style={{ fontSize: 'var(--text-base)' }}>No appointments yet</div>
+                              <div className="empty-text">Appointments will appear here once patients start booking.</div>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (stats?.recentAppointments ?? []).map(a => (
+                        <tr key={a.id}>
+                          <td>
+                            <div style={{ fontWeight: 'var(--font-medium)', color: 'var(--gray-900)' }}>
+                              {a.patientName}
+                            </div>
+                          </td>
+                          <td style={{ color: 'var(--gray-700)' }}>{a.serviceName ?? '—'}</td>
+                          <td className="col-hide-tablet" style={{ color: 'var(--gray-700)' }}>{a.dentistName}</td>
+                          <td style={{ color: 'var(--gray-600)', fontSize: 'var(--text-sm)' }}>{formatDate(a.appointmentDatetime)}</td>
+                          <td><StatusBadge status={a.appointmentStatus} /></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </>

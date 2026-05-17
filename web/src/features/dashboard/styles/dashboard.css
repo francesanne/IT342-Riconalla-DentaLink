@@ -992,6 +992,22 @@
   gap: var(--space-6);
 }
 
+/* ─── Admin dashboard chart + table row ─── */
+.dashboard-chart-row {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: var(--space-6);
+  align-items: stretch;
+}
+
+/* ─── Contact page layout ─── */
+.contact-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
 /* ─── Responsive table column visibility utilities ─── */
 /* Applied to <th> and matching <td> to hide columns at breakpoints */
 
@@ -1005,6 +1021,14 @@
 /* ─── Responsive ─── */
 @media (max-width: 1024px) {
   .page-container { padding: var(--space-6) var(--space-4); }
+}
+
+@media (max-width: 960px) {
+  .contact-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  .dashboard-chart-row { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {

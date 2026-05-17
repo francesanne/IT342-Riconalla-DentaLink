@@ -48,11 +48,9 @@ function Register() {
 
       const { accessToken, user } = response.data.data;
       localStorage.setItem("token", accessToken);
+      toast.success(`Welcome to DentaLink, ${user.firstName}!`);
       setUser(user);
-      navigate(
-        user.role === "ADMIN" ? "/admin" : "/dashboard",
-        { state: { justLoggedIn: true, firstName: user.firstName, role: user.role } }
-      );
+      navigate(user.role === "ADMIN" ? "/admin" : "/dashboard");
     } catch (err) {
       if (err.response?.status === 409) {
         toast.error("This email is already registered. Please log in instead.");
@@ -67,8 +65,6 @@ function Register() {
   };
 
   // ── Google Sign-Up/In ───────────────────────────────────────────────────────
-  // The backend auto-creates a PATIENT account for new Google users,
-  // or logs in an existing one — same endpoint as Login.
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       const idToken  = credentialResponse.credential;
@@ -76,11 +72,9 @@ function Register() {
       if (response.data && response.data.data) {
         const { accessToken, user } = response.data.data;
         localStorage.setItem("token", accessToken);
+        toast.success(`Welcome to DentaLink, ${user.firstName}!`);
         setUser(user);
-        navigate(
-          user.role === "ADMIN" ? "/admin" : "/dashboard",
-          { state: { justLoggedIn: true, firstName: user.firstName, role: user.role } }
-        );
+        navigate(user.role === "ADMIN" ? "/admin" : "/dashboard");
       }
     } catch (_) {
       toast.error("Google sign-up failed. Please try again.");
@@ -177,7 +171,6 @@ function Register() {
           <span>Or sign up with</span>
         </div>
 
-        {/* Real Google Sign-Up button */}
         <div className="google-btn-wrapper">
           <GoogleLogin
             onSuccess={handleGoogleSuccess}

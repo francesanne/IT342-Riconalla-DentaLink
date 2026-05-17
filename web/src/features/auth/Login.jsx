@@ -15,17 +15,11 @@ function Login() {
   const [password, setPassword]   = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Set user then navigate WITH a state flag so the destination page
-  // can show the success popup. We do NOT try to show the popup here
-  // because App.jsx immediately unmounts <Login> the moment setUser()
-  // runs (the route condition "user ? <Navigate> : <Login>" triggers).
   const finishLogin = (token, userData) => {
     localStorage.setItem("token", token);
+    toast.success(`Welcome back, ${userData.firstName}!`);
     setUser(userData);
-    navigate(
-      userData.role === "ADMIN" ? "/admin" : "/dashboard",
-      { state: { justLoggedIn: true, firstName: userData.firstName, role: userData.role } }
-    );
+    navigate(userData.role === "ADMIN" ? "/admin" : "/dashboard");
   };
 
   // ── Email / Password ────────────────────────────────────────────────────────
