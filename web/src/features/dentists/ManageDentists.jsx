@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { dentistsAPI } from '@/shared/api/api';
-import { AlertCircle, Pencil, X, Users } from 'lucide-react';
+import { AlertCircle, Pencil, Trash2, X, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import '@/features/dashboard/styles/dashboard.css';
 
@@ -148,6 +148,7 @@ export default function ManageDentists() {
                       <td>
                         <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
                           <button className="btn-sm btn-outline-sm" onClick={() => openEdit(d)}><Pencil size={14} /></button>
+                          <button className="btn-sm btn-danger-sm" onClick={() => setDeleteId(d.id)}><Trash2 size={14} /></button>
                     
                         </div>
                       </td>
