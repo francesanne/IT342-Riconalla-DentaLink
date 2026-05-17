@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { dentistsAPI } from '@/shared/api/api';
-import { AlertCircle, Pencil, X, Users } from 'lucide-react';
+import { AlertCircle, Pencil, Trash2, X, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import '@/features/dashboard/styles/dashboard.css';
 
@@ -14,6 +14,12 @@ const NAV_LINKS = [
 ];
 
 const EMPTY_FORM = { name: '', specialization: '', status: 'ACTIVE' };
+
+const STATUS_FILTERS = [
+  { key: '', label: 'All' },
+  { key: 'ACTIVE', label: 'Active' },
+  { key: 'INACTIVE', label: 'Inactive' },
+];
 
 function Initials({ name }) {
   const parts = (name || '').trim().split(' ');
@@ -33,6 +39,7 @@ function Initials({ name }) {
 
 export default function ManageDentists() {
   const [dentists, setDentists] = useState([]);
+  const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null);
   const [editing, setEditing] = useState(null);
@@ -81,6 +88,10 @@ export default function ManageDentists() {
     }
   };
 
+  const displayed = statusFilter
+    ? dentists.filter(d => d.status === statusFilter)
+    : dentists;
+
   return (
     <div className="app-layout">
       <Navbar links={NAV_LINKS} />
@@ -104,6 +115,19 @@ export default function ManageDentists() {
           </button>
         </div>
 
+        {/* Status filters */}
+        <div style={{ display: 'flex', gap: 'var(--space-2)', marginBottom: 'var(--space-6)', flexWrap: 'wrap' }}>
+          {STATUS_FILTERS.map(f => (
+            <button
+              key={f.key}
+              className={`filter-chip${statusFilter === f.key ? ' active' : ''}`}
+              onClick={() => setStatusFilter(f.key)}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
         {loading ? (
           <div className="loading-container"><div className="spinner" /></div>
         ) : (
@@ -120,17 +144,21 @@ export default function ManageDentists() {
                   </tr>
                 </thead>
                 <tbody>
-                  {dentists.length === 0 ? (
+                  {displayed.length === 0 ? (
                     <tr>
                       <td colSpan={5}>
                         <div className="empty-state" style={{ padding: 'var(--space-10) var(--space-8)' }}>
                           <div className="empty-icon"><Users size={28} /></div>
-                          <div className="empty-title" style={{ fontSize: 'var(--text-base)' }}>No dentists yet</div>
-                          <div className="empty-text">Add your first dentist to get started.</div>
+                          <div className="empty-title" style={{ fontSize: 'var(--text-base)' }}>
+                            {statusFilter ? 'No dentists found' : 'No dentists yet'}
+                          </div>
+                          <div className="empty-text">
+                            {statusFilter ? 'No dentists match this filter. Try a different status.' : 'Add your first dentist to get started.'}
+                          </div>
                         </div>
                       </td>
                     </tr>
-                  ) : dentists.map((d, i) => (
+                  ) : displayed.map((d, i) => (
                     <tr key={d.id}>
                       <td style={{ color: 'var(--gray-400)', fontSize: 'var(--text-sm)', width: 40 }}>{i + 1}</td>
                       <td>
@@ -148,6 +176,7 @@ export default function ManageDentists() {
                       <td>
                         <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
                           <button className="btn-sm btn-outline-sm" onClick={() => openEdit(d)}><Pencil size={14} /></button>
+                          <button className="btn-sm btn-danger-sm" onClick={() => setDeleteId(d.id)}><Trash2 size={14} /></button>
                     
                         </div>
                       </td>

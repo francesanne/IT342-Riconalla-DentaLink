@@ -5,7 +5,6 @@ import StatusBadge from '@/shared/components/StatusBadge';
 import { formatDate, formatTime } from '@/shared/utils/formatters';
 import { appointmentsAPI } from '@/shared/api/api';
 import { useAuth } from '@/shared/context/AuthContext';
-import WelcomePopup from '@/shared/components/WelcomePopup';
 import {
   AlertCircle, CalendarDays, CheckCircle2, Clock,
   UserRound, ClipboardList,
@@ -16,7 +15,6 @@ const NAV_LINKS = [
   { to: '/dashboard',       label: 'Dashboard' },
   { to: '/services',        label: 'Services' },
   { to: '/my-appointments', label: 'My Appointments' },
-  { to: '/profile',         label: 'Profile' },
   { to: '/contact',         label: 'Contact' },
 ];
 
@@ -67,9 +65,6 @@ export default function PatientDashboard() {
 
   return (
     <div className="app-layout">
-      {/* ── Welcome popup — only shows once right after login/Google sign-in ── */}
-      <WelcomePopup />
-
       <Navbar links={NAV_LINKS} />
       <main className="page-container">
 

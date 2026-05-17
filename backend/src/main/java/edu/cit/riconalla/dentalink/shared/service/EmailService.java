@@ -27,6 +27,9 @@ public class EmailService {
     @Value("${dentalink.mail.from}")
     private String fromAddress;
 
+    @Value("${dentalink.app.base-url:http://localhost:5173}")
+    private String appBaseUrl;
+
     public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
@@ -108,7 +111,7 @@ public class EmailService {
                   <p>Thank you for registering with <strong>DentaLink</strong>. Your account is ready.</p>
                   <p>You can now browse our dental services, book appointments, and pay securely online.</p>
                   <div style="margin: 30px 0; text-align: center;">
-                    <a href="http://localhost:5173/services"
+                    <a href="%s"
                        style="background: linear-gradient(135deg,#6ec1c3,#9ad0a6); color:white; padding:12px 28px;
                               border-radius:8px; text-decoration:none; font-weight:bold;">
                       Book an Appointment
@@ -119,7 +122,7 @@ public class EmailService {
                   </p>
                 </body>
                 </html>
-                """.formatted(firstName);
+                """.formatted(firstName, appBaseUrl + "/services");
     }
 
     private String buildConfirmationHtml(String firstName,
@@ -152,7 +155,7 @@ public class EmailService {
                   </div>
                   <p>Please arrive 10 minutes before your scheduled time.</p>
                   <div style="margin: 30px 0; text-align: center;">
-                    <a href="http://localhost:5173/my-appointments"
+                    <a href="%s"
                        style="background: linear-gradient(135deg,#6ec1c3,#9ad0a6); color:white; padding:12px 28px;
                               border-radius:8px; text-decoration:none; font-weight:bold;">
                       View My Appointments
@@ -163,6 +166,6 @@ public class EmailService {
                   </p>
                 </body>
                 </html>
-                """.formatted(firstName, serviceName, dentistName, date, time);
+                """.formatted(firstName, serviceName, dentistName, date, time, appBaseUrl + "/my-appointments");
     }
 }

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User } from 'lucide-react';
 import ToothIcon from '@/shared/components/ToothIcon';
 
 export default function Navbar({ links = [] }) {
@@ -53,7 +53,14 @@ export default function Navbar({ links = [] }) {
 
         <div className="user-menu">
           <button className="user-menu-btn" onClick={() => setOpen(p => !p)}>
-            <div className="user-avatar">{initials}</div>
+            <div
+              className="user-avatar"
+              style={user?.profileImageUrl ? { background: 'transparent', overflow: 'hidden', padding: 0 } : {}}
+            >
+              {user?.profileImageUrl
+                ? <img src={user.profileImageUrl} alt={initials} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                : initials}
+            </div>
             <span className="user-name">{user?.firstName}</span>
             <span style={{ fontSize: '10px', color: 'var(--gray-400)', marginLeft: '2px' }}>▼</span>
           </button>
@@ -64,6 +71,18 @@ export default function Navbar({ links = [] }) {
                 <div className="user-dropdown-name">{user?.firstName} {user?.lastName}</div>
                 <div className="user-dropdown-email">{user?.email}</div>
               </div>
+              {user?.role !== 'ADMIN' && (
+                <>
+                  <Link
+                    to="/profile"
+                    className="user-dropdown-item"
+                    onClick={() => setOpen(false)}
+                  >
+                    <User size={15} /> My Profile
+                  </Link>
+                  <div style={{ borderTop: '1px solid var(--gray-100)', margin: '0' }} />
+                </>
+              )}
               <button className="user-dropdown-item danger" onClick={() => { setOpen(false); logout(); }}>
                 <span>↩</span> Log Out
               </button>

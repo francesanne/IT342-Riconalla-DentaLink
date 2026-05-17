@@ -9,7 +9,6 @@ const NAV_LINKS = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/services', label: 'Services' },
   { to: '/my-appointments', label: 'My Appointments' },
-  { to: '/profile',         label: 'Profile' },
   { to: '/contact',         label: 'Contact' },
 ];
 
@@ -53,7 +52,7 @@ export default function PaymentSuccess() {
         const appt = res.data.data;
         setAppointment(appt);
 
-        if (appt.appointmentStatus === 'CONFIRMED' || appt.status === 'CONFIRMED') {
+        if (appt.status === 'CONFIRMED') {
           setStatus('confirmed');
           setLoading(false);
         } else if (attempts < MAX_ATTEMPTS) {

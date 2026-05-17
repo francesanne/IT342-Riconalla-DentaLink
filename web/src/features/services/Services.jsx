@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '@/shared/components/Navbar';
 import BookingModal from '@/features/appointments/BookingModal';
 import { servicesAPI } from '@/shared/api/api';
+import { toast } from 'sonner';
 import ToothIcon from '@/shared/components/ToothIcon';
 import '@/features/dashboard/styles/dashboard.css';
 
@@ -10,7 +11,6 @@ const NAV_LINKS = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/services', label: 'Services' },
   { to: '/my-appointments', label: 'My Appointments' },
-  { to: '/profile',         label: 'Profile' },
   { to: '/contact',         label: 'Contact' },
 ];
 
@@ -29,7 +29,7 @@ export default function Services() {
   useEffect(() => {
     servicesAPI.getAll()
       .then(res => setServices(res.data.data || []))
-      .catch(() => {})
+      .catch(() => toast.error('Failed to load services. Please refresh the page.'))
       .finally(() => setLoading(false));
   }, []);
 

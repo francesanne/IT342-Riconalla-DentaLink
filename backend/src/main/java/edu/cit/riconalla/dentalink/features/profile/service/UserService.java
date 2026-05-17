@@ -88,13 +88,17 @@ public class UserService {
         User user = userRepository.findByEmail(callerEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // currentPassword required — validates identity before any change
-        if (request.getCurrentPassword() == null || request.getCurrentPassword().isBlank()) {
-            throw new IllegalArgumentException("Current password is required");
-        }
-        if (user.getPassword() == null
-                || !passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-            throw new InvalidCredentialsException("Current password is incorrect");
+        boolean isOAuthUser = user.getGoogleId() != null;
+
+        if (!isOAuthUser) {
+            // currentPassword required — validates identity before any change
+            if (request.getCurrentPassword() == null || request.getCurrentPassword().isBlank()) {
+                throw new IllegalArgumentException("Current password is required");
+            }
+            if (user.getPassword() == null
+                    || !passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+                throw new InvalidCredentialsException("Current password is incorrect");
+            }
         }
 
         // Update name fields if provided
@@ -105,8 +109,8 @@ public class UserService {
             user.setLastName(request.getLastName().trim());
         }
 
-        // Update password if newPassword provided — min 8 chars
-        if (request.getNewPassword() != null && !request.getNewPassword().isBlank()) {
+        // Update password if newPassword provided — min 8 chars (email/password users only)
+        if (!isOAuthUser && request.getNewPassword() != null && !request.getNewPassword().isBlank()) {
             if (request.getNewPassword().length() < 8) {
                 throw new IllegalArgumentException("New password must be at least 8 characters");
             }
