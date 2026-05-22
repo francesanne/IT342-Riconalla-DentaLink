@@ -5,6 +5,7 @@ import edu.cit.riconalla.dentalink.features.services.dto.ServiceDto;
 import edu.cit.riconalla.dentalink.features.services.dto.ServiceRequest;
 import edu.cit.riconalla.dentalink.features.services.service.ServiceService;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,7 +43,7 @@ public class ServiceController {
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ApiResponse<ServiceDto>> createService(
-            @RequestBody ServiceRequest request
+            @Valid @RequestBody ServiceRequest request
     ) {
         ServiceDto created = serviceService.createService(
                 request.getName(),
@@ -58,7 +59,7 @@ public class ServiceController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ApiResponse<ServiceDto>> updateService(
             @PathVariable Long id,
-            @RequestBody ServiceRequest request
+            @Valid @RequestBody ServiceRequest request
     ) {
         ServiceDto updated = serviceService.updateService(
                 id,

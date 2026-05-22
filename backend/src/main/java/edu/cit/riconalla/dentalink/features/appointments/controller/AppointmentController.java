@@ -1,14 +1,16 @@
 package edu.cit.riconalla.dentalink.features.appointments.controller;
 
+import edu.cit.riconalla.dentalink.features.appointments.dto.AppointmentResponse;
+import edu.cit.riconalla.dentalink.features.appointments.dto.CreateAppointmentRequest;
 import edu.cit.riconalla.dentalink.features.appointments.entity.Appointment;
 import edu.cit.riconalla.dentalink.features.appointments.service.AppointmentService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import edu.cit.riconalla.dentalink.features.appointments.dto.AppointmentResponse;
 import java.time.LocalDateTime;
 import java.util.*;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/appointments")
@@ -22,12 +24,11 @@ public class AppointmentController {
 
     @PreAuthorize("hasAuthority('PATIENT')")
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createAppointment(@RequestBody Map<String, Object> body,
+    public ResponseEntity<Map<String, Object>> createAppointment(@Valid @RequestBody CreateAppointmentRequest request,
                                                                  Authentication auth) {
-        Long serviceId = Long.valueOf(body.get("serviceId").toString());
-        Long dentistId = Long.valueOf(body.get("dentistId").toString());
-        String dtStr = (String) body.get("appointmentDatetime");
-        LocalDateTime dt = LocalDateTime.parse(dtStr);
+        Long serviceId = request.getServiceId();
+        Long dentistId = request.getDentistId();
+        LocalDateTime dt = LocalDateTime.parse(request.getAppointmentDatetime());
 
         var a = appointmentService.createAppointment(auth.getName(), serviceId, dentistId, dt);
 
