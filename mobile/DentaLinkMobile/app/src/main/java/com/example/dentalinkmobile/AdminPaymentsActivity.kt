@@ -6,6 +6,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
+import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.launch
 
 class AdminPaymentsActivity : AppCompatActivity() {
@@ -13,6 +14,11 @@ class AdminPaymentsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_payments)
+
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener { finish() }
 
         val lvPayments = findViewById<ListView>(R.id.lvAdminPayments)
         val tvEmpty    = findViewById<TextView>(R.id.tvAdminPaymentsEmpty)

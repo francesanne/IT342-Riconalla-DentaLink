@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.dentists.model.DentistDto
 import com.example.dentalinkmobile.features.payments.model.DentistRequest
+import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.launch
 
 class AdminDentistsActivity : AppCompatActivity() {
@@ -20,6 +21,11 @@ class AdminDentistsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_dentists)
+
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener { finish() }
 
         lvDentists = findViewById(R.id.lvAdminDentists)
         tvEmpty    = findViewById(R.id.tvAdminDentistsEmpty)

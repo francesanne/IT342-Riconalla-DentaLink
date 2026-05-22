@@ -1,111 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7FA">
+    android:background="@color/background">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/surface"
+        android:elevation="4dp"
+        app:title="My Profile"
+        app:titleTextColor="@color/text_primary"
+        app:navigationIconTint="@color/text_primary" />
 
-        <TextView
-            android:text="My Profile"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <TextView
-            android:text="Manage your account information"
-            android:textSize="13sp"
-            android:textColor="#888888"
-            android:layout_marginBottom="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:text="Email"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="2dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/tvProfileEmail"
-            android:text=""
-            android:textColor="#888888"
-            android:layout_marginBottom="4dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:text="Email cannot be changed"
-            android:textSize="11sp"
-            android:textColor="#AAAAAA"
-            android:layout_marginBottom="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <EditText
-            android:id="@+id/etProfileFirstName"
-            android:hint="First Name"
-            android:inputType="textPersonName"
-            android:layout_marginBottom="12dp"
+        <LinearLayout
+            android:orientation="vertical"
+            android:padding="20dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/etProfileLastName"
-            android:hint="Last Name"
-            android:inputType="textPersonName"
-            android:layout_marginBottom="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <!-- Profile picture section -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:background="@drawable/bg_card"
+                android:padding="20dp"
+                android:elevation="2dp"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <TextView
-            android:text="Change Password (optional)"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+                <ImageView
+                    android:id="@+id/ivProfilePicture"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:scaleType="centerCrop"
+                    android:background="@color/primary_container"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    android:layout_marginBottom="12dp" />
 
-        <EditText
-            android:id="@+id/etCurrentPassword"
-            android:hint="Current Password (required to save)"
-            android:inputType="textPassword"
-            android:layout_marginBottom="12dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+                <Button
+                    android:id="@+id/btnChangePhoto"
+                    android:text="Change Photo"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-        <EditText
-            android:id="@+id/etNewPassword"
-            android:hint="New Password (leave blank to keep current)"
-            android:inputType="textPassword"
-            android:layout_marginBottom="24dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            </LinearLayout>
 
-        <Button
-            android:id="@+id/btnSaveProfile"
-            android:text="Save Changes"
-            android:layout_marginBottom="12dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <!-- Account info section -->
+            <TextView
+                android:text="ACCOUNT INFORMATION"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_secondary"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/btnLogout"
-            android:text="Log Out"
-            style="?attr/borderlessButtonStyle"
-            android:textColor="#F44336"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:background="@drawable/bg_card"
+                android:padding="16dp"
+                android:elevation="2dp"
+                android:layout_marginBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    </LinearLayout>
+                <TextView
+                    android:text="Email"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="2dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-</ScrollView>
+                <TextView
+                    android:id="@+id/tvProfileEmail"
+                    android:text=""
+                    android:textSize="15sp"
+                    android:textColor="@color/text_muted"
+                    android:layout_marginBottom="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:text="Email cannot be changed"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_muted"
+                    android:layout_marginBottom="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <EditText
+                    android:id="@+id/etProfileFirstName"
+                    android:hint="First Name"
+                    android:inputType="textPersonName"
+                    android:layout_marginBottom="12dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <EditText
+                    android:id="@+id/etProfileLastName"
+                    android:hint="Last Name"
+                    android:inputType="textPersonName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <!-- Password section -->
+            <TextView
+                android:text="CHANGE PASSWORD"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_secondary"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:background="@drawable/bg_card"
+                android:padding="16dp"
+                android:elevation="2dp"
+                android:layout_marginBottom="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/etCurrentPassword"
+                    android:hint="Current Password (required to save)"
+                    android:inputType="textPassword"
+                    android:layout_marginBottom="12dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <EditText
+                    android:id="@+id/etNewPassword"
+                    android:hint="New Password (leave blank to keep current)"
+                    android:inputType="textPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnSaveProfile"
+                android:text="Save Changes"
+                android:layout_marginBottom="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:text="Log Out"
+                style="?attr/borderlessButtonStyle"
+                android:textColor="@color/status_cancelled"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -29,6 +29,11 @@ class BookingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_booking)
 
+        val toolbar = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener { finish() }
+
         serviceId = intent.getLongExtra("SERVICE_ID", 0)
         val serviceName  = intent.getStringExtra("SERVICE_NAME") ?: ""
         val servicePrice = intent.getDoubleExtra("SERVICE_PRICE", 0.0)

@@ -29,6 +29,11 @@ android {
         val baseUrl = localProps.getProperty("BASE_URL") ?: "http://10.0.2.2:8080/api/v1/"
         buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
 
+        // Google OAuth Web Client ID — same client ID the backend's GoogleService uses as token audience.
+        // Set in local.properties: GOOGLE_WEB_CLIENT_ID=<your-web-client-id>
+        val googleWebClientId = localProps.getProperty("GOOGLE_WEB_CLIENT_ID") ?: ""
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
+
         // Default: cleartext NOT allowed. Debug build type overrides below.
         manifestPlaceholders["usesCleartextTraffic"] = false
     }
@@ -69,4 +74,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.play.services.auth)
 }

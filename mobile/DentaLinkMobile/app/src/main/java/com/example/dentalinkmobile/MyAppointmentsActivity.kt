@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.appointments.model.AppointmentItem
 import com.example.dentalinkmobile.features.appointments.model.CreateIntentRequest
+import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.launch
 
 class MyAppointmentsActivity : AppCompatActivity() {
@@ -23,20 +24,35 @@ class MyAppointmentsActivity : AppCompatActivity() {
 
     private lateinit var lvAppointments: ListView
     private lateinit var tvEmpty: TextView
+    private lateinit var filterButtons: List<Button>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_appointments)
 
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener { finish() }
+
         lvAppointments = findViewById(R.id.lvAppointments)
         tvEmpty        = findViewById(R.id.tvAppointmentsEmpty)
 
-        findViewById<Button>(R.id.btnFilterAll).setOnClickListener       { applyFilter("ALL") }
-        findViewById<Button>(R.id.btnFilterConfirmed).setOnClickListener  { applyFilter("CONFIRMED") }
-        findViewById<Button>(R.id.btnFilterPending).setOnClickListener    { applyFilter("PENDING_PAYMENT") }
-        findViewById<Button>(R.id.btnFilterCompleted).setOnClickListener  { applyFilter("COMPLETED") }
-        findViewById<Button>(R.id.btnFilterCancelled).setOnClickListener  { applyFilter("CANCELLED") }
+        val btnAll       = findViewById<Button>(R.id.btnFilterAll)
+        val btnConfirmed = findViewById<Button>(R.id.btnFilterConfirmed)
+        val btnPending   = findViewById<Button>(R.id.btnFilterPending)
+        val btnCompleted = findViewById<Button>(R.id.btnFilterCompleted)
+        val btnCancelled = findViewById<Button>(R.id.btnFilterCancelled)
+        filterButtons    = listOf(btnAll, btnConfirmed, btnPending, btnCompleted, btnCancelled)
 
+        btnAll.setOnClickListener       { applyFilter("ALL",             btnAll) }
+        btnConfirmed.setOnClickListener  { applyFilter("CONFIRMED",      btnConfirmed) }
+        btnPending.setOnClickListener    { applyFilter("PENDING_PAYMENT", btnPending) }
+        btnCompleted.setOnClickListener  { applyFilter("COMPLETED",      btnCompleted) }
+        btnCancelled.setOnClickListener  { applyFilter("CANCELLED",      btnCancelled) }
+
+        // Start with "All" visually active
+        setActiveFilter(btnAll)
         loadAppointments()
     }
 
@@ -46,7 +62,7 @@ class MyAppointmentsActivity : AppCompatActivity() {
                 val response = RetrofitClient.apiService.getAppointments()
                 if (response.isSuccessful) {
                     allAppointments = response.body()?.data ?: emptyList()
-                    applyFilter(currentFilter)
+                    applyFilter(currentFilter, filterButtons.first())
                 } else {
                     Toast.makeText(this@MyAppointmentsActivity, "Failed to load appointments", Toast.LENGTH_SHORT).show()
                 }
@@ -56,8 +72,10 @@ class MyAppointmentsActivity : AppCompatActivity() {
         }
     }
 
-    private fun applyFilter(filter: String) {
+    private fun applyFilter(filter: String, activeBtn: Button) {
         currentFilter = filter
+        setActiveFilter(activeBtn)
+
         val filtered = if (filter == "ALL") allAppointments
         else allAppointments.filter { it.status == filter }
 
@@ -73,6 +91,13 @@ class MyAppointmentsActivity : AppCompatActivity() {
             if (appointment.paymentStatus == "UNPAID" && appointment.status != "CANCELLED") {
                 payForAppointment(appointment.id)
             }
+        }
+    }
+
+    private fun setActiveFilter(activeBtn: Button) {
+        // Style the active filter with filled appearance; others as borderless
+        filterButtons.forEach { btn ->
+            btn.isSelected = (btn == activeBtn)
         }
     }
 
@@ -135,11 +160,11 @@ class AppointmentAdapter(
 
     private fun statusColors(context: Context, status: String?): Pair<Int, Int> {
         return when (status) {
-            "CONFIRMED"       -> Pair(ContextCompat.getColor(context, R.color.status_confirmed), ContextCompat.getColor(context, R.color.status_confirmed_bg))
-            "COMPLETED"       -> Pair(ContextCompat.getColor(context, R.color.status_completed), ContextCompat.getColor(context, R.color.status_completed_bg))
-            "PENDING_PAYMENT" -> Pair(ContextCompat.getColor(context, R.color.status_pending),   ContextCompat.getColor(context, R.color.status_pending_bg))
-            "CANCELLED"       -> Pair(ContextCompat.getColor(context, R.color.status_cancelled), ContextCompat.getColor(context, R.color.status_cancelled_bg))
-            else              -> Pair(ContextCompat.getColor(context, R.color.text_secondary),   ContextCompat.getColor(context, R.color.surface_variant))
+            "CONFIRMED"       -> Pair(ContextCompat.getColor(context, R.color.status_confirmed),  ContextCompat.getColor(context, R.color.status_confirmed_bg))
+            "COMPLETED"       -> Pair(ContextCompat.getColor(context, R.color.status_completed),  ContextCompat.getColor(context, R.color.status_completed_bg))
+            "PENDING_PAYMENT" -> Pair(ContextCompat.getColor(context, R.color.status_pending),    ContextCompat.getColor(context, R.color.status_pending_bg))
+            "CANCELLED"       -> Pair(ContextCompat.getColor(context, R.color.status_cancelled),  ContextCompat.getColor(context, R.color.status_cancelled_bg))
+            else              -> Pair(ContextCompat.getColor(context, R.color.text_secondary),    ContextCompat.getColor(context, R.color.surface_variant))
         }
     }
 

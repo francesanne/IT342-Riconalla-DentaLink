@@ -1,19 +1,23 @@
 package com.example.dentalinkmobile
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.utils.SessionManager
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.launch
 
 class PatientDashboardActivity : AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
+    private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,44 +25,57 @@ class PatientDashboardActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(this)
 
-        val tvWelcome      = findViewById<TextView>(R.id.tvWelcome)
-        val tvUpcoming     = findViewById<TextView>(R.id.tvUpcomingCount)
-        val tvCompleted    = findViewById<TextView>(R.id.tvCompletedCount)
-        val tvPending      = findViewById<TextView>(R.id.tvPendingCount)
-        val btnBook        = findViewById<Button>(R.id.btnBookAppointment)
-        val btnMyAppts     = findViewById<Button>(R.id.btnMyAppointments)
-        val btnServices    = findViewById<Button>(R.id.btnServices)
-        val btnProfile     = findViewById<Button>(R.id.btnProfile)
-        val lvUpcoming     = findViewById<ListView>(R.id.lvUpcomingAppointments)
-        val tvNoUpcoming   = findViewById<TextView>(R.id.tvNoUpcoming)
+        // ── Toolbar + Drawer ──
+        val toolbar   = findViewById<MaterialToolbar>(R.id.toolbar)
+        drawerLayout  = findViewById(R.id.drawerLayout)
+        val navView   = findViewById<NavigationView>(R.id.navView)
 
-        tvWelcome.text = "Welcome, ${sessionManager.getFirstName() ?: "Patient"}!"
+        setSupportActionBar(toolbar)
+        val toggle = ActionBarDrawerToggle(
+            this, drawerLayout, toolbar,
+            R.string.nav_open, R.string.nav_close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
 
-        btnBook.setOnClickListener {
-            startActivity(Intent(this, ServicesActivity::class.java))
-        }
-        btnMyAppts.setOnClickListener {
-            startActivity(Intent(this, MyAppointmentsActivity::class.java))
-        }
-        btnServices.setOnClickListener {
-            startActivity(Intent(this, ServicesActivity::class.java))
-        }
-        btnProfile.setOnClickListener {
-            startActivity(Intent(this, ProfileActivity::class.java))
-        }
+        // Personalise the nav drawer header with the patient's name
+        val firstName = sessionManager.getFirstName() ?: "Patient"
+        navView.getHeaderView(0)
+            ?.findViewById<TextView>(R.id.tvNavWelcome)
+            ?.text = "Welcome, $firstName!"
 
-        findViewById<Button>(R.id.btnClinicLocation).setOnClickListener {
-            // Opens Google Maps (or any installed maps app) at the clinic location.
-            // Coordinates match the web frontend: CLINIC_LAT, CLINIC_LNG.
-            val geoUri = Uri.parse("geo:10.24738412405074,123.8000086426953?q=10.24738412405074,123.8000086426953(DentaLink+Dental+Clinic)")
-            val mapIntent = Intent(Intent.ACTION_VIEW, geoUri)
-            if (mapIntent.resolveActivity(packageManager) != null) {
-                startActivity(mapIntent)
-            } else {
-                // Fallback: open in browser if no maps app is installed
-                val browserUri = Uri.parse("https://www.google.com/maps?q=10.24738412405074,123.8000086426953")
-                startActivity(Intent(Intent.ACTION_VIEW, browserUri))
+        navView.setNavigationItemSelectedListener { item ->
+            drawerLayout.closeDrawers()
+            when (item.itemId) {
+                R.id.nav_dashboard    -> { /* already here */ }
+                R.id.nav_services     -> startActivity(Intent(this, ServicesActivity::class.java))
+                R.id.nav_appointments -> startActivity(Intent(this, MyAppointmentsActivity::class.java))
+                R.id.nav_profile      -> startActivity(Intent(this, ProfileActivity::class.java))
+                R.id.nav_directions   -> startActivity(Intent(this, ClinicDirectionsActivity::class.java))
+                R.id.nav_logout       -> logout()
             }
+            true
+        }
+
+        // Mark Dashboard as selected by default
+        navView.setCheckedItem(R.id.nav_dashboard)
+
+        // ── Views ──
+        val tvWelcome    = findViewById<TextView>(R.id.tvWelcome)
+        val tvUpcoming   = findViewById<TextView>(R.id.tvUpcomingCount)
+        val tvCompleted  = findViewById<TextView>(R.id.tvCompletedCount)
+        val tvPending    = findViewById<TextView>(R.id.tvPendingCount)
+        val lvUpcoming   = findViewById<ListView>(R.id.lvUpcomingAppointments)
+        val tvNoUpcoming = findViewById<TextView>(R.id.tvNoUpcoming)
+
+        tvWelcome.text = "Welcome, $firstName!"
+
+        // ── Quick action buttons ──
+        findViewById<Button>(R.id.btnBookAppointment).setOnClickListener {
+            startActivity(Intent(this, ServicesActivity::class.java))
+        }
+        findViewById<Button>(R.id.btnClinicLocation).setOnClickListener {
+            startActivity(Intent(this, ClinicDirectionsActivity::class.java))
         }
 
         loadDashboard(tvUpcoming, tvCompleted, tvPending, lvUpcoming, tvNoUpcoming)
@@ -76,7 +93,6 @@ class PatientDashboardActivity : AppCompatActivity() {
                 val response = RetrofitClient.apiService.getAppointments()
                 if (response.isSuccessful) {
                     val appointments = response.body()?.data ?: emptyList()
-
                     val now = System.currentTimeMillis()
 
                     val upcomingList = appointments.filter { a ->
@@ -85,7 +101,9 @@ class PatientDashboardActivity : AppCompatActivity() {
                     }.sortedBy { parseDateTime(it.appointmentDatetime) }
 
                     val completedCount = appointments.count { it.status == "COMPLETED" }
-                    val pendingCount   = appointments.count { it.paymentStatus == "UNPAID" && it.status != "CANCELLED" }
+                    val pendingCount   = appointments.count {
+                        it.paymentStatus == "UNPAID" && it.status != "CANCELLED"
+                    }
 
                     tvUpcoming.text  = upcomingList.size.toString()
                     tvCompleted.text = completedCount.toString()
@@ -104,9 +122,21 @@ class PatientDashboardActivity : AppCompatActivity() {
                     }
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@PatientDashboardActivity, "Failed to load appointments", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@PatientDashboardActivity,
+                    "Failed to load appointments",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
+    }
+
+    private fun logout() {
+        sessionManager.clear()
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+        finish()
     }
 
     private fun parseDateTime(dt: String?): Long {
@@ -116,14 +146,5 @@ class PatientDashboardActivity : AppCompatActivity() {
                 .atZone(java.time.ZoneId.systemDefault())
                 .toInstant().toEpochMilli()
         } catch (e: Exception) { 0L }
-    }
-
-    private fun formatDatetime(dt: String?): String {
-        if (dt == null) return ""
-        return try {
-            val ldt = java.time.LocalDateTime.parse(dt.take(19))
-            val fmt = java.time.format.DateTimeFormatter.ofPattern("MMM d, yyyy h:mm a")
-            ldt.format(fmt)
-        } catch (e: Exception) { dt }
     }
 }

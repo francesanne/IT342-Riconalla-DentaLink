@@ -3,15 +3,20 @@ package com.example.dentalinkmobile
 import android.content.Intent
 import android.os.Bundle
 import android.widget.*
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.utils.SessionManager
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.launch
 
 class AdminDashboardActivity : AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
+    private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,11 +24,39 @@ class AdminDashboardActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(this)
 
-        val tvTotal       = findViewById<TextView>(R.id.tvTotalAppointments)
-        val tvPending     = findViewById<TextView>(R.id.tvPendingPayments)
-        val tvConfirmed   = findViewById<TextView>(R.id.tvConfirmedAppointments)
-        val tvRevenue     = findViewById<TextView>(R.id.tvTotalRevenue)
-        val lvRecent      = findViewById<ListView>(R.id.lvRecentAppointments)
+        // ── Toolbar + Drawer ──
+        val toolbar  = findViewById<MaterialToolbar>(R.id.toolbar)
+        drawerLayout = findViewById(R.id.drawerLayout)
+        val navView  = findViewById<NavigationView>(R.id.navView)
+
+        setSupportActionBar(toolbar)
+        val toggle = ActionBarDrawerToggle(
+            this, drawerLayout, toolbar,
+            R.string.nav_open, R.string.nav_close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        navView.setNavigationItemSelectedListener { item ->
+            drawerLayout.closeDrawers()
+            when (item.itemId) {
+                R.id.nav_admin_dashboard    -> { /* already here */ }
+                R.id.nav_admin_services     -> startActivity(Intent(this, AdminServicesActivity::class.java))
+                R.id.nav_admin_dentists     -> startActivity(Intent(this, AdminDentistsActivity::class.java))
+                R.id.nav_admin_appointments -> startActivity(Intent(this, AdminAppointmentsActivity::class.java))
+                R.id.nav_admin_payments     -> startActivity(Intent(this, AdminPaymentsActivity::class.java))
+                R.id.nav_admin_logout       -> logout()
+            }
+            true
+        }
+        navView.setCheckedItem(R.id.nav_admin_dashboard)
+
+        // ── Dashboard nav buttons ──
+        val tvTotal     = findViewById<TextView>(R.id.tvTotalAppointments)
+        val tvPending   = findViewById<TextView>(R.id.tvPendingPayments)
+        val tvConfirmed = findViewById<TextView>(R.id.tvConfirmedAppointments)
+        val tvRevenue   = findViewById<TextView>(R.id.tvTotalRevenue)
+        val lvRecent    = findViewById<ListView>(R.id.lvRecentAppointments)
 
         findViewById<Button>(R.id.btnAdminServices).setOnClickListener {
             startActivity(Intent(this, AdminServicesActivity::class.java))
@@ -36,13 +69,6 @@ class AdminDashboardActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.btnAdminPayments).setOnClickListener {
             startActivity(Intent(this, AdminPaymentsActivity::class.java))
-        }
-        findViewById<Button>(R.id.btnAdminLogout).setOnClickListener {
-            sessionManager.clear()
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
-            finish()
         }
 
         loadDashboard(tvTotal, tvPending, tvConfirmed, tvRevenue, lvRecent)
@@ -67,7 +93,8 @@ class AdminDashboardActivity : AppCompatActivity() {
                     tvRevenue.text   = "P${String.format("%.2f", stats.totalRevenue)}"
 
                     val items = stats.recentAppointments.map { r ->
-                        "${r.patientName ?: "Patient"} | ${r.dentistName ?: "Dentist"}\n${formatDatetime(r.appointmentDatetime)} | ${r.appointmentStatus ?: ""}"
+                        "${r.patientName ?: "Patient"} — ${r.dentistName ?: "Dentist"}\n" +
+                        "${formatDatetime(r.appointmentDatetime)}  |  ${r.appointmentStatus ?: ""}"
                     }
                     lvRecent.adapter = ArrayAdapter(
                         this@AdminDashboardActivity,
@@ -81,6 +108,14 @@ class AdminDashboardActivity : AppCompatActivity() {
                 Toast.makeText(this@AdminDashboardActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun logout() {
+        sessionManager.clear()
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+        finish()
     }
 
     private fun formatDatetime(dt: String?): String {

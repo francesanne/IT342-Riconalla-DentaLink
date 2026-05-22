@@ -6,6 +6,7 @@ import com.example.dentalinkmobile.features.appointments.model.CreateIntentReque
 import com.example.dentalinkmobile.features.appointments.model.CreateIntentResponse
 import com.example.dentalinkmobile.features.auth.model.ApiResponse
 import com.example.dentalinkmobile.features.auth.model.AuthResponseDto
+import com.example.dentalinkmobile.features.auth.model.GoogleLoginRequest
 import com.example.dentalinkmobile.features.auth.model.LoginRequest
 import com.example.dentalinkmobile.features.auth.model.RegisterRequest
 import com.example.dentalinkmobile.features.auth.model.UserData
@@ -18,6 +19,7 @@ import com.example.dentalinkmobile.features.payments.model.UpdateStatusRequest
 import com.example.dentalinkmobile.features.profile.model.UpdateProfileRequest
 import com.example.dentalinkmobile.features.services.model.ServiceDto
 //import com.example.dentalinkmobile.model.*
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -30,6 +32,9 @@ interface ApiService {
 
     @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): Response<ApiResponse<AuthResponseDto>>
+
+    @POST("auth/google")
+    suspend fun googleLogin(@Body request: GoogleLoginRequest): Response<ApiResponse<AuthResponseDto>>
 
     @GET("auth/me")
     suspend fun getMe(): Response<ApiResponse<UserData>>
@@ -62,6 +67,12 @@ interface ApiService {
     @PUT("users/me/profile")
     suspend fun updateProfile(@Body request: UpdateProfileRequest): Response<ApiResponse<UserData>>
 
+    @Multipart
+    @POST("users/me/upload-profile-picture")
+    suspend fun uploadProfilePicture(
+        @Part file: MultipartBody.Part
+    ): Response<ApiResponse<UserData>>
+
     // --- Admin dashboard ---
 
     @GET("admin/dashboard")
@@ -88,6 +99,13 @@ interface ApiService {
 
     @DELETE("dentists/{id}")
     suspend fun deleteDentist(@Path("id") id: Long): Response<ApiResponse<String>>
+
+    @Multipart
+    @POST("services/{id}/upload-image")
+    suspend fun uploadServiceImage(
+        @Path("id") id: Long,
+        @Part file: MultipartBody.Part
+    ): Response<ApiResponse<Map<String, String>>>
 
     // --- Admin: appointment status update ---
     // Only COMPLETED and CANCELLED are accepted — CONFIRMED is webhook-only
