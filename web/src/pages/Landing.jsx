@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { MapPin } from "lucide-react";
-import ToothIcon from "@/shared/components/ToothIcon";
 import "../styles/landing.css";
 
 // Clinic coordinates — fixed per SDD AC-7
@@ -75,7 +74,7 @@ function Landing() {
           {/* Left Column */}
           <div className="left-column">
             <div className="logo-section">
-              <span className="logo-icon"><ToothIcon size={24} /></span>
+              <img src="/Logo.png" alt="DentaLink" style={{ height: '48px', objectFit: 'contain' }} />
               <span className="logo-text">DentaLink</span>
             </div>
 

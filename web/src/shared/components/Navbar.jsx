@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
 import { Menu, X, User } from 'lucide-react';
-import ToothIcon from '@/shared/components/ToothIcon';
 
 export default function Navbar({ links = [] }) {
   const { user, logout } = useAuth();
@@ -26,7 +25,7 @@ export default function Navbar({ links = [] }) {
   return (
     <nav className="navbar" ref={ref}>
       <Link to={user?.role === 'ADMIN' ? '/admin' : '/dashboard'} className="navbar-brand">
-        <ToothIcon size={18} /> DentaLink
+        <img src="/Logo.png" alt="DentaLink" style={{ height: '28px', objectFit: 'contain', display: 'block' }} /><span>DentaLink</span>
       </Link>
 
       <div className="navbar-nav">

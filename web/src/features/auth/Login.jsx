@@ -4,7 +4,6 @@ import "./styles/login.css";
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from "@/shared/context/AuthContext";
 import { authAPI } from "@/shared/api/api";
-import ToothIcon from '@/shared/components/ToothIcon';
 import { toast } from 'sonner';
 
 function Login() {
@@ -76,7 +75,7 @@ function Login() {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <Link to="/" className="logo-text" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><ToothIcon size={18} /> DentaLink</Link>
+          <Link to="/" className="logo-text" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><img src="/Logo.png" alt="DentaLink" style={{ height: '36px', objectFit: 'contain', display: 'block' }} /><span>DentaLink</span></Link>
           <h2>Sign in to your account</h2>
           <p>Welcome back! Please enter your details.</p>
         </div>

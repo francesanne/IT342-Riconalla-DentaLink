@@ -35,7 +35,7 @@
 .logo-section {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: 6px;
 }
 
 .logo-icon {

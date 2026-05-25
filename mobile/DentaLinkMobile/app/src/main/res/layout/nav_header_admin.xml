@@ -8,6 +8,16 @@
     android:layout_height="160dp"
     android:background="@drawable/bg_nav_header">
 
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/logo"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:tint="#FFFFFF"
+        android:contentDescription="DentaLink logo"
+        android:layout_marginBottom="8dp" />
+
     <TextView
         android:text="DentaLink"
         android:textSize="22sp"
