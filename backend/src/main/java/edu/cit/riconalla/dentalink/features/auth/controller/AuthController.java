@@ -10,6 +10,7 @@ import edu.cit.riconalla.dentalink.features.auth.service.AuthService;
 import edu.cit.riconalla.dentalink.features.profile.service.UserService;
 import edu.cit.riconalla.dentalink.features.auth.strategy.EmailPasswordStrategy;
 import edu.cit.riconalla.dentalink.features.auth.strategy.GoogleStrategy;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -36,7 +37,7 @@ public class AuthController {
 
     /** POST /api/v1/auth/register — SDD §5.3 — 201 Created */
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<AuthResponseDto>> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<ApiResponse<AuthResponseDto>> register(@Valid @RequestBody RegisterRequest request) {
         AuthResponseDto data = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(data));
     }

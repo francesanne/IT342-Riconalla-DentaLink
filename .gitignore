@@ -4,3 +4,10 @@
 .env
 .env.local
 .env.*.local
+
+web/.env
+web/.env.*
+
+# JVM crash logs
+hs_err_pid*.log
+replay_pid*.log

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Filter chip — inactive state.
+    White fill, 1.5dp gray border, full pill radius.
+    Matches web .filter-chip default state.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/surface" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/divider" />
+    <corners android:radius="@dimen/chip_radius" />
+</shape>

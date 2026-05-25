@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Primary gradient button drawable.
+    Usage: android:background="@drawable/bg_button_primary"
+    On MaterialButton also set: app:backgroundTint="@null"
+    Gradient mirrors web gradient-primary: teal to mint (left-to-right).
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Pressed / ripple state — darker gradient -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="@color/primary_dark"
+                android:endColor="@color/secondary_dark"
+                android:angle="0" />
+            <corners android:radius="@dimen/button_radius" />
+        </shape>
+    </item>
+
+    <!-- Disabled state — muted fill -->
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/text_muted" />
+            <corners android:radius="@dimen/button_radius" />
+        </shape>
+    </item>
+
+    <!-- Default state — primary → secondary gradient -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="@color/primary"
+                android:endColor="@color/secondary"
+                android:angle="0" />
+            <corners android:radius="@dimen/button_radius" />
+        </shape>
+    </item>
+
+</selector>

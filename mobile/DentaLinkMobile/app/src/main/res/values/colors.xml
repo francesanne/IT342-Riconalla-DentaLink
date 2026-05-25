@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Brand -->
+    <!-- Brand — primary teal -->
     <color name="primary">#6EC1C3</color>
     <color name="primary_dark">#5DA9AB</color>
     <color name="primary_light">#8EDFE1</color>
     <color name="primary_container">#E0F5F5</color>
+
+    <!-- Brand — secondary mint (mirrors web secondary variable) -->
+    <color name="secondary">#9AD0A6</color>
+    <color name="secondary_dark">#7FB88B</color>
+    <color name="secondary_light">#B5E8C1</color>
 
     <!-- Surfaces -->
     <color name="background">#F9FAFB</color>
@@ -17,19 +22,30 @@
     <color name="text_muted">#9CA3AF</color>
     <color name="text_on_primary">#FFFFFF</color>
 
-    <!-- Status -->
-    <color name="status_confirmed">#6EC1C3</color>
+    <!-- Status — backgrounds -->
     <color name="status_confirmed_bg">#E0F5F5</color>
-    <color name="status_completed">#10B981</color>
     <color name="status_completed_bg">#D1FAE5</color>
-    <color name="status_pending">#F59E0B</color>
     <color name="status_pending_bg">#FEF3C7</color>
-    <color name="status_cancelled">#EF4444</color>
     <color name="status_cancelled_bg">#FEE2E2</color>
 
-    <!-- Divider and border -->
+    <!-- Status — foreground (icon/text on colored bg) -->
+    <color name="status_confirmed">#6EC1C3</color>
+    <color name="status_completed">#10B981</color>
+    <color name="status_pending">#F59E0B</color>
+    <color name="status_cancelled">#EF4444</color>
+
+    <!-- Badge text — dark tones readable on each status background -->
+    <color name="badge_confirmed_text">#0E7490</color>
+    <color name="badge_completed_text">#065F46</color>
+    <color name="badge_pending_text">#92400E</color>
+    <color name="badge_cancelled_text">#991B1B</color>
+
+    <!-- Divider, border, card stroke -->
     <color name="divider">#E5E7EB</color>
     <color name="border">#D1D5DB</color>
+    <color name="card_border">#E5E7EB</color>
+    <color name="input_border">#E5E7EB</color>
+    <color name="input_border_focus">#6EC1C3</color>
 
     <!-- Keep these for system use -->
     <color name="black">#FF000000</color>

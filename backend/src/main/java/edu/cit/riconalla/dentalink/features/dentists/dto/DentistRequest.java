@@ -1,8 +1,12 @@
 package edu.cit.riconalla.dentalink.features.dentists.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class DentistRequest {
 
+    @NotBlank(message = "Dentist name is required")
     private String name;
+
     private String specialization;
     private String status;
 

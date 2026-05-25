@@ -24,4 +24,8 @@
     <string name="error_network_prefix">Network error: </string>
     <string name="error_registration_failed">Registration failed. Please try again.</string>
     <string name="error_session_expired">Session expired. Please log in again.</string>
+
+    <!-- Navigation drawer accessibility -->
+    <string name="nav_open">Open navigation drawer</string>
+    <string name="nav_close">Close navigation drawer</string>
 </resources>

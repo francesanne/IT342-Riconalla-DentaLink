@@ -1,26 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="16dp"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <EditText android:id="@+id/etServiceName"
-        android:hint="Service Name"
-        android:inputType="textCapSentences"
-        android:layout_marginBottom="8dp"
-        android:layout_width="match_parent" android:layout_height="wrap_content" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <EditText android:id="@+id/etServiceDescription"
-        android:hint="Description"
-        android:inputType="textMultiLine"
-        android:minLines="2"
-        android:layout_marginBottom="8dp"
-        android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <!-- Tappable image placeholder; preview shows once an image is selected -->
+        <FrameLayout
+            android:id="@+id/flServiceImagePicker"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/primary_container"
+            android:clickable="true"
+            android:focusable="true">
 
-    <EditText android:id="@+id/etServicePrice"
-        android:hint="Price (e.g. 1500.00)"
-        android:inputType="numberDecimal"
-        android:layout_width="match_parent" android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/ivServiceImagePreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
 
-</LinearLayout>
+            <LinearLayout
+                android:id="@+id/llServiceImageHint"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:text="Tap to add image"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <EditText
+            android:id="@+id/etServiceName"
+            android:hint="Service Name"
+            android:inputType="textCapSentences"
+            android:background="@drawable/bg_input"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_muted"
+            android:textSize="15sp"
+            android:layout_marginBottom="@dimen/field_spacing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/etServiceDescription"
+            android:hint="Description (optional)"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:background="@drawable/bg_input"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_muted"
+            android:textSize="15sp"
+            android:layout_marginBottom="@dimen/field_spacing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/etServicePrice"
+            android:hint="Price (e.g. 1500.00)"
+            android:inputType="numberDecimal"
+            android:background="@drawable/bg_input"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_muted"
+            android:textSize="15sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</ScrollView>

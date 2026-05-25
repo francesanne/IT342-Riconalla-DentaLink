@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Filter chip — active/selected state.
+    Solid primary teal fill, no border, full pill radius.
+    Matches web .filter-chip.active state.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/primary" />
+    <corners android:radius="@dimen/chip_radius" />
+</shape>

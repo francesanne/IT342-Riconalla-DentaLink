@@ -11,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.services.model.ServiceDto
+import com.example.dentalinkmobile.utils.ImageLoader
+import com.google.android.material.appbar.MaterialToolbar
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class ServicesActivity : AppCompatActivity() {
@@ -19,9 +22,14 @@ class ServicesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_services)
 
+        val toolbar     = findViewById<MaterialToolbar>(R.id.toolbar)
         val lvServices  = findViewById<ListView>(R.id.lvServices)
         val tvEmpty     = findViewById<TextView>(R.id.tvServicesEmpty)
         val progressBar = findViewById<ProgressBar>(R.id.progressServices)
+
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener { finish() }
 
         progressBar.visibility = View.VISIBLE
 
@@ -39,7 +47,7 @@ class ServicesActivity : AppCompatActivity() {
                     } else {
                         tvEmpty.visibility    = View.GONE
                         lvServices.visibility = View.VISIBLE
-                        lvServices.adapter    = ServiceAdapter(this@ServicesActivity, services)
+                        lvServices.adapter    = ServiceAdapter(this@ServicesActivity, services, lifecycleScope)
                         lvServices.setOnItemClickListener { _, _, position, _ ->
                             openBooking(services[position])
                         }
@@ -66,17 +74,30 @@ class ServicesActivity : AppCompatActivity() {
 
 private class ServiceAdapter(
     context: Context,
-    private val items: List<ServiceDto>
+    private val items: List<ServiceDto>,
+    private val scope: CoroutineScope
 ) : ArrayAdapter<ServiceDto>(context, 0, items) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView ?: LayoutInflater.from(context)
             .inflate(R.layout.item_service, parent, false)
 
-        val item = items[position]
+        val item    = items[position]
+        val ivImage = view.findViewById<ImageView>(R.id.ivServiceImage)
+
         view.findViewById<TextView>(R.id.tvServiceName).text        = item.name
         view.findViewById<TextView>(R.id.tvServiceDescription).text = item.description ?: ""
         view.findViewById<TextView>(R.id.tvServicePrice).text       = "P${String.format("%.2f", item.price)}"
+
+        // Reset to placeholder before (re)loading — prevents stale images during recycling
+        ivImage.setImageResource(android.R.drawable.ic_menu_gallery)
+
+        if (!item.imageUrl.isNullOrBlank()) {
+            scope.launch {
+                ImageLoader.loadInto(item.imageUrl, ivImage)
+            }
+        }
+
         return view
     }
 }

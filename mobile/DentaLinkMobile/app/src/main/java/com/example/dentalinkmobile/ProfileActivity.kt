@@ -1,18 +1,36 @@
 package com.example.dentalinkmobile
 
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.profile.model.UpdateProfileRequest
+import com.example.dentalinkmobile.utils.ImageLoader
 import com.example.dentalinkmobile.utils.SessionManager
+import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class ProfileActivity : AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
+    private lateinit var ivProfilePicture: ImageView
+
+    private val pickImageLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            displayLocalImage(uri)
+            uploadProfilePicture(uri)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +38,13 @@ class ProfileActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(this)
 
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener { finish() }
+
+        ivProfilePicture      = findViewById(R.id.ivProfilePicture)
+        val btnChangePhoto    = findViewById<Button>(R.id.btnChangePhoto)
         val etFirstName       = findViewById<EditText>(R.id.etProfileFirstName)
         val etLastName        = findViewById<EditText>(R.id.etProfileLastName)
         val tvEmail           = findViewById<TextView>(R.id.tvProfileEmail)
@@ -27,6 +52,10 @@ class ProfileActivity : AppCompatActivity() {
         val etNewPassword     = findViewById<EditText>(R.id.etNewPassword)
         val btnSave           = findViewById<Button>(R.id.btnSaveProfile)
         val btnLogout         = findViewById<Button>(R.id.btnLogout)
+
+        btnChangePhoto.setOnClickListener {
+            pickImageLauncher.launch("image/*")
+        }
 
         // Load current profile from /auth/me
         lifecycleScope.launch {
@@ -38,6 +67,10 @@ class ProfileActivity : AppCompatActivity() {
                         etFirstName.setText(user.firstName)
                         etLastName.setText(user.lastName)
                         tvEmail.text = user.email
+                        // Load remote profile picture from Supabase if available
+                        if (!user.profileImageUrl.isNullOrBlank()) {
+                            ImageLoader.loadInto(user.profileImageUrl, ivProfilePicture)
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -92,6 +125,45 @@ class ProfileActivity : AppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
             finish()
+        }
+    }
+
+    private fun displayLocalImage(uri: Uri) {
+        try {
+            val stream = contentResolver.openInputStream(uri)
+            val bitmap = BitmapFactory.decodeStream(stream)
+            stream?.close()
+            if (bitmap != null) ivProfilePicture.setImageBitmap(bitmap)
+        } catch (e: Exception) {
+            // silently ignore display errors — the upload may still succeed
+        }
+    }
+
+    private fun uploadProfilePicture(uri: Uri) {
+        lifecycleScope.launch {
+            try {
+                val mimeType = contentResolver.getType(uri) ?: "image/jpeg"
+                val bytes = contentResolver.openInputStream(uri)?.readBytes()
+                    ?: return@launch
+
+                val requestBody = bytes.toRequestBody(mimeType.toMediaTypeOrNull())
+                val part = MultipartBody.Part.createFormData("file", "profile.jpg", requestBody)
+
+                val response = RetrofitClient.apiService.uploadProfilePicture(part)
+                if (response.isSuccessful) {
+                    Toast.makeText(this@ProfileActivity, "Profile picture updated", Toast.LENGTH_SHORT).show()
+                    // Reload the remote URL returned by the server so the displayed image
+                    // reflects exactly what's stored (server may resize/process it)
+                    val remoteUrl = response.body()?.data?.profileImageUrl
+                    if (!remoteUrl.isNullOrBlank()) {
+                        ImageLoader.loadInto(remoteUrl, ivProfilePicture)
+                    }
+                } else {
+                    Toast.makeText(this@ProfileActivity, "Upload failed (${response.code()})", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@ProfileActivity, "Upload error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

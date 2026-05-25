@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Stat card icon background — red (cancelled / revenue accent).
+    Matches web .stat-icon.red danger-light color.
+    44dp × 44dp, 10dp corners.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/status_cancelled_bg" />
+    <corners android:radius="@dimen/stat_icon_radius" />
+</shape>

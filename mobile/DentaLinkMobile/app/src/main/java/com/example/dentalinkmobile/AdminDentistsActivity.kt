@@ -1,14 +1,19 @@
 package com.example.dentalinkmobile
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.dentists.model.DentistDto
 import com.example.dentalinkmobile.features.payments.model.DentistRequest
+import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.launch
 
 class AdminDentistsActivity : AppCompatActivity() {
@@ -21,13 +26,21 @@ class AdminDentistsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_dentists)
 
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener { finish() }
+
         lvDentists = findViewById(R.id.lvAdminDentists)
         tvEmpty    = findViewById(R.id.tvAdminDentistsEmpty)
 
         findViewById<Button>(R.id.btnAddDentist).setOnClickListener {
             showDentistDialog(null)
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
         loadDentists()
     }
 
@@ -56,11 +69,7 @@ class AdminDentistsActivity : AppCompatActivity() {
         tvEmpty.visibility    = View.GONE
         lvDentists.visibility = View.VISIBLE
 
-        val labels = dentistList.map { d ->
-            "${d.name}\n${d.specialization ?: ""} | ${d.status}"
-        }
-        lvDentists.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, labels)
-
+        lvDentists.adapter = AdminDentistAdapter(this, dentistList)
         lvDentists.setOnItemClickListener { _, _, position, _ ->
             showItemOptions(dentistList[position])
         }
@@ -80,12 +89,12 @@ class AdminDentistsActivity : AppCompatActivity() {
     }
 
     private fun showDentistDialog(existing: DentistDto?) {
-        val view           = layoutInflater.inflate(R.layout.dialog_dentist, null)
-        val etName         = view.findViewById<EditText>(R.id.etDentistName)
-        val etSpec         = view.findViewById<EditText>(R.id.etDentistSpecialization)
-        val rgStatus       = view.findViewById<RadioGroup>(R.id.rgDentistStatus)
-        val rbActive       = view.findViewById<RadioButton>(R.id.rbActive)
-        val rbInactive     = view.findViewById<RadioButton>(R.id.rbInactive)
+        val view       = layoutInflater.inflate(R.layout.dialog_dentist, null)
+        val etName     = view.findViewById<EditText>(R.id.etDentistName)
+        val etSpec     = view.findViewById<EditText>(R.id.etDentistSpecialization)
+        val rgStatus   = view.findViewById<RadioGroup>(R.id.rgDentistStatus)
+        val rbActive   = view.findViewById<RadioButton>(R.id.rbActive)
+        val rbInactive = view.findViewById<RadioButton>(R.id.rbInactive)
 
         if (existing != null) {
             etName.setText(existing.name)
@@ -170,5 +179,37 @@ class AdminDentistsActivity : AppCompatActivity() {
                 Toast.makeText(this@AdminDentistsActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+}
+
+private class AdminDentistAdapter(
+    context: Context,
+    private val items: List<DentistDto>
+) : ArrayAdapter<DentistDto>(context, 0, items) {
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val view = convertView ?: LayoutInflater.from(context)
+            .inflate(R.layout.item_admin_dentist, parent, false)
+
+        val item = items[position]
+
+        view.findViewById<TextView>(R.id.tvDentistInitial).text = item.name.firstOrNull()?.uppercase() ?: "?"
+        view.findViewById<TextView>(R.id.tvDentistName).text   = item.name
+        view.findViewById<TextView>(R.id.tvDentistSpec).text   = item.specialization ?: ""
+
+        val tvStatus = view.findViewById<TextView>(R.id.tvDentistStatus)
+        tvStatus.text = item.status
+        when (item.status) {
+            "ACTIVE" -> {
+                tvStatus.setBackgroundResource(R.drawable.bg_badge_completed)
+                tvStatus.setTextColor(ContextCompat.getColor(context, R.color.badge_completed_text))
+            }
+            else -> {
+                tvStatus.setBackgroundResource(R.drawable.bg_badge_cancelled)
+                tvStatus.setTextColor(ContextCompat.getColor(context, R.color.badge_cancelled_text))
+            }
+        }
+
+        return view
     }
 }

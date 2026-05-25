@@ -17,7 +17,7 @@ function Login() {
 
   const finishLogin = (token, userData) => {
     localStorage.setItem("token", token);
-    toast.success(`Welcome back, ${userData.firstName}!`);
+    toast.success(`Welcome back, ${userData.firstName?.trim()}!`);
     setUser(userData);
     navigate(userData.role === "ADMIN" ? "/admin" : "/dashboard");
   };

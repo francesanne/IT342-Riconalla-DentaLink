@@ -12,6 +12,7 @@ import edu.cit.riconalla.dentalink.features.auth.entity.Role;
 import edu.cit.riconalla.dentalink.features.auth.repository.UserRepository;
 import edu.cit.riconalla.dentalink.shared.security.JwtUtil;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,10 +21,11 @@ import java.util.Collections;
 @Service
 public class GoogleService {
 
+    @Value("${google.client-id}")
+    private String clientId;
+
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-
-    private final String CLIENT_ID = "573816851730-23qfd86kjha2ahkv57cdfaoakk2bm4t8.apps.googleusercontent.com";
 
     public GoogleService(UserRepository userRepository, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
@@ -36,7 +38,7 @@ public class GoogleService {
                     new NetHttpTransport(),
                     GsonFactory.getDefaultInstance()
             )
-                    .setAudience(Collections.singletonList(CLIENT_ID))
+                    .setAudience(Collections.singletonList(clientId))
                     .build();
 
             GoogleIdToken idToken = verifier.verify(idTokenString);

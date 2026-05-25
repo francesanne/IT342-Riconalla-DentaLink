@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Teal circle background -->
+    <path
+        android:fillColor="#6EC1C3"
+        android:pathData="M32,0C49.67,0 64,14.33 64,32C64,49.67 49.67,64 32,64C14.33,64 0,49.67 0,32C0,14.33 14.33,0 32,0Z"/>
+
+    <!-- Minimal white tooth: smooth crown + two tapered roots -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M22,38L20,53C19.8,56 25.2,56 25,53L27,44C27.5,42 29.5,40.5 32,40.5C34.5,40.5 36.5,42 37,44L39,53C38.8,56 44.2,56 44,53L42,38C44,36 46,32 45.5,27C45,20 41.5,14.5 32,14.5C22.5,14.5 19,20 18.5,27C18,32 20,36 22,38Z"/>
+</vector>

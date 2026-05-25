@@ -2,27 +2,43 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:background="@drawable/bg_card"
-    android:padding="@dimen/card_padding"
-    android:layout_marginHorizontal="0dp"
-    android:layout_marginBottom="@dimen/item_spacing"
-    android:elevation="1dp"
+    android:layout_marginStart="@dimen/screen_padding"
+    android:layout_marginEnd="@dimen/screen_padding"
+    android:layout_marginBottom="12dp"
+    android:elevation="3dp"
+    android:clipToOutline="true"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="110dp">
 
-    <!-- Text content -->
+    <!-- Square thumbnail on the left, clipped by card outline -->
+    <ImageView
+        android:id="@+id/ivServiceImage"
+        android:layout_width="110dp"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:background="@color/primary_container"
+        android:src="@android:drawable/ic_menu_gallery" />
+
+    <!-- Content column -->
     <LinearLayout
         android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="12dp"
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/tvServiceName"
             android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:layout_marginBottom="4dp"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <TextView
@@ -31,30 +47,36 @@
             android:textColor="@color/text_secondary"
             android:maxLines="2"
             android:ellipsize="end"
-            android:layout_marginBottom="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
 
-        <TextView
-            android:id="@+id/tvServicePrice"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/primary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <!-- Price row -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvServicePrice"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="Book →"
+                android:textSize="12sp"
+                android:textColor="@color/primary"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
     </LinearLayout>
-
-    <!-- Book Now label on the right -->
-    <TextView
-        android:text="Book Now"
-        android:textSize="12sp"
-        android:textColor="@color/primary"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:paddingHorizontal="8dp"
-        android:layout_gravity="center_vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
 </LinearLayout>
