@@ -44,11 +44,16 @@ public class AppointmentService {
         User patient = userRepository.findByEmail(patientEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Validate service and dentist exist
+        // Validate service exists
         serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new RuntimeException("Service not found"));
-        dentistRepository.findById(dentistId)
+
+        // Validate dentist exists and is active
+        var dentist = dentistRepository.findById(dentistId)
                 .orElseThrow(() -> new RuntimeException("Dentist not found"));
+        if (!"ACTIVE".equals(dentist.getDentistStatus())) {
+            throw new IllegalArgumentException("Dentist is not currently available for booking");
+        }
 
         // Double-booking check
         if (appointmentRepository.existsByDentistIdAndAppointmentDatetime(dentistId, appointmentDatetime)) {
