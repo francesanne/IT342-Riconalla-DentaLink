@@ -48,7 +48,7 @@ function Register() {
 
       const { accessToken, user } = response.data.data;
       localStorage.setItem("token", accessToken);
-      toast.success(`Welcome to DentaLink, ${user.firstName}!`);
+      toast.success(`Welcome to DentaLink, ${user.firstName?.trim()}!`);
       setUser(user);
       navigate(user.role === "ADMIN" ? "/admin" : "/dashboard");
     } catch (err) {
@@ -72,7 +72,7 @@ function Register() {
       if (response.data && response.data.data) {
         const { accessToken, user } = response.data.data;
         localStorage.setItem("token", accessToken);
-        toast.success(`Welcome to DentaLink, ${user.firstName}!`);
+        toast.success(`Welcome to DentaLink, ${user.firstName?.trim()}!`);
         setUser(user);
         navigate(user.role === "ADMIN" ? "/admin" : "/dashboard");
       }

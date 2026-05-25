@@ -1,10 +1,13 @@
 package com.example.dentalinkmobile
 
 import android.app.AlertDialog
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -12,7 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.services.model.ServiceDto
 import com.example.dentalinkmobile.features.payments.model.ServiceRequest
+import com.example.dentalinkmobile.utils.ImageLoader
 import com.google.android.material.appbar.MaterialToolbar
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -24,9 +29,7 @@ class AdminServicesActivity : AppCompatActivity() {
     private lateinit var lvServices: ListView
     private lateinit var tvEmpty: TextView
 
-    // URI selected while a dialog is open; cleared after upload attempt
     private var pendingServiceImageUri: Uri? = null
-    // Dialog-scoped callback: updates the preview ImageView when an image is picked
     private var onImagePickedCallback: ((Uri) -> Unit)? = null
 
     private val pickImageLauncher = registerForActivityResult(
@@ -53,7 +56,10 @@ class AdminServicesActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnAddService).setOnClickListener {
             showServiceDialog(null)
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
         loadServices()
     }
 
@@ -82,11 +88,7 @@ class AdminServicesActivity : AppCompatActivity() {
         tvEmpty.visibility    = View.GONE
         lvServices.visibility = View.VISIBLE
 
-        val labels = serviceList.map { s ->
-            "${s.name}\nP${String.format("%.2f", s.price)}\n${s.description ?: ""}"
-        }
-        lvServices.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, labels)
-
+        lvServices.adapter = AdminServiceAdapter(this, serviceList, lifecycleScope)
         lvServices.setOnItemClickListener { _, _, position, _ ->
             showItemOptions(serviceList[position])
         }
@@ -109,21 +111,20 @@ class AdminServicesActivity : AppCompatActivity() {
         pendingServiceImageUri = null
 
         val view = layoutInflater.inflate(R.layout.dialog_service, null)
-        val flImagePicker    = view.findViewById<android.widget.FrameLayout>(R.id.flServiceImagePicker)
-        val ivImagePreview   = view.findViewById<ImageView>(R.id.ivServiceImagePreview)
-        val llImageHint      = view.findViewById<android.widget.LinearLayout>(R.id.llServiceImageHint)
-        val etName           = view.findViewById<EditText>(R.id.etServiceName)
-        val etDescription    = view.findViewById<EditText>(R.id.etServiceDescription)
-        val etPrice          = view.findViewById<EditText>(R.id.etServicePrice)
+        val flImagePicker  = view.findViewById<android.widget.FrameLayout>(R.id.flServiceImagePicker)
+        val ivImagePreview = view.findViewById<ImageView>(R.id.ivServiceImagePreview)
+        val llImageHint    = view.findViewById<android.widget.LinearLayout>(R.id.llServiceImageHint)
+        val etName         = view.findViewById<EditText>(R.id.etServiceName)
+        val etDescription  = view.findViewById<EditText>(R.id.etServiceDescription)
+        val etPrice        = view.findViewById<EditText>(R.id.etServicePrice)
 
         if (existing != null) {
             etName.setText(existing.name)
             etDescription.setText(existing.description ?: "")
             etPrice.setText(existing.price.toString())
-            // Load existing service image into the preview if available
             if (!existing.imageUrl.isNullOrBlank()) {
                 lifecycleScope.launch {
-                    val bitmap = com.example.dentalinkmobile.utils.ImageLoader.fetchBitmap(existing.imageUrl)
+                    val bitmap = ImageLoader.fetchBitmap(existing.imageUrl)
                     if (bitmap != null) {
                         ivImagePreview.setImageBitmap(bitmap)
                         ivImagePreview.visibility = View.VISIBLE
@@ -180,18 +181,20 @@ class AdminServicesActivity : AppCompatActivity() {
     }
 
     private fun createService(request: ServiceRequest) {
+        val imageUri = pendingServiceImageUri
+        pendingServiceImageUri = null
+        onImagePickedCallback  = null
+
         lifecycleScope.launch {
             try {
                 val response = RetrofitClient.apiService.createService(request)
                 if (response.isSuccessful) {
                     val newService = response.body()?.data
                     Toast.makeText(this@AdminServicesActivity, "Service created", Toast.LENGTH_SHORT).show()
-                    val imageUri = pendingServiceImageUri
+                    // Upload image first (suspend), THEN reload so the image URL is already saved
                     if (newService != null && imageUri != null) {
                         uploadServiceImage(newService.id, imageUri)
                     }
-                    pendingServiceImageUri = null
-                    onImagePickedCallback = null
                     loadServices()
                 } else {
                     Toast.makeText(this@AdminServicesActivity, "Failed to create service (${response.code()})", Toast.LENGTH_SHORT).show()
@@ -203,17 +206,19 @@ class AdminServicesActivity : AppCompatActivity() {
     }
 
     private fun updateService(id: Long, request: ServiceRequest) {
+        val imageUri = pendingServiceImageUri
+        pendingServiceImageUri = null
+        onImagePickedCallback  = null
+
         lifecycleScope.launch {
             try {
                 val response = RetrofitClient.apiService.updateService(id, request)
                 if (response.isSuccessful) {
                     Toast.makeText(this@AdminServicesActivity, "Service updated", Toast.LENGTH_SHORT).show()
-                    val imageUri = pendingServiceImageUri
+                    // Upload image first (suspend), THEN reload
                     if (imageUri != null) {
                         uploadServiceImage(id, imageUri)
                     }
-                    pendingServiceImageUri = null
-                    onImagePickedCallback = null
                     loadServices()
                 } else {
                     Toast.makeText(this@AdminServicesActivity, "Failed to update service (${response.code()})", Toast.LENGTH_SHORT).show()
@@ -249,30 +254,48 @@ class AdminServicesActivity : AppCompatActivity() {
         }
     }
 
-    private fun uploadServiceImage(serviceId: Long, uri: Uri) {
-        lifecycleScope.launch {
-            try {
-                val mimeType = contentResolver.getType(uri) ?: "image/jpeg"
-                val bytes = contentResolver.openInputStream(uri)?.readBytes()
-                    ?: return@launch
+    // suspend — runs inline inside the caller's coroutine so loadServices() waits for it
+    private suspend fun uploadServiceImage(serviceId: Long, uri: Uri) {
+        try {
+            val mimeType    = contentResolver.getType(uri) ?: "image/jpeg"
+            val bytes       = contentResolver.openInputStream(uri)?.readBytes() ?: return
+            val requestBody = bytes.toRequestBody(mimeType.toMediaTypeOrNull())
+            val part        = MultipartBody.Part.createFormData("file", "service.jpg", requestBody)
 
-                val requestBody = bytes.toRequestBody(mimeType.toMediaTypeOrNull())
-                val part = MultipartBody.Part.createFormData("file", "service.jpg", requestBody)
+            val response = RetrofitClient.apiService.uploadServiceImage(serviceId, part)
+            if (!response.isSuccessful) {
+                Toast.makeText(this@AdminServicesActivity, "Image upload failed (${response.code()})", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this@AdminServicesActivity, "Image upload error: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+}
 
-                val response = RetrofitClient.apiService.uploadServiceImage(serviceId, part)
-                if (response.isSuccessful) {
-                    val imageUrl = response.body()?.data?.get("imageUrl")
-                    if (imageUrl != null) {
-                        Toast.makeText(this@AdminServicesActivity, "Service image uploaded", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this@AdminServicesActivity, "Image upload failed: no URL returned", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(this@AdminServicesActivity, "Image upload failed (${response.code()})", Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                Toast.makeText(this@AdminServicesActivity, "Image upload error: ${e.message}", Toast.LENGTH_SHORT).show()
+private class AdminServiceAdapter(
+    context: Context,
+    private val items: List<ServiceDto>,
+    private val scope: CoroutineScope
+) : ArrayAdapter<ServiceDto>(context, 0, items) {
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val view = convertView ?: LayoutInflater.from(context)
+            .inflate(R.layout.item_admin_service, parent, false)
+
+        val item    = items[position]
+        val ivImage = view.findViewById<ImageView>(R.id.ivServiceImage)
+
+        view.findViewById<TextView>(R.id.tvServiceName).text        = item.name
+        view.findViewById<TextView>(R.id.tvServiceDescription).text = item.description ?: ""
+        view.findViewById<TextView>(R.id.tvServicePrice).text       = "P${String.format("%.2f", item.price)}"
+
+        ivImage.setImageResource(android.R.drawable.ic_menu_gallery)
+        if (!item.imageUrl.isNullOrBlank()) {
+            scope.launch {
+                ImageLoader.loadInto(item.imageUrl, ivImage)
             }
         }
+
+        return view
     }
 }

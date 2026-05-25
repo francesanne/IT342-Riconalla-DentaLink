@@ -52,6 +52,9 @@
             android:name=".ClinicDirectionsActivity"
             android:exported="false" />
         <activity
+            android:name=".PaymentWebViewActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

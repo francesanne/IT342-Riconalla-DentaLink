@@ -29,7 +29,26 @@ class ClinicDirectionsActivity : AppCompatActivity() {
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
         webView.webViewClient = WebViewClient()
-        webView.loadUrl("https://maps.google.com/maps?q=$CLINIC_LAT,$CLINIC_LNG&z=16&output=embed")
+
+        // Google Maps embed now requires an actual <iframe> — load HTML wrapper
+        val embedUrl = "https://maps.google.com/maps?q=$CLINIC_LAT,$CLINIC_LNG&z=16&output=embed"
+        val html = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                    * { margin: 0; padding: 0; }
+                    html, body, iframe { width: 100%; height: 100%; border: 0; }
+                </style>
+            </head>
+            <body>
+                <iframe src="$embedUrl" allowfullscreen loading="lazy"></iframe>
+            </body>
+            </html>
+        """.trimIndent()
+
+        webView.loadDataWithBaseURL("https://maps.google.com", html, "text/html", "UTF-8", null)
 
         findViewById<Button>(R.id.btnOpenMaps).setOnClickListener {
             val geoUri = Uri.parse(

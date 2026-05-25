@@ -1,13 +1,19 @@
 package com.example.dentalinkmobile
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
+import com.example.dentalinkmobile.features.dashboard.model.RecentAppointment
 import com.example.dentalinkmobile.utils.SessionManager
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
@@ -18,13 +24,18 @@ class AdminDashboardActivity : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
     private lateinit var drawerLayout: DrawerLayout
 
+    private lateinit var tvTotal: TextView
+    private lateinit var tvPending: TextView
+    private lateinit var tvConfirmed: TextView
+    private lateinit var tvRevenue: TextView
+    private lateinit var lvRecent: ListView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_dashboard)
 
         sessionManager = SessionManager(this)
 
-        // ── Toolbar + Drawer ──
         val toolbar  = findViewById<MaterialToolbar>(R.id.toolbar)
         drawerLayout = findViewById(R.id.drawerLayout)
         val navView  = findViewById<NavigationView>(R.id.navView)
@@ -51,12 +62,11 @@ class AdminDashboardActivity : AppCompatActivity() {
         }
         navView.setCheckedItem(R.id.nav_admin_dashboard)
 
-        // ── Dashboard nav buttons ──
-        val tvTotal     = findViewById<TextView>(R.id.tvTotalAppointments)
-        val tvPending   = findViewById<TextView>(R.id.tvPendingPayments)
-        val tvConfirmed = findViewById<TextView>(R.id.tvConfirmedAppointments)
-        val tvRevenue   = findViewById<TextView>(R.id.tvTotalRevenue)
-        val lvRecent    = findViewById<ListView>(R.id.lvRecentAppointments)
+        tvTotal     = findViewById(R.id.tvTotalAppointments)
+        tvPending   = findViewById(R.id.tvPendingPayments)
+        tvConfirmed = findViewById(R.id.tvConfirmedAppointments)
+        tvRevenue   = findViewById(R.id.tvTotalRevenue)
+        lvRecent    = findViewById(R.id.lvRecentAppointments)
 
         findViewById<Button>(R.id.btnAdminServices).setOnClickListener {
             startActivity(Intent(this, AdminServicesActivity::class.java))
@@ -70,17 +80,14 @@ class AdminDashboardActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnAdminPayments).setOnClickListener {
             startActivity(Intent(this, AdminPaymentsActivity::class.java))
         }
-
-        loadDashboard(tvTotal, tvPending, tvConfirmed, tvRevenue, lvRecent)
     }
 
-    private fun loadDashboard(
-        tvTotal: TextView,
-        tvPending: TextView,
-        tvConfirmed: TextView,
-        tvRevenue: TextView,
-        lvRecent: ListView
-    ) {
+    override fun onResume() {
+        super.onResume()
+        loadDashboard()
+    }
+
+    private fun loadDashboard() {
         lifecycleScope.launch {
             try {
                 val response = RetrofitClient.apiService.getAdminDashboard()
@@ -92,14 +99,10 @@ class AdminDashboardActivity : AppCompatActivity() {
                     tvConfirmed.text = stats.confirmedAppointments.toString()
                     tvRevenue.text   = "P${String.format("%.2f", stats.totalRevenue)}"
 
-                    val items = stats.recentAppointments.map { r ->
-                        "${r.patientName ?: "Patient"} — ${r.dentistName ?: "Dentist"}\n" +
-                        "${formatDatetime(r.appointmentDatetime)}  |  ${r.appointmentStatus ?: ""}"
-                    }
-                    lvRecent.adapter = ArrayAdapter(
+                    lvRecent.adapter = RecentAppointmentAdapter(
                         this@AdminDashboardActivity,
-                        android.R.layout.simple_list_item_1,
-                        items
+                        stats.recentAppointments,
+                        ::formatDatetime
                     )
                 } else {
                     Toast.makeText(this@AdminDashboardActivity, "Failed to load dashboard", Toast.LENGTH_SHORT).show()
@@ -124,5 +127,50 @@ class AdminDashboardActivity : AppCompatActivity() {
             val ldt = java.time.LocalDateTime.parse(dt.take(19))
             ldt.format(java.time.format.DateTimeFormatter.ofPattern("MMM d, yyyy h:mm a"))
         } catch (e: Exception) { dt }
+    }
+}
+
+private class RecentAppointmentAdapter(
+    context: Context,
+    private val items: List<RecentAppointment>,
+    private val fmt: (String?) -> String
+) : ArrayAdapter<RecentAppointment>(context, 0, items) {
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val view = convertView ?: LayoutInflater.from(context)
+            .inflate(R.layout.item_recent_appointment, parent, false)
+
+        val item = items[position]
+
+        view.findViewById<TextView>(R.id.tvRecentPatient).text  = item.patientName ?: "Patient"
+        view.findViewById<TextView>(R.id.tvRecentDentist).text  = item.dentistName ?: ""
+        view.findViewById<TextView>(R.id.tvRecentDatetime).text = fmt(item.appointmentDatetime)
+
+        val tvStatus = view.findViewById<TextView>(R.id.tvRecentStatus)
+        tvStatus.text = (item.appointmentStatus ?: "").replace("_", " ")
+        when (item.appointmentStatus) {
+            "CONFIRMED" -> {
+                tvStatus.setBackgroundResource(R.drawable.bg_badge_confirmed)
+                tvStatus.setTextColor(ContextCompat.getColor(context, R.color.badge_confirmed_text))
+            }
+            "COMPLETED" -> {
+                tvStatus.setBackgroundResource(R.drawable.bg_badge_completed)
+                tvStatus.setTextColor(ContextCompat.getColor(context, R.color.badge_completed_text))
+            }
+            "PENDING_PAYMENT" -> {
+                tvStatus.setBackgroundResource(R.drawable.bg_badge_pending)
+                tvStatus.setTextColor(ContextCompat.getColor(context, R.color.badge_pending_text))
+            }
+            "CANCELLED" -> {
+                tvStatus.setBackgroundResource(R.drawable.bg_badge_cancelled)
+                tvStatus.setTextColor(ContextCompat.getColor(context, R.color.badge_cancelled_text))
+            }
+            else -> {
+                tvStatus.setBackgroundResource(R.drawable.bg_status_badge)
+                tvStatus.setTextColor(ContextCompat.getColor(context, R.color.text_secondary))
+            }
+        }
+
+        return view
     }
 }

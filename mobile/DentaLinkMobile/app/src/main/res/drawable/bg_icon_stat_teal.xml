@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Stat card icon background — teal (upcoming / general).
+    Matches web .stat-icon with primary teal tint.
+    44dp × 44dp, 10dp corners.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/primary_container" />
+    <corners android:radius="@dimen/stat_icon_radius" />
+</shape>

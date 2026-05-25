@@ -1,10 +1,14 @@
 package com.example.dentalinkmobile
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.appointments.model.AppointmentItem
@@ -29,7 +33,10 @@ class AdminAppointmentsActivity : AppCompatActivity() {
 
         lvAppointments = findViewById(R.id.lvAdminAppointments)
         tvEmpty        = findViewById(R.id.tvAdminAppointmentsEmpty)
+    }
 
+    override fun onResume() {
+        super.onResume()
         loadAppointments()
     }
 
@@ -58,11 +65,7 @@ class AdminAppointmentsActivity : AppCompatActivity() {
         tvEmpty.visibility        = View.GONE
         lvAppointments.visibility = View.VISIBLE
 
-        val labels = allAppointments.map { a ->
-            "${a.serviceName ?: "Service"} | ${a.dentistName ?: "Dentist"}\n${formatDatetime(a.appointmentDatetime)}\nStatus: ${a.status} | Payment: ${a.paymentStatus}"
-        }
-        lvAppointments.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, labels)
-
+        lvAppointments.adapter = AdminAppointmentAdapter(this, allAppointments, ::formatDatetime)
         lvAppointments.setOnItemClickListener { _, _, position, _ ->
             showStatusOptions(allAppointments[position])
         }
@@ -71,8 +74,6 @@ class AdminAppointmentsActivity : AppCompatActivity() {
     private fun showStatusOptions(appointment: AppointmentItem) {
         val currentStatus = appointment.status ?: ""
 
-        // Only show update option for statuses that admin can change to COMPLETED or CANCELLED
-        // CONFIRMED is webhook-only, COMPLETED and CANCELLED are already terminal
         if (currentStatus == "COMPLETED" || currentStatus == "CANCELLED") {
             Toast.makeText(this, "This appointment is already $currentStatus", Toast.LENGTH_SHORT).show()
             return
@@ -113,5 +114,64 @@ class AdminAppointmentsActivity : AppCompatActivity() {
             val ldt = java.time.LocalDateTime.parse(dt.take(19))
             ldt.format(java.time.format.DateTimeFormatter.ofPattern("MMM d, yyyy h:mm a"))
         } catch (e: Exception) { dt }
+    }
+}
+
+private class AdminAppointmentAdapter(
+    context: Context,
+    private val items: List<AppointmentItem>,
+    private val fmt: (String?) -> String
+) : ArrayAdapter<AppointmentItem>(context, 0, items) {
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val view = convertView ?: LayoutInflater.from(context)
+            .inflate(R.layout.item_admin_appointment, parent, false)
+
+        val item = items[position]
+
+        view.findViewById<TextView>(R.id.tvAdminApptService).text  = item.serviceName ?: "Service"
+        view.findViewById<TextView>(R.id.tvAdminApptDentist).text  = item.dentistName ?: ""
+        view.findViewById<TextView>(R.id.tvAdminApptDatetime).text = fmt(item.appointmentDatetime)
+
+        val tvStatus = view.findViewById<TextView>(R.id.tvAdminApptStatus)
+        tvStatus.text = (item.status ?: "").replace("_", " ")
+        when (item.status) {
+            "CONFIRMED" -> {
+                tvStatus.setBackgroundResource(R.drawable.bg_badge_confirmed)
+                tvStatus.setTextColor(ContextCompat.getColor(context, R.color.badge_confirmed_text))
+            }
+            "COMPLETED" -> {
+                tvStatus.setBackgroundResource(R.drawable.bg_badge_completed)
+                tvStatus.setTextColor(ContextCompat.getColor(context, R.color.badge_completed_text))
+            }
+            "PENDING_PAYMENT" -> {
+                tvStatus.setBackgroundResource(R.drawable.bg_badge_pending)
+                tvStatus.setTextColor(ContextCompat.getColor(context, R.color.badge_pending_text))
+            }
+            "CANCELLED" -> {
+                tvStatus.setBackgroundResource(R.drawable.bg_badge_cancelled)
+                tvStatus.setTextColor(ContextCompat.getColor(context, R.color.badge_cancelled_text))
+            }
+            else -> {
+                tvStatus.setBackgroundResource(R.drawable.bg_status_badge)
+                tvStatus.setTextColor(ContextCompat.getColor(context, R.color.text_secondary))
+            }
+        }
+
+        val tvPayment = view.findViewById<TextView>(R.id.tvAdminApptPayment)
+        val isPaid = item.paymentStatus == "PAID"
+        tvPayment.text = if (isPaid) "PAID" else "UNPAID"
+        if (isPaid) {
+            tvPayment.setBackgroundResource(R.drawable.bg_badge_completed)
+            tvPayment.setTextColor(ContextCompat.getColor(context, R.color.badge_completed_text))
+        } else {
+            tvPayment.setBackgroundResource(R.drawable.bg_badge_pending)
+            tvPayment.setTextColor(ContextCompat.getColor(context, R.color.badge_pending_text))
+        }
+
+        val isTerminal = item.status == "COMPLETED" || item.status == "CANCELLED"
+        view.alpha = if (isTerminal) 0.6f else 1.0f
+
+        return view
     }
 }

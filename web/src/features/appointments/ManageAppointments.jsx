@@ -30,6 +30,7 @@ export default function ManageAppointments() {
   const [statusFilter, setStatusFilter] = useState('');
   const [updating, setUpdating] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [menuPos, setMenuPos] = useState({ top: 0, right: 0 });
 
   const load = () => {
     setLoading(true);
@@ -51,6 +52,13 @@ export default function ManageAppointments() {
     } catch (err) {
       toast.error(err.response?.data?.error?.message || 'Failed to update appointment status.');
     } finally { setUpdating(null); }
+  };
+
+  const openMenu = (e, id) => {
+    if (openMenuId === id) { setOpenMenuId(null); return; }
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+    setOpenMenuId(id);
   };
 
   return (
@@ -142,38 +150,13 @@ export default function ManageAppointments() {
                         ) : (a.status === 'COMPLETED' || a.status === 'CANCELLED') ? (
                           <span style={{ fontSize: 'var(--text-xs)', color: 'var(--gray-400)' }}>—</span>
                         ) : (
-                          <div style={{ position: 'relative' }}>
-                            <button
-                              className="btn-sm btn-outline-sm"
-                              onClick={() => setOpenMenuId(openMenuId === a.id ? null : a.id)}
-                              style={{ gap: 4 }}
-                            >
-                              Update Status <span style={{ fontSize: 10 }}>▼</span>
-                            </button>
-                            {openMenuId === a.id && (
-                              <div style={{
-                                position: 'absolute', top: 'calc(100% + 4px)', right: 0,
-                                background: 'white', border: '1px solid var(--gray-200)',
-                                borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-xl)',
-                                zIndex: 50, minWidth: 160, overflow: 'hidden',
-                              }}>
-                                {a.status !== 'COMPLETED' && (
-                                  <button
-                                    className="dropdown-action dropdown-action-success"
-                                    onClick={() => handleStatusUpdate(a.id, 'COMPLETED')}
-                                  >
-                                    <Check size={13} /> Mark Completed
-                                  </button>
-                                )}
-                                <button
-                                  className="dropdown-action dropdown-action-danger"
-                                  onClick={() => handleStatusUpdate(a.id, 'CANCELLED')}
-                                >
-                                  <X size={13} /> Mark Cancelled
-                                </button>
-                              </div>
-                            )}
-                          </div>
+                          <button
+                            className="btn-sm btn-outline-sm"
+                            onClick={(e) => openMenu(e, a.id)}
+                            style={{ gap: 4 }}
+                          >
+                            Update Status <span style={{ fontSize: 10 }}>▼</span>
+                          </button>
                         )}
                       </td>
                     </tr>
@@ -184,12 +167,41 @@ export default function ManageAppointments() {
           </div>
       </main>
 
-      {/* Close dropdown on outside click */}
+      {/* Dropdown rendered in a fixed portal — escapes overflow:hidden on .card and .table-wrapper */}
       {openMenuId !== null && (
-        <div
-          style={{ position: 'fixed', inset: 0, zIndex: 40 }}
-          onClick={() => setOpenMenuId(null)}
-        />
+        <>
+          <div
+            style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+            onClick={() => setOpenMenuId(null)}
+          />
+          <div style={{
+            position: 'fixed',
+            top: menuPos.top,
+            right: menuPos.right,
+            background: 'white',
+            border: '1px solid var(--gray-200)',
+            borderRadius: 'var(--radius-lg)',
+            boxShadow: 'var(--shadow-xl)',
+            zIndex: 50,
+            minWidth: 160,
+            overflow: 'hidden',
+          }}>
+            {appointments.find(a => a.id === openMenuId)?.status !== 'COMPLETED' && (
+              <button
+                className="dropdown-action dropdown-action-success"
+                onClick={() => handleStatusUpdate(openMenuId, 'COMPLETED')}
+              >
+                <Check size={13} /> Mark Completed
+              </button>
+            )}
+            <button
+              className="dropdown-action dropdown-action-danger"
+              onClick={() => handleStatusUpdate(openMenuId, 'CANCELLED')}
+            >
+              <X size={13} /> Mark Cancelled
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

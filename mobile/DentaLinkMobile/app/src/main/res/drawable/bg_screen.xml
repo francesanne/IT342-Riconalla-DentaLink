@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Screen background — very subtle top-to-bottom gradient matching web app background -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:startColor="#F6F9FC"
+        android:endColor="#F1F5F9"
+        android:angle="270" />
+</shape>

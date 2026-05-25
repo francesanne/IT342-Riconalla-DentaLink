@@ -8,7 +8,16 @@
         <item name="android:windowBackground">@color/background</item>
     </style>
 
-    <style name="Theme.DentaLinkMobile" parent="Base.Theme.DentaLinkMobile" />
+    <style name="Theme.DentaLinkMobile" parent="Base.Theme.DentaLinkMobile">
+        <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
+    </style>
+
+    <style name="ActivityAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+    </style>
 
     <!-- Toolbar style used on all screens with a back button -->
     <style name="DentaLink.Toolbar" parent="Widget.MaterialComponents.Toolbar">
@@ -16,4 +25,25 @@
         <item name="titleTextColor">@color/text_primary</item>
         <item name="navigationIconTint">@color/text_primary</item>
     </style>
+
+    <!--
+        Primary gradient button.
+        Sets the custom gradient drawable as background and uses a transparent
+        backgroundTint so Material3's tint system does not overlay our gradient.
+        Used on: login, register, booking, profile save, and any primary CTA.
+    -->
+    <style name="PrimaryButton" parent="Widget.Material3.Button">
+        <item name="android:background">@drawable/bg_button_primary</item>
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="android:textColor">@color/text_on_primary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:elevation">2dp</item>
+    </style>
+
 </resources>

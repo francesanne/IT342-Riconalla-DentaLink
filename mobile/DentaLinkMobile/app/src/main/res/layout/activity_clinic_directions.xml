@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@drawable/bg_screen">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -26,7 +26,10 @@
     <!-- Info card below the map -->
     <LinearLayout
         android:orientation="vertical"
-        android:padding="20dp"
+        android:paddingStart="@dimen/screen_padding"
+        android:paddingEnd="@dimen/screen_padding"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
         android:background="@color/surface"
         android:elevation="8dp"
         android:layout_width="match_parent"
@@ -34,7 +37,7 @@
 
         <TextView
             android:text="DentaLink Dental Clinic"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
             android:layout_marginBottom="2dp"
@@ -52,8 +55,9 @@
         <Button
             android:id="@+id/btnOpenMaps"
             android:text="Open in Google Maps"
+            style="@style/PrimaryButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="@dimen/button_height" />
 
     </LinearLayout>
 

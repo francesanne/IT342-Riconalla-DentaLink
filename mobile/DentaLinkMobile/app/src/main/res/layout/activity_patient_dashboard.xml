@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background">
+        android:background="@drawable/bg_screen">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -30,37 +30,52 @@
 
             <LinearLayout
                 android:orientation="vertical"
-                android:padding="20dp"
+                android:paddingStart="@dimen/screen_padding"
+                android:paddingEnd="@dimen/screen_padding"
+                android:paddingTop="20dp"
+                android:paddingBottom="32dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/tvWelcome"
-                    android:text="Welcome!"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary"
-                    android:layout_marginBottom="4dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:text="Here is your dental appointment overview"
-                    android:textSize="13sp"
-                    android:textColor="@color/text_secondary"
-                    android:layout_marginBottom="20dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <!-- Stat cards -->
+                <!-- ── Hero card ── -->
                 <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="24dp"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_hero"
+                    android:padding="@dimen/hero_padding"
+                    android:layout_marginBottom="20dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
+                    <TextView
+                        android:id="@+id/tvWelcome"
+                        android:text="Welcome!"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginBottom="4dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:text="Your dental appointment overview"
+                        android:textSize="13sp"
+                        android:textColor="#CCFFFFFF"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <!-- ── Stat cards ── -->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <!-- Upcoming -->
                     <LinearLayout
                         android:orientation="vertical"
+                        android:gravity="center_horizontal"
                         android:background="@drawable/bg_card"
                         android:padding="14dp"
                         android:elevation="2dp"
@@ -68,25 +83,32 @@
                         android:layout_marginEnd="8dp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content">
-                        <TextView
-                            android:text="Upcoming"
-                            android:textSize="11sp"
-                            android:textColor="@color/text_secondary"
-                            android:layout_marginBottom="4dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                        <View
+                            android:background="@drawable/bg_icon_stat_teal"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_marginBottom="8dp" />
                         <TextView
                             android:id="@+id/tvUpcomingCount"
                             android:text="0"
                             android:textSize="26sp"
                             android:textStyle="bold"
-                            android:textColor="#4A9B9D"
+                            android:textColor="@color/primary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                        <TextView
+                            android:text="Upcoming"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="2dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
                     </LinearLayout>
 
+                    <!-- Completed -->
                     <LinearLayout
                         android:orientation="vertical"
+                        android:gravity="center_horizontal"
                         android:background="@drawable/bg_card"
                         android:padding="14dp"
                         android:elevation="2dp"
@@ -94,13 +116,11 @@
                         android:layout_marginEnd="8dp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content">
-                        <TextView
-                            android:text="Completed"
-                            android:textSize="11sp"
-                            android:textColor="@color/text_secondary"
-                            android:layout_marginBottom="4dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                        <View
+                            android:background="@drawable/bg_icon_stat_green"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_marginBottom="8dp" />
                         <TextView
                             android:id="@+id/tvCompletedCount"
                             android:text="0"
@@ -109,23 +129,30 @@
                             android:textColor="@color/status_completed"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
+                        <TextView
+                            android:text="Completed"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="2dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
+                    <!-- Pending Payment -->
                     <LinearLayout
                         android:orientation="vertical"
+                        android:gravity="center_horizontal"
                         android:background="@drawable/bg_card"
                         android:padding="14dp"
                         android:elevation="2dp"
                         android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content">
-                        <TextView
-                            android:text="Pending Pay"
-                            android:textSize="11sp"
-                            android:textColor="@color/text_secondary"
-                            android:layout_marginBottom="4dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                        <View
+                            android:background="@drawable/bg_icon_stat_amber"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_marginBottom="8dp" />
                         <TextView
                             android:id="@+id/tvPendingCount"
                             android:text="0"
@@ -134,28 +161,38 @@
                             android:textColor="@color/status_pending"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
+                        <TextView
+                            android:text="Pending Pay"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="2dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
                 </LinearLayout>
 
-                <!-- Primary CTA -->
+                <!-- ── Primary CTA ── -->
                 <Button
                     android:id="@+id/btnBookAppointment"
                     android:text="Book Appointment"
-                    android:layout_marginBottom="12dp"
+                    style="@style/PrimaryButton"
+                    android:layout_marginBottom="8dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="@dimen/button_height" />
 
-                <!-- Clinic Directions -->
+                <!-- ── Clinic Directions ── -->
                 <Button
                     android:id="@+id/btnClinicLocation"
-                    android:text="Clinic Directions"
+                    android:text="Get Clinic Directions"
                     style="?attr/borderlessButtonStyle"
+                    android:textColor="@color/primary"
+                    android:textSize="14sp"
                     android:layout_marginBottom="28dp"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <!-- Upcoming appointments -->
+                <!-- ── Upcoming appointments section ── -->
                 <TextView
                     android:text="Upcoming Appointments"
                     android:textSize="16sp"

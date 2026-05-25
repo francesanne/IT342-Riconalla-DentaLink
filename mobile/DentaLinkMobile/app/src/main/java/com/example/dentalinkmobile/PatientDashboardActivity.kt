@@ -19,16 +19,21 @@ class PatientDashboardActivity : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
     private lateinit var drawerLayout: DrawerLayout
 
+    private lateinit var tvUpcoming: TextView
+    private lateinit var tvCompleted: TextView
+    private lateinit var tvPending: TextView
+    private lateinit var lvUpcoming: ListView
+    private lateinit var tvNoUpcoming: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_patient_dashboard)
 
         sessionManager = SessionManager(this)
 
-        // ── Toolbar + Drawer ──
-        val toolbar   = findViewById<MaterialToolbar>(R.id.toolbar)
-        drawerLayout  = findViewById(R.id.drawerLayout)
-        val navView   = findViewById<NavigationView>(R.id.navView)
+        val toolbar  = findViewById<MaterialToolbar>(R.id.toolbar)
+        drawerLayout = findViewById(R.id.drawerLayout)
+        val navView  = findViewById<NavigationView>(R.id.navView)
 
         setSupportActionBar(toolbar)
         val toggle = ActionBarDrawerToggle(
@@ -38,7 +43,6 @@ class PatientDashboardActivity : AppCompatActivity() {
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        // Personalise the nav drawer header with the patient's name
         val firstName = sessionManager.getFirstName() ?: "Patient"
         navView.getHeaderView(0)
             ?.findViewById<TextView>(R.id.tvNavWelcome)
@@ -57,37 +61,30 @@ class PatientDashboardActivity : AppCompatActivity() {
             true
         }
 
-        // Mark Dashboard as selected by default
         navView.setCheckedItem(R.id.nav_dashboard)
 
-        // ── Views ──
-        val tvWelcome    = findViewById<TextView>(R.id.tvWelcome)
-        val tvUpcoming   = findViewById<TextView>(R.id.tvUpcomingCount)
-        val tvCompleted  = findViewById<TextView>(R.id.tvCompletedCount)
-        val tvPending    = findViewById<TextView>(R.id.tvPendingCount)
-        val lvUpcoming   = findViewById<ListView>(R.id.lvUpcomingAppointments)
-        val tvNoUpcoming = findViewById<TextView>(R.id.tvNoUpcoming)
+        tvUpcoming   = findViewById(R.id.tvUpcomingCount)
+        tvCompleted  = findViewById(R.id.tvCompletedCount)
+        tvPending    = findViewById(R.id.tvPendingCount)
+        lvUpcoming   = findViewById(R.id.lvUpcomingAppointments)
+        tvNoUpcoming = findViewById(R.id.tvNoUpcoming)
 
-        tvWelcome.text = "Welcome, $firstName!"
+        findViewById<TextView>(R.id.tvWelcome).text = "Welcome, $firstName!"
 
-        // ── Quick action buttons ──
         findViewById<Button>(R.id.btnBookAppointment).setOnClickListener {
             startActivity(Intent(this, ServicesActivity::class.java))
         }
         findViewById<Button>(R.id.btnClinicLocation).setOnClickListener {
             startActivity(Intent(this, ClinicDirectionsActivity::class.java))
         }
-
-        loadDashboard(tvUpcoming, tvCompleted, tvPending, lvUpcoming, tvNoUpcoming)
     }
 
-    private fun loadDashboard(
-        tvUpcoming: TextView,
-        tvCompleted: TextView,
-        tvPending: TextView,
-        lvUpcoming: ListView,
-        tvNoUpcoming: TextView
-    ) {
+    override fun onResume() {
+        super.onResume()
+        loadDashboard()
+    }
+
+    private fun loadDashboard() {
         lifecycleScope.launch {
             try {
                 val response = RetrofitClient.apiService.getAppointments()

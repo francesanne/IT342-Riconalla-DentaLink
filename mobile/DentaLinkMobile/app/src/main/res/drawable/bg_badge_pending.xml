@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Status badge: PENDING / PENDING_PAYMENT — amber pill -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/status_pending_bg" />
+    <corners android:radius="@dimen/badge_radius" />
+</shape>

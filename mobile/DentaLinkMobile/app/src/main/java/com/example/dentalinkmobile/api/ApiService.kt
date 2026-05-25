@@ -57,6 +57,9 @@ interface ApiService {
     @GET("appointments")
     suspend fun getAppointments(): Response<ApiResponse<List<AppointmentItem>>>
 
+    @GET("appointments/{id}")
+    suspend fun getAppointmentById(@Path("id") id: Long): Response<ApiResponse<AppointmentItem>>
+
     // --- Payments (requires JWT) ---
 
     @POST("payments/create-intent")
