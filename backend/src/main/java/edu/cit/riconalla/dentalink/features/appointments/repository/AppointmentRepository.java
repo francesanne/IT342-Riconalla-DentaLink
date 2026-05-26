@@ -18,4 +18,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByAppointmentStatus(AppointmentStatus status);
 
     Optional<Appointment> findByPaymongoIntentId(String paymongoIntentId);
+
+    List<Appointment> findByAppointmentStatusAndPaymentStatusAndCreatedAtBefore(
+            AppointmentStatus status,
+            edu.cit.riconalla.dentalink.features.payments.entity.PaymentStatus paymentStatus,
+            java.time.LocalDateTime cutoff);
 }

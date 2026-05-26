@@ -43,4 +43,12 @@ public class Appointment {
 
     @Column(name = "paymongo_intent_id")
     private String paymongoIntentId;
+
+    @Column(name = "created_at", updatable = false)
+    private java.time.LocalDateTime createdAt;
+
+    @jakarta.persistence.PrePersist
+    void prePersist() {
+        if (createdAt == null) createdAt = java.time.LocalDateTime.now();
+    }
 }
