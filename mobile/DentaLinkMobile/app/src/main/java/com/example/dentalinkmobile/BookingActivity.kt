@@ -18,12 +18,13 @@ class BookingActivity : AppCompatActivity() {
     private var serviceId: Long = 0
     private val dentistList = mutableListOf<DentistDto>()
 
-    // Time slots matching web frontend
-    private val timeSlots = listOf(
+    private val weekdaySlots = listOf(
         "08:00", "08:30", "09:00", "09:30", "10:00", "10:30",
         "11:00", "11:30", "13:00", "13:30", "14:00", "14:30",
         "15:00", "15:30", "16:00", "16:30", "17:00"
     )
+    private val saturdaySlots = weekdaySlots.filter { it >= "09:00" }
+    private var timeSlots = weekdaySlots
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,10 +54,19 @@ class BookingActivity : AppCompatActivity() {
         val today = Calendar.getInstance()
         datePicker.minDate = today.timeInMillis
 
-        // Time slot spinner
-        val timeAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, timeSlots)
-        timeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerTime.adapter = timeAdapter
+        fun updateTimeSlots() {
+            val cal = Calendar.getInstance()
+            cal.set(datePicker.year, datePicker.month, datePicker.dayOfMonth)
+            timeSlots = if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) saturdaySlots else weekdaySlots
+            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, timeSlots)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerTime.adapter = adapter
+        }
+
+        // Time slot spinner — initialize based on current date
+        updateTimeSlots()
+
+        datePicker.setOnDateChangedListener { _, _, _, _ -> updateTimeSlots() }
 
         // Load dentists
         lifecycleScope.launch {

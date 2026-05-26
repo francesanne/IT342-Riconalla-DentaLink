@@ -50,11 +50,13 @@ public class AppointmentService {
             throw new IllegalArgumentException("The clinic is closed on Sundays");
         }
         LocalTime bookingTime = appointmentDatetime.toLocalTime();
-        LocalTime open  = LocalTime.of(8, 0);
+        boolean isSaturday = appointmentDatetime.getDayOfWeek() == DayOfWeek.SATURDAY;
+        LocalTime open  = isSaturday ? LocalTime.of(9, 0) : LocalTime.of(8, 0);
         LocalTime close = LocalTime.of(17, 0);
         if (bookingTime.isBefore(open) || bookingTime.isAfter(close)) {
+            String hours = isSaturday ? "9:00 AM – 5:00 PM" : "8:00 AM – 5:00 PM";
             throw new IllegalArgumentException(
-                    "Appointments must be scheduled during clinic operating hours (8:00 AM – 5:00 PM)");
+                    "Appointments must be scheduled during clinic operating hours (" + hours + ")");
         }
 
         // Validate patient exists
