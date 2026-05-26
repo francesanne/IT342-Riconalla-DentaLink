@@ -53,6 +53,19 @@ export default function MyAppointments() {
     }
   };
 
+  const handleCancel = async (appointmentId) => {
+    if (!window.confirm('Cancel this appointment? This cannot be undone.')) return;
+    try {
+      await appointmentsAPI.cancel(appointmentId);
+      toast.success('Appointment cancelled.');
+      setAppointments(prev => prev.map(a =>
+        a.id === appointmentId ? { ...a, status: 'CANCELLED' } : a
+      ));
+    } catch (err) {
+      toast.error(err.response?.data?.error?.message || 'Failed to cancel appointment.');
+    }
+  };
+
   return (
     <div className="app-layout">
       <Navbar links={NAV_LINKS} />
@@ -114,13 +127,19 @@ export default function MyAppointments() {
                       <td><StatusBadge status={a.status} /></td>
                       <td><StatusBadge status={a.paymentStatus} /></td>
                       <td>
-                        {a.paymentStatus === 'UNPAID' && a.status !== 'CANCELLED' && (
-                          <button
-                            className="btn-sm btn-primary-sm"
-                            onClick={() => handlePay(a.id)}
-                          >
-                            Pay Now
-                          </button>
+                        {a.paymentStatus === 'UNPAID' && a.status === 'PENDING_PAYMENT' && (
+                          <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                            <button className="btn-sm btn-primary-sm" onClick={() => handlePay(a.id)}>
+                              Pay Now
+                            </button>
+                            <button
+                              className="btn-sm btn-outline-sm"
+                              style={{ color: 'var(--danger)', borderColor: 'var(--danger)' }}
+                              onClick={() => handleCancel(a.id)}
+                            >
+                              Cancel
+                            </button>
+                          </div>
                         )}
                       </td>
                     </tr>

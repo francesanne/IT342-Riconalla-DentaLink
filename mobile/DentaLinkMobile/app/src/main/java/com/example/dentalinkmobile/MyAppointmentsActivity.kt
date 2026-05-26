@@ -87,7 +87,7 @@ class MyAppointmentsActivity : AppCompatActivity() {
                     Toast.makeText(this@MyAppointmentsActivity, "Failed to load appointments", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@MyAppointmentsActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MyAppointmentsActivity, "Network error. Please check your connection.", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -136,17 +136,46 @@ class MyAppointmentsActivity : AppCompatActivity() {
 
         tvEmpty.visibility        = View.GONE
         lvAppointments.visibility = View.VISIBLE
-        lvAppointments.adapter    = AppointmentAdapter(this, filtered) { appointment ->
-            if (appointment.paymentStatus == "UNPAID" && appointment.status != "CANCELLED") {
-                payForAppointment(appointment.id)
-            }
-        }
+        lvAppointments.adapter    = AppointmentAdapter(
+            this, filtered,
+            onPayClick    = { payForAppointment(it.id) },
+            onCancelClick = { cancelAppointment(it.id) }
+        )
     }
 
     private fun setActiveFilter(activeBtn: Button) {
         filterButtons.forEach { btn ->
             btn.isSelected = (btn == activeBtn)
         }
+    }
+
+    private fun cancelAppointment(appointmentId: Long) {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Cancel Appointment")
+            .setMessage("Cancel this appointment? This cannot be undone.")
+            .setPositiveButton("Yes, Cancel") { _, _ ->
+                lifecycleScope.launch {
+                    try {
+                        val response = RetrofitClient.apiService.cancelAppointment(appointmentId)
+                        if (response.isSuccessful) {
+                            Toast.makeText(this@MyAppointmentsActivity, "Your appointment has been cancelled.", Toast.LENGTH_SHORT).show()
+                            loadAppointments()
+                        } else {
+                            val msg = when (response.code()) {
+                                400  -> "This appointment cannot be cancelled (payment may already be recorded)."
+                                403  -> "You can only cancel your own appointments."
+                                404  -> "Appointment not found."
+                                else -> "Failed to cancel appointment. Please try again."
+                            }
+                            Toast.makeText(this@MyAppointmentsActivity, msg, Toast.LENGTH_LONG).show()
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(this@MyAppointmentsActivity, "Network error. Please check your connection.", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+            .setNegativeButton("No", null)
+            .show()
     }
 
     private fun payForAppointment(appointmentId: Long) {
@@ -177,7 +206,8 @@ class MyAppointmentsActivity : AppCompatActivity() {
 class AppointmentAdapter(
     context: Context,
     private val items: List<AppointmentItem>,
-    private val onItemClick: (AppointmentItem) -> Unit
+    private val onPayClick: (AppointmentItem) -> Unit,
+    private val onCancelClick: (AppointmentItem) -> Unit
 ) : ArrayAdapter<AppointmentItem>(context, 0, items) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -199,11 +229,16 @@ class AppointmentAdapter(
         val tvPayment = view.findViewById<TextView>(R.id.tvApptPaymentStatus)
         tvPayment.text = "Payment: ${item.paymentStatus ?: ""}"
 
-        val tvPayNow = view.findViewById<TextView>(R.id.tvPayNow)
-        tvPayNow.visibility = if (item.paymentStatus == "UNPAID" && item.status != "CANCELLED")
-            View.VISIBLE else View.GONE
+        val isUnpaidPending = item.paymentStatus == "UNPAID" && item.status == "PENDING_PAYMENT"
 
-        view.setOnClickListener { onItemClick(item) }
+        val tvPayNow = view.findViewById<TextView>(R.id.tvPayNow)
+        tvPayNow.visibility = if (isUnpaidPending) View.VISIBLE else View.GONE
+        tvPayNow.setOnClickListener { onPayClick(item) }
+
+        val tvCancel = view.findViewById<TextView>(R.id.tvCancelAppt)
+        tvCancel.visibility = if (isUnpaidPending) View.VISIBLE else View.GONE
+        tvCancel.setOnClickListener { onCancelClick(item) }
+
         return view
     }
 

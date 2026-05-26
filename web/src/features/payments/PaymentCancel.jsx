@@ -1,6 +1,6 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/shared/components/Navbar';
-import { XCircle } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -13,7 +13,6 @@ const NAV_LINKS = [
 export default function PaymentCancel() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const appointmentId = searchParams.get('appointmentId');
 
   return (
     <div className="app-layout">
@@ -29,10 +28,13 @@ export default function PaymentCancel() {
           width: '100%',
           textAlign: 'center',
         }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}><XCircle size={64} color="var(--danger)" /></div>
-          <h2 style={{ color: 'var(--gray-700)', marginBottom: 8 }}>Payment Cancelled</h2>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+            <Clock size={64} color="var(--warning)" />
+          </div>
+
+          <h2 style={{ color: 'var(--gray-700)', marginBottom: 8 }}>Payment Pending</h2>
           <p style={{ color: 'var(--gray-500)', marginBottom: 8, fontSize: '14px' }}>
-            You cancelled the payment. Your appointment has been saved with a
+            You exited the payment page. Your appointment has been saved with a
             <strong> Pending Payment</strong> status.
           </p>
           <p style={{ color: 'var(--gray-400)', marginBottom: 28, fontSize: '13px' }}>
@@ -40,20 +42,18 @@ export default function PaymentCancel() {
             <strong> Pay Now</strong> button.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <button
-              onClick={() => navigate('/my-appointments')}
-              style={{
-                width: '100%', height: 44,
-                background: 'var(--gradient-primary)',
-                color: 'white', border: 'none',
-                borderRadius: 10, fontWeight: 600,
-                fontSize: 14, cursor: 'pointer',
-              }}
-            >
-              Go to My Appointments
-            </button>
-          </div>
+          <button
+            onClick={() => navigate('/my-appointments')}
+            style={{
+              width: '100%', height: 44,
+              background: 'var(--gradient-primary)',
+              color: 'white', border: 'none',
+              borderRadius: 10, fontWeight: 600,
+              fontSize: 14, cursor: 'pointer',
+            }}
+          >
+            Go to My Appointments
+          </button>
         </div>
       </main>
     </div>

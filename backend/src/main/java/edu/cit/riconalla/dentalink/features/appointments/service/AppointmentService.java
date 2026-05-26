@@ -72,8 +72,9 @@ public class AppointmentService {
             throw new IllegalArgumentException("Dentist is not currently available for booking");
         }
 
-        // Double-booking check
-        if (appointmentRepository.existsByDentistIdAndAppointmentDatetime(dentistId, appointmentDatetime)) {
+        // Double-booking check (exclude CANCELLED — those slots are free again)
+        if (appointmentRepository.existsByDentistIdAndAppointmentDatetimeAndAppointmentStatusNot(
+                dentistId, appointmentDatetime, AppointmentStatus.CANCELLED)) {
             throw new BookingConflictException("Conflict: This dentist is already booked at the selected date and time");
         }
 
@@ -103,6 +104,24 @@ public class AppointmentService {
             return appointmentRepository.findByAppointmentStatus(s);
         }
         return appointmentRepository.findAll();
+    }
+
+    /** Patient cancels their own unpaid appointment */
+    public Appointment cancelOwnAppointment(String patientEmail, Long appointmentId) {
+        Appointment a = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        User patient = userRepository.findByEmail(patientEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!a.getPatientId().equals(patient.getUserId())) {
+            throw new RuntimeException("Access denied: you can only cancel your own appointments");
+        }
+        if (a.getPaymentStatus() != PaymentStatus.UNPAID) {
+            throw new IllegalArgumentException("Only unpaid appointments can be cancelled");
+        }
+
+        a.setAppointmentStatus(AppointmentStatus.CANCELLED);
+        return appointmentRepository.save(a);
     }
 
     public Appointment getAppointmentById(Long id) {

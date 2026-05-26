@@ -58,6 +58,7 @@ export const appointmentsAPI = {
   getAll: (status) => api.get('/appointments', { params: status ? { status } : {} }),
   getById: (id) => api.get(`/appointments/${id}`),
   updateStatus: (id, status) => api.put(`/appointments/${id}/status`, { status }),
+  cancel: (id) => api.post(`/appointments/${id}/cancel`),
 };
 
 // Users / Profile
