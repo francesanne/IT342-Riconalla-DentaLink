@@ -155,6 +155,10 @@ public class AppointmentService {
                 "Invalid status. Admin may only set: COMPLETED, CANCELLED");
         }
         Appointment a = getAppointmentById(id);
+        if ("COMPLETED".equalsIgnoreCase(status) && a.getPaymentStatus() != PaymentStatus.PAID) {
+            throw new IllegalArgumentException(
+                "Cannot mark an unpaid appointment as completed.");
+        }
         a.setAppointmentStatus(AppointmentStatus.valueOf(status.toUpperCase()));
         return appointmentRepository.save(a);
     }

@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import StatusBadge from '@/shared/components/StatusBadge';
 import { formatDate, formatPeso } from '@/shared/utils/formatters';
-import { paymentsAPI } from '@/shared/api/api';
-import { AlertCircle, CreditCard, CheckCircle2, Banknote } from 'lucide-react';
+import { paymentsAPI, appointmentsAPI } from '@/shared/api/api';
+import { AlertCircle, CreditCard, TrendingUp, Banknote } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -17,19 +17,45 @@ const NAV_LINKS = [
 
 export default function AdminPayments() {
   const [payments, setPayments] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [loading,  setLoading]  = useState(true);
   const [error,    setError]    = useState('');
+  const [patientFilter, setPatientFilter] = useState('');
 
   useEffect(() => {
-    paymentsAPI.getAll()
-      .then(res => setPayments(res.data.data ?? []))
+    Promise.all([
+      paymentsAPI.getAll(),
+      appointmentsAPI.getAll(),
+    ])
+      .then(([payRes, apptRes]) => {
+        setPayments(payRes.data.data ?? []);
+        setAppointments(apptRes.data.data ?? []);
+      })
       .catch(() => setError('Failed to load payment records.'))
       .finally(() => setLoading(false));
   }, []);
 
-  const totalRevenue = payments
+  const patientNames = [...new Set(
+    payments
+      .filter(p => p.patient)
+      .map(p => `${p.patient.firstName} ${p.patient.lastName}`.trim())
+  )].sort();
+
+  const filtered = patientFilter
+    ? payments.filter(p => `${p.patient?.firstName} ${p.patient?.lastName}`.trim() === patientFilter)
+    : payments;
+
+  const totalRevenue = filtered
     .filter(p => p.paymentStatus === 'PAID')
     .reduce((sum, p) => sum + Number(p.paymentAmount ?? 0), 0);
+
+  const unpaidCount = appointments.filter(a => {
+    const isPending = a.status === 'PENDING_PAYMENT' && a.paymentStatus === 'UNPAID';
+    if (!isPending) return false;
+    if (!patientFilter) return true;
+    const name = `${a.patient?.firstName ?? ''} ${a.patient?.lastName ?? ''}`.trim();
+    return name === patientFilter;
+  }).length;
 
   return (
     <div className="app-layout">
@@ -49,23 +75,38 @@ export default function AdminPayments() {
           <div className="stat-card">
             <div className="stat-icon blue"><CreditCard size={20} /></div>
             <div className="stat-info">
-              <div className="stat-label">Total Payments</div>
-              <div className="stat-value">{payments.length}</div>
+              <div className="stat-label">{patientFilter ? `${patientFilter}'s Payments` : 'Total Payments'}</div>
+              <div className="stat-value">{filtered.length}</div>
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon green"><CheckCircle2 size={20} /></div>
+            <div className="stat-icon orange"><TrendingUp size={20} /></div>
             <div className="stat-info">
-              <div className="stat-label">Paid</div>
-              <div className="stat-value">{payments.filter(p => p.paymentStatus === 'PAID').length}</div>
+              <div className="stat-label">{patientFilter ? `${patientFilter}'s Unpaid` : 'Unpaid / Pending'}</div>
+              <div className="stat-value">{unpaidCount}</div>
             </div>
           </div>
           <div className="stat-card">
             <div className="stat-icon teal"><Banknote size={20} /></div>
             <div className="stat-info">
-              <div className="stat-label">Total Revenue</div>
+              <div className="stat-label">{patientFilter ? `${patientFilter}'s Revenue` : 'Total Revenue'}</div>
               <div className="stat-value" style={{ fontSize: 'var(--text-xl)' }}>{formatPeso(totalRevenue)}</div>
             </div>
+          </div>
+        </div>
+
+        {/* Patient filter */}
+        <div style={{ marginBottom: 'var(--space-4)' }}>
+          <div className="form-group" style={{ maxWidth: 260 }}>
+            <select
+              value={patientFilter}
+              onChange={e => setPatientFilter(e.target.value)}
+            >
+              <option value="">All Patients</option>
+              {patientNames.map(name => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -116,8 +157,18 @@ export default function AdminPayments() {
                       </div>
                     </td>
                   </tr>
+                ) : filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={7}>
+                      <div className="empty-state" style={{ padding: 'var(--space-10) var(--space-8)' }}>
+                        <div className="empty-icon"><CreditCard size={28} /></div>
+                        <div className="empty-title" style={{ fontSize: 'var(--text-base)' }}>No payments found</div>
+                        <div className="empty-text">No payment records match the selected patient.</div>
+                      </div>
+                    </td>
+                  </tr>
                 ) : (
-                    payments.map(p => (
+                    filtered.map(p => (
                       <tr key={p.id}>
                         <td className="col-hide-tablet" style={{ color: 'var(--gray-400)', fontSize: 'var(--text-sm)', fontFamily: 'monospace' }}>
                           #{p.id}

@@ -4,7 +4,7 @@ import StatusBadge from '@/shared/components/StatusBadge';
 import { formatDateTime } from '@/shared/utils/formatters';
 import { appointmentsAPI } from '@/shared/api/api';
 import { toast } from 'sonner';
-import { Check, X, CalendarDays } from 'lucide-react';
+import { Check, X, CalendarDays, AlertTriangle, HelpCircle } from 'lucide-react';
 import '@/features/dashboard/styles/dashboard.css';
 
 const NAV_LINKS = [
@@ -31,6 +31,7 @@ export default function ManageAppointments() {
   const [updating, setUpdating] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [menuPos, setMenuPos] = useState({ top: 0, right: 0 });
+  const [cancelModal, setCancelModal] = useState({ open: false, id: null, isPaid: false });
 
   const load = () => {
     setLoading(true);
@@ -52,6 +53,17 @@ export default function ManageAppointments() {
     } catch (err) {
       toast.error(err.response?.data?.error?.message || 'Failed to update appointment status.');
     } finally { setUpdating(null); }
+  };
+
+  const handleCancelClick = (id) => {
+    const appt = appointments.find(a => a.id === id);
+    setCancelModal({ open: true, id, isPaid: appt?.paymentStatus === 'PAID' });
+    setOpenMenuId(null);
+  };
+
+  const confirmCancel = () => {
+    handleStatusUpdate(cancelModal.id, 'CANCELLED');
+    setCancelModal({ open: false, id: null, isPaid: false });
   };
 
   const openMenu = (e, id) => {
@@ -186,22 +198,135 @@ export default function ManageAppointments() {
             minWidth: 160,
             overflow: 'hidden',
           }}>
-            {appointments.find(a => a.id === openMenuId)?.status !== 'COMPLETED' && (
-              <button
-                className="dropdown-action dropdown-action-success"
-                onClick={() => handleStatusUpdate(openMenuId, 'COMPLETED')}
-              >
-                <Check size={13} /> Mark Completed
-              </button>
-            )}
+            {(() => {
+              const appt = appointments.find(a => a.id === openMenuId);
+              return appt?.status !== 'COMPLETED' && appt?.paymentStatus === 'PAID' ? (
+                <button
+                  className="dropdown-action dropdown-action-success"
+                  onClick={() => handleStatusUpdate(openMenuId, 'COMPLETED')}
+                >
+                  <Check size={13} /> Mark Completed
+                </button>
+              ) : appt?.status !== 'COMPLETED' && appt?.paymentStatus !== 'PAID' ? (
+                <div className="dropdown-action dropdown-action-success" style={{
+                  opacity: 0.38,
+                  cursor: 'not-allowed',
+                  pointerEvents: 'none',
+                }}>
+                  <Check size={13} /> Mark Completed
+                </div>
+              ) : null;
+            })()}
             <button
               className="dropdown-action dropdown-action-danger"
-              onClick={() => handleStatusUpdate(openMenuId, 'CANCELLED')}
+              onClick={() => handleCancelClick(openMenuId)}
             >
               <X size={13} /> Mark Cancelled
             </button>
           </div>
         </>
+      )}
+      {/* Cancel confirmation modal */}
+      {cancelModal.open && (
+        <div style={{
+          position: 'fixed', inset: 0,
+          background: 'rgba(17,24,39,0.5)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 200,
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '20px',
+            padding: '40px 36px 32px',
+            maxWidth: '420px',
+            width: '90%',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
+            textAlign: 'center',
+          }}>
+
+            {/* Icon */}
+            <div style={{
+              width: 68, height: 68, borderRadius: '50%',
+              background: cancelModal.isPaid
+                ? 'linear-gradient(135deg, rgba(239,68,68,0.12), rgba(239,68,68,0.06))'
+                : 'linear-gradient(135deg, rgba(251,191,36,0.15), rgba(251,191,36,0.06))',
+              border: cancelModal.isPaid
+                ? '2px solid rgba(239,68,68,0.2)'
+                : '2px solid rgba(251,191,36,0.25)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 20px',
+            }}>
+              {cancelModal.isPaid
+                ? <AlertTriangle size={28} color="#ef4444" strokeWidth={2} />
+                : <HelpCircle size={28} color="#d97706" strokeWidth={2} />}
+            </div>
+
+            {/* Title */}
+            <h3 style={{
+              margin: '0 0 10px',
+              fontSize: '20px',
+              fontWeight: 700,
+              color: 'var(--gray-900)',
+              fontFamily: 'var(--font-display)',
+            }}>
+              Cancel Appointment
+            </h3>
+
+            {/* Message */}
+            {cancelModal.isPaid ? (
+              <>
+                <p style={{ fontSize: '14px', color: 'var(--gray-600)', lineHeight: 1.65, margin: '0 0 10px' }}>
+                  This appointment has already been{' '}
+                  <strong style={{ color: '#ef4444' }}>paid</strong>.
+                  Cancelling will <strong>not</strong> issue an automatic refund.
+                </p>
+                <p style={{ fontSize: '13px', color: 'var(--gray-500)', lineHeight: 1.6, margin: 0 }}>
+                  Please coordinate with the patient directly to arrange a manual refund.
+                </p>
+              </>
+            ) : (
+              <p style={{ fontSize: '14px', color: 'var(--gray-600)', lineHeight: 1.65, margin: 0 }}>
+                Are you sure you want to cancel this appointment?
+                This action <strong>cannot be undone</strong>.
+              </p>
+            )}
+
+            {/* Divider */}
+            <div style={{ height: 1, background: 'var(--gray-100)', margin: '24px 0 20px' }} />
+
+            {/* Buttons */}
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+              <button
+                onClick={() => setCancelModal({ open: false, id: null, isPaid: false })}
+                style={{
+                  height: 42, padding: '0 22px',
+                  background: 'white', color: 'var(--gray-600)',
+                  border: '1.5px solid var(--gray-200)',
+                  borderRadius: '10px', fontWeight: 600,
+                  fontSize: '13px', cursor: 'pointer',
+                  transition: 'all 0.15s',
+                }}
+              >
+                Go Back
+              </button>
+              <button
+                onClick={confirmCancel}
+                style={{
+                  height: 42, padding: '0 22px',
+                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  color: 'white', border: 'none',
+                  borderRadius: '10px', fontWeight: 600,
+                  fontSize: '13px', cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(239,68,68,0.3)',
+                  transition: 'all 0.15s',
+                }}
+              >
+                Yes, Cancel Appointment
+              </button>
+            </div>
+
+          </div>
+        </div>
       )}
     </div>
   );
