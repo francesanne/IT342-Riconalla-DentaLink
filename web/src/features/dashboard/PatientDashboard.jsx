@@ -33,7 +33,7 @@ export default function PatientDashboard() {
   }, []);
 
   const upcoming = appointments.filter(a =>
-    (a.status === 'CONFIRMED' || a.status === 'PENDING_PAYMENT') &&
+    a.status === 'CONFIRMED' &&
     new Date(a.appointmentDatetime) >= new Date()
   ).sort((a, b) => new Date(a.appointmentDatetime) - new Date(b.appointmentDatetime));
 
@@ -81,7 +81,7 @@ export default function PatientDashboard() {
         {/* Stats */}
         <div className="stats-grid" style={{ marginBottom: 'var(--space-8)' }}>
           <div className="stat-card">
-            <div className="stat-icon blue"><CalendarDays size={20} /></div>
+            <div className="stat-icon teal"><CalendarDays size={20} /></div>
             <div className="stat-info">
               <div className="stat-label">Upcoming Appointments</div>
               <div className="stat-value">{upcoming.length}</div>
