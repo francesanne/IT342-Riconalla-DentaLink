@@ -1,5 +1,6 @@
 package edu.cit.riconalla.dentalink.features.services.service;
 
+import edu.cit.riconalla.dentalink.features.appointments.repository.AppointmentRepository;
 import edu.cit.riconalla.dentalink.features.services.dto.ServiceDto;
 import edu.cit.riconalla.dentalink.features.services.entity.Service;
 import edu.cit.riconalla.dentalink.shared.exception.ResourceNotFoundException;
@@ -23,11 +24,14 @@ public class ServiceService {
 
     private final ServiceRepository serviceRepository;
     private final SupabaseStorageService storageService;
+    private final AppointmentRepository appointmentRepository;
 
     public ServiceService(ServiceRepository serviceRepository,
-                          SupabaseStorageService storageService) {
+                          SupabaseStorageService storageService,
+                          AppointmentRepository appointmentRepository) {
         this.serviceRepository = serviceRepository;
         this.storageService = storageService;
+        this.appointmentRepository = appointmentRepository;
     }
 
     public List<ServiceDto> getAllServices() {
@@ -69,6 +73,11 @@ public class ServiceService {
     public void deleteService(Long id) {
         if (!serviceRepository.existsById(id)) {
             throw new ResourceNotFoundException("Service not found");
+        }
+        if (appointmentRepository.existsByServiceId(id)) {
+            throw new IllegalArgumentException(
+                "Cannot delete a service with existing appointments."
+            );
         }
         serviceRepository.deleteById(id);
     }
