@@ -293,8 +293,11 @@ export default function ManageDentists() {
 
             {/* Message */}
             <p style={{ fontSize: '14px', color: 'var(--gray-600)', lineHeight: 1.65, margin: 0 }}>
-              Are you sure you want to remove this dentist record?
-              This action <strong>cannot be undone</strong>.
+              Are you sure you want to remove this dentist record? This cannot be undone.
+              <br /><br />
+              <span style={{ fontSize: 'var(--text-sm)', color: 'var(--gray-400)' }}>
+                Note: Dentists with existing appointments cannot be deleted. Set their status to <strong>Inactive</strong> instead.
+              </span>
             </p>
 
             {/* Divider */}
