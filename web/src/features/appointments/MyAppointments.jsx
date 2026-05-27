@@ -29,13 +29,18 @@ export default function MyAppointments() {
   const [filter, setFilter] = useState('ALL');
   const [cancelConfirm, setCancelConfirm] = useState(null); // stores appointment id pending confirmation
 
+  // Extracted so handleCancel can re-fetch without toggling the loading spinner
+  const loadAppointments = async () => {
+    const res = await appointmentsAPI.getAll();
+    setAppointments(res.data.data || []);
+  };
+
   useEffect(() => {
-    appointmentsAPI
-      .getAll()
-      .then(res => setAppointments(res.data.data || []))
+    setLoading(true);
+    loadAppointments()
       .catch(() => toast.error('Failed to load appointments. Please refresh the page.'))
       .finally(() => setLoading(false));
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered =
     filter === 'ALL'
@@ -58,9 +63,9 @@ export default function MyAppointments() {
     try {
       await appointmentsAPI.cancel(appointmentId);
       toast.success('Appointment cancelled.');
-      setAppointments(prev => prev.map(a =>
-        a.id === appointmentId ? { ...a, status: 'CANCELLED' } : a
-      ));
+      // Re-fetch the full list so filtered views update correctly
+      // (optimistic update would leave the row visible in the PENDING_PAYMENT filter)
+      await loadAppointments();
     } catch (err) {
       toast.error(err.response?.data?.error?.message || 'Failed to cancel appointment.');
     } finally {
