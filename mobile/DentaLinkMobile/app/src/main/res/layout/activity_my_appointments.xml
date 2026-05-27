@@ -16,14 +16,17 @@
         app:titleTextColor="@color/text_primary"
         app:navigationIconTint="@color/text_primary" />
 
-    <!-- ── Filter chip bar ── -->
+    <!-- ── Filter chip bar ──
+         Uses <TextView> (not <Button>) so that the android:background state selector
+         and android:textColor state selector both work without Material3 interference. -->
     <HorizontalScrollView
         android:background="@color/surface"
         android:elevation="2dp"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
+        android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -33,87 +36,93 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <Button
+            <TextView
                 android:id="@+id/btnFilterAll"
                 android:text="All"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:background="@drawable/bg_filter_chip_selector"
-                android:backgroundTint="@android:color/transparent"
                 android:textColor="@color/color_chip_text"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_filter_chip_selector"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:layout_marginEnd="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp" />
 
-            <Button
+            <TextView
                 android:id="@+id/btnFilterConfirmed"
                 android:text="Confirmed"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:background="@drawable/bg_filter_chip_selector"
-                android:backgroundTint="@android:color/transparent"
                 android:textColor="@color/color_chip_text"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_filter_chip_selector"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:layout_marginEnd="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp" />
 
-            <Button
+            <TextView
                 android:id="@+id/btnFilterPending"
                 android:text="Pending Payment"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:background="@drawable/bg_filter_chip_selector"
-                android:backgroundTint="@android:color/transparent"
                 android:textColor="@color/color_chip_text"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_filter_chip_selector"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:layout_marginEnd="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp" />
 
-            <Button
+            <TextView
                 android:id="@+id/btnFilterCompleted"
                 android:text="Completed"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:background="@drawable/bg_filter_chip_selector"
-                android:backgroundTint="@android:color/transparent"
                 android:textColor="@color/color_chip_text"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_filter_chip_selector"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:layout_marginEnd="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp" />
 
-            <Button
+            <TextView
                 android:id="@+id/btnFilterCancelled"
                 android:text="Cancelled"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:background="@drawable/bg_filter_chip_selector"
-                android:backgroundTint="@android:color/transparent"
                 android:textColor="@color/color_chip_text"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:background="@drawable/bg_filter_chip_selector"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp" />
 
         </LinearLayout>
     </HorizontalScrollView>
+
+    <!-- Subtle divider below chips -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
 
     <!-- ── Empty state ── -->
     <TextView
@@ -133,9 +142,10 @@
         android:id="@+id/lvAppointments"
         android:divider="@null"
         android:dividerHeight="0dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp"
         android:clipToPadding="false"
+        android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />

@@ -108,19 +108,58 @@ class AdminAppointmentsActivity : AppCompatActivity() {
     private fun showStatusOptions(appointment: AppointmentItem) {
         val currentStatus = appointment.status ?: ""
 
+        // Terminal states — no further updates allowed
         if (currentStatus == "COMPLETED" || currentStatus == "CANCELLED") {
-            Snackbar.make(findViewById(android.R.id.content), "This appointment is already $currentStatus", Snackbar.LENGTH_SHORT).show()
+            val label = currentStatus.replace("_", " ").lowercase()
+                .replaceFirstChar { it.uppercaseChar() }
+            Snackbar.make(
+                findViewById(android.R.id.content),
+                "This appointment is already $label — no further changes",
+                Snackbar.LENGTH_SHORT
+            ).show()
             return
         }
 
-        val options = arrayOf("Mark Completed", "Mark Cancelled")
+        // Build options based on current state:
+        //   PENDING_PAYMENT → Confirm | Cancel
+        //   CONFIRMED       → Complete | Cancel
+        val (options, statusValues) = when (currentStatus) {
+            "PENDING_PAYMENT" -> Pair(
+                arrayOf("✓  Confirm appointment", "✗  Cancel appointment"),
+                arrayOf("CONFIRMED", "CANCELLED")
+            )
+            "CONFIRMED" -> Pair(
+                arrayOf("✓  Mark as Completed", "✗  Cancel appointment"),
+                arrayOf("COMPLETED", "CANCELLED")
+            )
+            else -> Pair(
+                arrayOf("✗  Cancel appointment"),
+                arrayOf("CANCELLED")
+            )
+        }
+
+        // NOTE: setMessage() + setItems() are mutually exclusive in AlertDialog —
+        // the items list won't render if a message is also set.
+        // Put the appointment summary in the title so setItems() works correctly.
+        val dialogTitle = buildString {
+            append(appointment.serviceName ?: "Appointment")
+            append("  •  ")
+            append(formatDatetime(appointment.appointmentDatetime))
+        }
+
         AlertDialog.Builder(this)
-            .setTitle("Update Status")
-            .setMessage("${appointment.serviceName} | ${formatDatetime(appointment.appointmentDatetime)}")
+            .setTitle(dialogTitle)
             .setItems(options) { _, which ->
-                val newStatus = if (which == 0) "COMPLETED" else "CANCELLED"
-                updateStatus(appointment.id, newStatus)
+                val newStatus = statusValues[which]
+                // Double-confirm before applying
+                AlertDialog.Builder(this)
+                    .setTitle("Confirm change")
+                    .setMessage("Set status to \"${newStatus.replace("_", " ")}\"?")
+                    .setPositiveButton("Yes") { _, _ -> updateStatus(appointment.id, newStatus) }
+                    .setNegativeButton("No", null)
+                    .show()
             }
+            .setNegativeButton("Dismiss", null)
             .show()
     }
 
@@ -207,8 +246,11 @@ private class AdminAppointmentAdapter(
             tvPayment.setTextColor(ContextCompat.getColor(context, R.color.badge_pending_text))
         }
 
+        // Show "Tap to update ›" hint only for actionable (non-terminal) appointments
         val isTerminal = item.status == "COMPLETED" || item.status == "CANCELLED"
-        view.alpha = if (isTerminal) 0.6f else 1.0f
+        view.findViewById<TextView>(R.id.tvTapHint).visibility =
+            if (isTerminal) View.GONE else View.VISIBLE
+        view.alpha = 1.0f   // never dim — grayed-out cards are confusing UX
 
         return view
     }

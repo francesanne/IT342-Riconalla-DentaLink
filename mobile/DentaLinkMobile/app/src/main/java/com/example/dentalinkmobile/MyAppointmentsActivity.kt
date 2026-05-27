@@ -26,7 +26,9 @@ class MyAppointmentsActivity : AppCompatActivity() {
 
     private lateinit var lvAppointments: ListView
     private lateinit var tvEmpty: TextView
-    private lateinit var filterButtons: List<Button>
+    // TextViews, not Buttons — Material3 Button overrides background/textColor selectors;
+    // plain TextView respects android:background state selector and android:textColor selector natively.
+    private lateinit var filterButtons: List<TextView>
 
     private val paymentLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -56,11 +58,12 @@ class MyAppointmentsActivity : AppCompatActivity() {
         lvAppointments = findViewById(R.id.lvAppointments)
         tvEmpty        = findViewById(R.id.tvAppointmentsEmpty)
 
-        val btnAll       = findViewById<Button>(R.id.btnFilterAll)
-        val btnConfirmed = findViewById<Button>(R.id.btnFilterConfirmed)
-        val btnPending   = findViewById<Button>(R.id.btnFilterPending)
-        val btnCompleted = findViewById<Button>(R.id.btnFilterCompleted)
-        val btnCancelled = findViewById<Button>(R.id.btnFilterCancelled)
+        // Chips are TextViews so android:textColor / android:background selectors work correctly
+        val btnAll       = findViewById<TextView>(R.id.btnFilterAll)
+        val btnConfirmed = findViewById<TextView>(R.id.btnFilterConfirmed)
+        val btnPending   = findViewById<TextView>(R.id.btnFilterPending)
+        val btnCompleted = findViewById<TextView>(R.id.btnFilterCompleted)
+        val btnCancelled = findViewById<TextView>(R.id.btnFilterCancelled)
         filterButtons    = listOf(btnAll, btnConfirmed, btnPending, btnCompleted, btnCancelled)
 
         btnAll.setOnClickListener       { applyFilter("ALL",             btnAll) }
@@ -69,6 +72,7 @@ class MyAppointmentsActivity : AppCompatActivity() {
         btnCompleted.setOnClickListener { applyFilter("COMPLETED",       btnCompleted) }
         btnCancelled.setOnClickListener { applyFilter("CANCELLED",       btnCancelled) }
 
+        // Initialise "All" as selected; the background + text selectors react automatically
         setActiveFilter(btnAll)
     }
 
@@ -93,7 +97,6 @@ class MyAppointmentsActivity : AppCompatActivity() {
         }
     }
 
-    // Mirrors web's PaymentSuccess.jsx: polls up to 5s for CONFIRMED, then tells user to check email
     private fun pollForConfirmation(appointmentId: Long) {
         lifecycleScope.launch {
             var confirmed = false
@@ -111,18 +114,16 @@ class MyAppointmentsActivity : AppCompatActivity() {
                     break
                 }
             }
-
-            val message = if (confirmed) {
+            val message = if (confirmed)
                 "Payment confirmed! A confirmation email has been sent to your registered email."
-            } else {
+            else
                 "Payment received! Your appointment confirmation may take a moment. Check your email shortly."
-            }
             Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show()
             loadAppointments()
         }
     }
 
-    private fun applyFilter(filter: String, activeBtn: Button) {
+    private fun applyFilter(filter: String, activeBtn: TextView) {
         currentFilter = filter
         setActiveFilter(activeBtn)
 
@@ -144,7 +145,13 @@ class MyAppointmentsActivity : AppCompatActivity() {
         )
     }
 
-    private fun setActiveFilter(activeBtn: Button) {
+    /**
+     * Updates the chip selection state.
+     * With <TextView> chips, setting isSelected triggers refreshDrawableState() which
+     * automatically applies the correct background drawable AND textColor from the selectors.
+     * No programmatic setTextColor() needed — the XML selectors handle everything.
+     */
+    private fun setActiveFilter(activeBtn: TextView) {
         filterButtons.forEach { btn ->
             btn.isSelected = (btn == activeBtn)
         }
