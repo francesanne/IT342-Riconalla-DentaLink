@@ -5,6 +5,9 @@ data class DashboardStats(
     val totalAppointments: Long,
     val pendingPayments: Long,
     val confirmedAppointments: Long,
+    val completedAppointments: Long,
+    val cancelledAppointments: Long,
+    val pendingPaymentAppointments: Long,
     val totalRevenue: Double,
     val recentAppointments: List<RecentAppointment>
 )

@@ -15,6 +15,7 @@ import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.appointments.model.AppointmentItem
 import com.example.dentalinkmobile.features.appointments.model.CreateIntentRequest
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -25,7 +26,9 @@ class MyAppointmentsActivity : AppCompatActivity() {
 
     private lateinit var lvAppointments: ListView
     private lateinit var tvEmpty: TextView
-    private lateinit var filterButtons: List<Button>
+    // TextViews, not Buttons — Material3 Button overrides background/textColor selectors;
+    // plain TextView respects android:background state selector and android:textColor selector natively.
+    private lateinit var filterButtons: List<TextView>
 
     private val paymentLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -35,7 +38,7 @@ class MyAppointmentsActivity : AppCompatActivity() {
             if (appointmentId != -1L) {
                 pollForConfirmation(appointmentId)
             } else {
-                Toast.makeText(this, "Payment successful! Check your email for confirmation.", Toast.LENGTH_LONG).show()
+                Snackbar.make(findViewById(android.R.id.content), "Payment successful! Check your email for confirmation.", Snackbar.LENGTH_LONG).show()
                 loadAppointments()
             }
         } else {
@@ -55,11 +58,12 @@ class MyAppointmentsActivity : AppCompatActivity() {
         lvAppointments = findViewById(R.id.lvAppointments)
         tvEmpty        = findViewById(R.id.tvAppointmentsEmpty)
 
-        val btnAll       = findViewById<Button>(R.id.btnFilterAll)
-        val btnConfirmed = findViewById<Button>(R.id.btnFilterConfirmed)
-        val btnPending   = findViewById<Button>(R.id.btnFilterPending)
-        val btnCompleted = findViewById<Button>(R.id.btnFilterCompleted)
-        val btnCancelled = findViewById<Button>(R.id.btnFilterCancelled)
+        // Chips are TextViews so android:textColor / android:background selectors work correctly
+        val btnAll       = findViewById<TextView>(R.id.btnFilterAll)
+        val btnConfirmed = findViewById<TextView>(R.id.btnFilterConfirmed)
+        val btnPending   = findViewById<TextView>(R.id.btnFilterPending)
+        val btnCompleted = findViewById<TextView>(R.id.btnFilterCompleted)
+        val btnCancelled = findViewById<TextView>(R.id.btnFilterCancelled)
         filterButtons    = listOf(btnAll, btnConfirmed, btnPending, btnCompleted, btnCancelled)
 
         btnAll.setOnClickListener       { applyFilter("ALL",             btnAll) }
@@ -68,6 +72,7 @@ class MyAppointmentsActivity : AppCompatActivity() {
         btnCompleted.setOnClickListener { applyFilter("COMPLETED",       btnCompleted) }
         btnCancelled.setOnClickListener { applyFilter("CANCELLED",       btnCancelled) }
 
+        // Initialise "All" as selected; the background + text selectors react automatically
         setActiveFilter(btnAll)
     }
 
@@ -84,15 +89,14 @@ class MyAppointmentsActivity : AppCompatActivity() {
                     allAppointments = response.body()?.data ?: emptyList()
                     applyFilter(currentFilter, filterButtons.first())
                 } else {
-                    Toast.makeText(this@MyAppointmentsActivity, "Failed to load appointments", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), "Failed to load appointments", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@MyAppointmentsActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), "Network error. Please check your connection.", Snackbar.LENGTH_SHORT).show()
             }
         }
     }
 
-    // Mirrors web's PaymentSuccess.jsx: polls up to 5s for CONFIRMED, then tells user to check email
     private fun pollForConfirmation(appointmentId: Long) {
         lifecycleScope.launch {
             var confirmed = false
@@ -110,18 +114,16 @@ class MyAppointmentsActivity : AppCompatActivity() {
                     break
                 }
             }
-
-            val message = if (confirmed) {
+            val message = if (confirmed)
                 "Payment confirmed! A confirmation email has been sent to your registered email."
-            } else {
+            else
                 "Payment received! Your appointment confirmation may take a moment. Check your email shortly."
-            }
-            Toast.makeText(this@MyAppointmentsActivity, message, Toast.LENGTH_LONG).show()
+            Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show()
             loadAppointments()
         }
     }
 
-    private fun applyFilter(filter: String, activeBtn: Button) {
+    private fun applyFilter(filter: String, activeBtn: TextView) {
         currentFilter = filter
         setActiveFilter(activeBtn)
 
@@ -136,17 +138,52 @@ class MyAppointmentsActivity : AppCompatActivity() {
 
         tvEmpty.visibility        = View.GONE
         lvAppointments.visibility = View.VISIBLE
-        lvAppointments.adapter    = AppointmentAdapter(this, filtered) { appointment ->
-            if (appointment.paymentStatus == "UNPAID" && appointment.status != "CANCELLED") {
-                payForAppointment(appointment.id)
-            }
-        }
+        lvAppointments.adapter    = AppointmentAdapter(
+            this, filtered,
+            onPayClick    = { payForAppointment(it.id) },
+            onCancelClick = { cancelAppointment(it.id) }
+        )
     }
 
-    private fun setActiveFilter(activeBtn: Button) {
+    /**
+     * Updates the chip selection state.
+     * With <TextView> chips, setting isSelected triggers refreshDrawableState() which
+     * automatically applies the correct background drawable AND textColor from the selectors.
+     * No programmatic setTextColor() needed — the XML selectors handle everything.
+     */
+    private fun setActiveFilter(activeBtn: TextView) {
         filterButtons.forEach { btn ->
             btn.isSelected = (btn == activeBtn)
         }
+    }
+
+    private fun cancelAppointment(appointmentId: Long) {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Cancel Appointment")
+            .setMessage("Cancel this appointment? This cannot be undone.")
+            .setPositiveButton("Yes, Cancel") { _, _ ->
+                lifecycleScope.launch {
+                    try {
+                        val response = RetrofitClient.apiService.cancelAppointment(appointmentId)
+                        if (response.isSuccessful) {
+                            Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), "Your appointment has been cancelled.", Snackbar.LENGTH_SHORT).show()
+                            loadAppointments()
+                        } else {
+                            val msg = when (response.code()) {
+                                400  -> "This appointment cannot be cancelled (payment may already be recorded)."
+                                403  -> "You can only cancel your own appointments."
+                                404  -> "Appointment not found."
+                                else -> "Failed to cancel appointment. Please try again."
+                            }
+                            Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG).show()
+                        }
+                    } catch (e: Exception) {
+                        Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), "Network error. Please check your connection.", Snackbar.LENGTH_LONG).show()
+                    }
+                }
+            }
+            .setNegativeButton("No", null)
+            .show()
     }
 
     private fun payForAppointment(appointmentId: Long) {
@@ -162,13 +199,13 @@ class MyAppointmentsActivity : AppCompatActivity() {
                         intent.putExtra(PaymentWebViewActivity.EXTRA_CHECKOUT_URL, checkoutUrl)
                         paymentLauncher.launch(intent)
                     } else {
-                        Toast.makeText(this@MyAppointmentsActivity, "Checkout URL not received", Toast.LENGTH_SHORT).show()
+                        Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), "Checkout URL not received", Snackbar.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this@MyAppointmentsActivity, "Failed to initiate payment", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), "Failed to initiate payment", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@MyAppointmentsActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -177,7 +214,8 @@ class MyAppointmentsActivity : AppCompatActivity() {
 class AppointmentAdapter(
     context: Context,
     private val items: List<AppointmentItem>,
-    private val onItemClick: (AppointmentItem) -> Unit
+    private val onPayClick: (AppointmentItem) -> Unit,
+    private val onCancelClick: (AppointmentItem) -> Unit
 ) : ArrayAdapter<AppointmentItem>(context, 0, items) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -187,7 +225,7 @@ class AppointmentAdapter(
         val item = items[position]
 
         view.findViewById<TextView>(R.id.tvApptServiceName).text = item.serviceName ?: "Service"
-        view.findViewById<TextView>(R.id.tvApptDentistName).text = item.dentistName ?: ""
+        view.findViewById<TextView>(R.id.tvApptDentistName).text = if (item.dentistName != null) "Dr. ${item.dentistName}" else "Unknown Dentist"
         view.findViewById<TextView>(R.id.tvApptDatetime).text    = formatDatetime(item.appointmentDatetime)
 
         val tvStatus = view.findViewById<TextView>(R.id.tvApptStatus)
@@ -199,11 +237,16 @@ class AppointmentAdapter(
         val tvPayment = view.findViewById<TextView>(R.id.tvApptPaymentStatus)
         tvPayment.text = "Payment: ${item.paymentStatus ?: ""}"
 
-        val tvPayNow = view.findViewById<TextView>(R.id.tvPayNow)
-        tvPayNow.visibility = if (item.paymentStatus == "UNPAID" && item.status != "CANCELLED")
-            View.VISIBLE else View.GONE
+        val isUnpaidPending = item.paymentStatus == "UNPAID" && item.status == "PENDING_PAYMENT"
 
-        view.setOnClickListener { onItemClick(item) }
+        val tvPayNow = view.findViewById<TextView>(R.id.tvPayNow)
+        tvPayNow.visibility = if (isUnpaidPending) View.VISIBLE else View.GONE
+        tvPayNow.setOnClickListener { onPayClick(item) }
+
+        val tvCancel = view.findViewById<TextView>(R.id.tvCancelAppt)
+        tvCancel.visibility = if (isUnpaidPending) View.VISIBLE else View.GONE
+        tvCancel.setOnClickListener { onCancelClick(item) }
+
         return view
     }
 

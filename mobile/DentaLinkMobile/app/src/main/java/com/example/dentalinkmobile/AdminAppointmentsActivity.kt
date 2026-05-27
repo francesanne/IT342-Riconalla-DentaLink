@@ -14,13 +14,17 @@ import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.appointments.model.AppointmentItem
 import com.example.dentalinkmobile.features.payments.model.UpdateStatusRequest
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class AdminAppointmentsActivity : AppCompatActivity() {
 
     private var allAppointments = listOf<AppointmentItem>()
+    private var currentFilter   = ""          // "" = All; otherwise an exact status string
+
     private lateinit var lvAppointments: ListView
     private lateinit var tvEmpty: TextView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +37,26 @@ class AdminAppointmentsActivity : AppCompatActivity() {
 
         lvAppointments = findViewById(R.id.lvAdminAppointments)
         tvEmpty        = findViewById(R.id.tvAdminAppointmentsEmpty)
+        progressBar    = findViewById(R.id.progressBar)
+
+        // Filter Spinner — matches the 5 web chip options (All / Pending Payment / Confirmed / Completed / Cancelled)
+        val spinnerFilter = findViewById<Spinner>(R.id.spinnerApptFilter)
+        val filterLabels  = arrayOf("All", "Pending Payment", "Confirmed", "Completed", "Cancelled")
+        val filterValues  = arrayOf("", "PENDING_PAYMENT", "CONFIRMED", "COMPLETED", "CANCELLED")
+
+        spinnerFilter.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            filterLabels
+        ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+
+        spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
+                currentFilter = filterValues[pos]
+                renderList()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
     }
 
     override fun onResume() {
@@ -41,6 +65,9 @@ class AdminAppointmentsActivity : AppCompatActivity() {
     }
 
     private fun loadAppointments() {
+        progressBar.visibility    = View.VISIBLE
+        lvAppointments.visibility = View.GONE
+        tvEmpty.visibility        = View.GONE
         lifecycleScope.launch {
             try {
                 val response = RetrofitClient.apiService.getAppointments()
@@ -48,16 +75,22 @@ class AdminAppointmentsActivity : AppCompatActivity() {
                     allAppointments = response.body()?.data ?: emptyList()
                     renderList()
                 } else {
-                    Toast.makeText(this@AdminAppointmentsActivity, "Failed to load appointments", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminAppointmentsActivity.findViewById(android.R.id.content), "Failed to load appointments", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AdminAppointmentsActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminAppointmentsActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
+            } finally {
+                progressBar.visibility = View.GONE
             }
         }
     }
 
     private fun renderList() {
-        if (allAppointments.isEmpty()) {
+        // Apply the active filter (empty string = show all)
+        val filtered = if (currentFilter.isEmpty()) allAppointments
+                       else allAppointments.filter { it.status == currentFilter }
+
+        if (filtered.isEmpty()) {
             tvEmpty.visibility        = View.VISIBLE
             lvAppointments.visibility = View.GONE
             return
@@ -65,28 +98,66 @@ class AdminAppointmentsActivity : AppCompatActivity() {
         tvEmpty.visibility        = View.GONE
         lvAppointments.visibility = View.VISIBLE
 
-        lvAppointments.adapter = AdminAppointmentAdapter(this, allAppointments, ::formatDatetime)
+        lvAppointments.adapter = AdminAppointmentAdapter(this, filtered, ::formatDatetime)
+        // Use filtered[position] so taps map to the correct item after filtering
         lvAppointments.setOnItemClickListener { _, _, position, _ ->
-            showStatusOptions(allAppointments[position])
+            showStatusOptions(filtered[position])
         }
     }
 
     private fun showStatusOptions(appointment: AppointmentItem) {
         val currentStatus = appointment.status ?: ""
 
+        // Terminal states — no further updates allowed
         if (currentStatus == "COMPLETED" || currentStatus == "CANCELLED") {
-            Toast.makeText(this, "This appointment is already $currentStatus", Toast.LENGTH_SHORT).show()
+            val label = currentStatus.replace("_", " ").lowercase()
+                .replaceFirstChar { it.uppercaseChar() }
+            Snackbar.make(
+                findViewById(android.R.id.content),
+                "This appointment is already $label — no further changes",
+                Snackbar.LENGTH_SHORT
+            ).show()
             return
         }
 
-        val options = arrayOf("Mark Completed", "Mark Cancelled")
+        // Build options based on current state — matches web ManageAppointments.jsx:
+        //   CONFIRMED       → Mark Completed | Cancel
+        //   PENDING_PAYMENT → Cancel only
+        //     (COMPLETED is blocked — payment is still UNPAID;
+        //      CONFIRMED is blocked — only the PayMongo webhook may set this)
+        val (options, statusValues) = when (currentStatus) {
+            "CONFIRMED" -> Pair(
+                arrayOf("✓  Mark as Completed", "✗  Cancel appointment"),
+                arrayOf("COMPLETED", "CANCELLED")
+            )
+            else -> Pair(   // PENDING_PAYMENT: only cancellation is permitted
+                arrayOf("✗  Cancel appointment"),
+                arrayOf("CANCELLED")
+            )
+        }
+
+        // NOTE: setMessage() + setItems() are mutually exclusive in AlertDialog —
+        // the items list won't render if a message is also set.
+        // Put the appointment summary in the title so setItems() works correctly.
+        val dialogTitle = buildString {
+            append(appointment.serviceName ?: "Appointment")
+            append("  •  ")
+            append(formatDatetime(appointment.appointmentDatetime))
+        }
+
         AlertDialog.Builder(this)
-            .setTitle("Update Status")
-            .setMessage("${appointment.serviceName} | ${formatDatetime(appointment.appointmentDatetime)}")
+            .setTitle(dialogTitle)
             .setItems(options) { _, which ->
-                val newStatus = if (which == 0) "COMPLETED" else "CANCELLED"
-                updateStatus(appointment.id, newStatus)
+                val newStatus = statusValues[which]
+                // Double-confirm before applying
+                AlertDialog.Builder(this)
+                    .setTitle("Confirm change")
+                    .setMessage("Set status to \"${newStatus.replace("_", " ")}\"?")
+                    .setPositiveButton("Yes") { _, _ -> updateStatus(appointment.id, newStatus) }
+                    .setNegativeButton("No", null)
+                    .show()
             }
+            .setNegativeButton("Dismiss", null)
             .show()
     }
 
@@ -97,13 +168,13 @@ class AdminAppointmentsActivity : AppCompatActivity() {
                     id, UpdateStatusRequest(status)
                 )
                 if (response.isSuccessful) {
-                    Toast.makeText(this@AdminAppointmentsActivity, "Status updated to $status", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminAppointmentsActivity.findViewById(android.R.id.content), "Status updated to $status", Snackbar.LENGTH_SHORT).show()
                     loadAppointments()
                 } else {
-                    Toast.makeText(this@AdminAppointmentsActivity, "Failed to update status (${response.code()})", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminAppointmentsActivity.findViewById(android.R.id.content), "Failed to update status (${response.code()})", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AdminAppointmentsActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminAppointmentsActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -130,7 +201,11 @@ private class AdminAppointmentAdapter(
         val item = items[position]
 
         view.findViewById<TextView>(R.id.tvAdminApptService).text  = item.serviceName ?: "Service"
-        view.findViewById<TextView>(R.id.tvAdminApptDentist).text  = item.dentistName ?: ""
+
+        view.findViewById<TextView>(R.id.tvAdminApptPatient).text =
+            "Patient: ${"${item.patient?.firstName ?: ""} ${item.patient?.lastName ?: ""}".trim().ifEmpty { "Unknown" }}"
+
+        view.findViewById<TextView>(R.id.tvAdminApptDentist).text  = if (item.dentistName != null) "Dr. ${item.dentistName}" else "Unknown Dentist"
         view.findViewById<TextView>(R.id.tvAdminApptDatetime).text = fmt(item.appointmentDatetime)
 
         val tvStatus = view.findViewById<TextView>(R.id.tvAdminApptStatus)
@@ -169,8 +244,11 @@ private class AdminAppointmentAdapter(
             tvPayment.setTextColor(ContextCompat.getColor(context, R.color.badge_pending_text))
         }
 
+        // Show "Tap to update ›" hint only for actionable (non-terminal) appointments
         val isTerminal = item.status == "COMPLETED" || item.status == "CANCELLED"
-        view.alpha = if (isTerminal) 0.6f else 1.0f
+        view.findViewById<TextView>(R.id.tvTapHint).visibility =
+            if (isTerminal) View.GONE else View.VISIBLE
+        view.alpha = 1.0f   // never dim — grayed-out cards are confusing UX
 
         return view
     }

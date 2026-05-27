@@ -31,6 +31,7 @@ data class PatientSummary(
 data class PaymentItem(
     val id: Long,
     val appointmentId: Long?,
+    val serviceName: String?,
     val paymongoPaymentId: String?,
     val paymentAmount: Double?,
     val paymentStatus: String?,

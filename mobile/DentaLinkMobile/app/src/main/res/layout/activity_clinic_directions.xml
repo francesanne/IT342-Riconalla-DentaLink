@@ -45,7 +45,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:text="Cebu City, Philippines"
+            android:text="Minglanilla, Cebu, Philippines"
             android:textSize="13sp"
             android:textColor="@color/text_secondary"
             android:layout_marginBottom="16dp"

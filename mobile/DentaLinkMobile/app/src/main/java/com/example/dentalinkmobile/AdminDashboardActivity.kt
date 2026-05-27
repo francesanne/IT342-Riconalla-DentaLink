@@ -15,8 +15,10 @@ import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.dashboard.model.RecentAppointment
 import com.example.dentalinkmobile.utils.SessionManager
+import com.example.dentalinkmobile.utils.formatPeso
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class AdminDashboardActivity : AppCompatActivity() {
@@ -29,6 +31,8 @@ class AdminDashboardActivity : AppCompatActivity() {
     private lateinit var tvConfirmed: TextView
     private lateinit var tvRevenue: TextView
     private lateinit var lvRecent: ListView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var scrollContent: ScrollView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,11 +66,13 @@ class AdminDashboardActivity : AppCompatActivity() {
         }
         navView.setCheckedItem(R.id.nav_admin_dashboard)
 
-        tvTotal     = findViewById(R.id.tvTotalAppointments)
-        tvPending   = findViewById(R.id.tvPendingPayments)
-        tvConfirmed = findViewById(R.id.tvConfirmedAppointments)
-        tvRevenue   = findViewById(R.id.tvTotalRevenue)
-        lvRecent    = findViewById(R.id.lvRecentAppointments)
+        tvTotal      = findViewById(R.id.tvTotalAppointments)
+        tvPending    = findViewById(R.id.tvPendingPayments)
+        tvConfirmed  = findViewById(R.id.tvConfirmedAppointments)
+        tvRevenue    = findViewById(R.id.tvTotalRevenue)
+        lvRecent     = findViewById(R.id.lvRecentAppointments)
+        progressBar  = findViewById(R.id.progressBar)
+        scrollContent = findViewById(R.id.scrollContent)
 
         findViewById<Button>(R.id.btnAdminServices).setOnClickListener {
             startActivity(Intent(this, AdminServicesActivity::class.java))
@@ -88,6 +94,8 @@ class AdminDashboardActivity : AppCompatActivity() {
     }
 
     private fun loadDashboard() {
+        progressBar.visibility   = View.VISIBLE
+        scrollContent.visibility = View.GONE
         lifecycleScope.launch {
             try {
                 val response = RetrofitClient.apiService.getAdminDashboard()
@@ -97,7 +105,7 @@ class AdminDashboardActivity : AppCompatActivity() {
                     tvTotal.text     = stats.totalAppointments.toString()
                     tvPending.text   = stats.pendingPayments.toString()
                     tvConfirmed.text = stats.confirmedAppointments.toString()
-                    tvRevenue.text   = "P${String.format("%.2f", stats.totalRevenue)}"
+                    tvRevenue.text   = formatPeso(stats.totalRevenue)
 
                     lvRecent.adapter = RecentAppointmentAdapter(
                         this@AdminDashboardActivity,
@@ -105,10 +113,13 @@ class AdminDashboardActivity : AppCompatActivity() {
                         ::formatDatetime
                     )
                 } else {
-                    Toast.makeText(this@AdminDashboardActivity, "Failed to load dashboard", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminDashboardActivity.findViewById(android.R.id.content), "Failed to load dashboard", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AdminDashboardActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminDashboardActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
+            } finally {
+                progressBar.visibility   = View.GONE
+                scrollContent.visibility = View.VISIBLE
             }
         }
     }
@@ -143,7 +154,7 @@ private class RecentAppointmentAdapter(
         val item = items[position]
 
         view.findViewById<TextView>(R.id.tvRecentPatient).text  = item.patientName ?: "Patient"
-        view.findViewById<TextView>(R.id.tvRecentDentist).text  = item.dentistName ?: ""
+        view.findViewById<TextView>(R.id.tvRecentDentist).text  = if (item.dentistName != null) "Dr. ${item.dentistName}" else "Unknown Dentist"
         view.findViewById<TextView>(R.id.tvRecentDatetime).text = fmt(item.appointmentDatetime)
 
         val tvStatus = view.findViewById<TextView>(R.id.tvRecentStatus)

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { formatDate, formatTime } from '@/shared/utils/formatters';
 import { appointmentsAPI, paymentsAPI } from '@/shared/api/api';
-import { CalendarDays } from 'lucide-react';
+import { CalendarDays, HelpCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import StatusBadge from '@/shared/components/StatusBadge';
 import '@/features/dashboard/styles/dashboard.css';
@@ -27,14 +27,20 @@ export default function MyAppointments() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ALL');
+  const [cancelConfirm, setCancelConfirm] = useState(null); // stores appointment id pending confirmation
+
+  // Extracted so handleCancel can re-fetch without toggling the loading spinner
+  const loadAppointments = async () => {
+    const res = await appointmentsAPI.getAll();
+    setAppointments(res.data.data || []);
+  };
 
   useEffect(() => {
-    appointmentsAPI
-      .getAll()
-      .then(res => setAppointments(res.data.data || []))
+    setLoading(true);
+    loadAppointments()
       .catch(() => toast.error('Failed to load appointments. Please refresh the page.'))
       .finally(() => setLoading(false));
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered =
     filter === 'ALL'
@@ -50,6 +56,20 @@ export default function MyAppointments() {
       }
     } catch (err) {
       toast.error(err.response?.data?.error?.message || 'Failed to initiate payment. Please try again.');
+    }
+  };
+
+  const handleCancel = async (appointmentId) => {
+    try {
+      await appointmentsAPI.cancel(appointmentId);
+      toast.success('Appointment cancelled.');
+      // Re-fetch the full list so filtered views update correctly
+      // (optimistic update would leave the row visible in the PENDING_PAYMENT filter)
+      await loadAppointments();
+    } catch (err) {
+      toast.error(err.response?.data?.error?.message || 'Failed to cancel appointment.');
+    } finally {
+      setCancelConfirm(null);
     }
   };
 
@@ -114,13 +134,19 @@ export default function MyAppointments() {
                       <td><StatusBadge status={a.status} /></td>
                       <td><StatusBadge status={a.paymentStatus} /></td>
                       <td>
-                        {a.paymentStatus === 'UNPAID' && a.status !== 'CANCELLED' && (
-                          <button
-                            className="btn-sm btn-primary-sm"
-                            onClick={() => handlePay(a.id)}
-                          >
-                            Pay Now
-                          </button>
+                        {a.paymentStatus === 'UNPAID' && a.status === 'PENDING_PAYMENT' && (
+                          <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                            <button className="btn-sm btn-primary-sm" onClick={() => handlePay(a.id)}>
+                              Pay Now
+                            </button>
+                            <button
+                              className="btn-sm btn-outline-sm"
+                              style={{ color: 'var(--danger)', borderColor: 'var(--danger)' }}
+                              onClick={() => setCancelConfirm(a.id)}
+                            >
+                              Cancel
+                            </button>
+                          </div>
                         )}
                       </td>
                     </tr>
@@ -131,6 +157,90 @@ export default function MyAppointments() {
           </div>
         )}
       </main>
+
+      {/* Cancel confirmation modal */}
+      {cancelConfirm !== null && (
+        <div style={{
+          position: 'fixed', inset: 0,
+          background: 'rgba(17,24,39,0.5)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 200,
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '20px',
+            padding: '40px 36px 32px',
+            maxWidth: '420px',
+            width: '90%',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
+            textAlign: 'center',
+          }}>
+
+            {/* Icon */}
+            <div style={{
+              width: 68, height: 68, borderRadius: '50%',
+              background: 'linear-gradient(135deg, rgba(251,191,36,0.15), rgba(251,191,36,0.06))',
+              border: '2px solid rgba(251,191,36,0.25)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 20px',
+            }}>
+              <HelpCircle size={28} color="#d97706" strokeWidth={2} />
+            </div>
+
+            {/* Title */}
+            <h3 style={{
+              margin: '0 0 10px',
+              fontSize: '20px',
+              fontWeight: 700,
+              color: 'var(--gray-900)',
+              fontFamily: 'var(--font-display)',
+            }}>
+              Cancel Appointment
+            </h3>
+
+            {/* Message */}
+            <p style={{ fontSize: '14px', color: 'var(--gray-600)', lineHeight: 1.65, margin: 0 }}>
+              Are you sure you want to cancel this appointment?
+              This action <strong>cannot be undone</strong>.
+            </p>
+
+            {/* Divider */}
+            <div style={{ height: 1, background: 'var(--gray-100)', margin: '24px 0 20px' }} />
+
+            {/* Buttons */}
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+              <button
+                onClick={() => setCancelConfirm(null)}
+                style={{
+                  height: 42, padding: '0 22px',
+                  background: 'white', color: 'var(--gray-600)',
+                  border: '1.5px solid var(--gray-200)',
+                  borderRadius: '10px', fontWeight: 600,
+                  fontSize: '13px', cursor: 'pointer',
+                  transition: 'all 0.15s',
+                }}
+              >
+                Go Back
+              </button>
+              <button
+                onClick={() => handleCancel(cancelConfirm)}
+                style={{
+                  height: 42, padding: '0 22px',
+                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  color: 'white', border: 'none',
+                  borderRadius: '10px', fontWeight: 600,
+                  fontSize: '13px', cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(239,68,68,0.3)',
+                  transition: 'all 0.15s',
+                }}
+              >
+                Yes, Cancel Appointment
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }

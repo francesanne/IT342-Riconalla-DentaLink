@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import "./styles/register.css";
 import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "@/shared/context/AuthContext";
 import { authAPI } from "@/shared/api/api";
-import ToothIcon from '@/shared/components/ToothIcon';
 import { toast } from 'sonner';
 
 function Register() {
@@ -18,7 +18,9 @@ function Register() {
     password: "",
     confirmPassword: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading]               = useState(false);
+  const [showPassword, setShowPassword]         = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,8 +34,8 @@ function Register() {
       toast.error("Passwords do not match.");
       return;
     }
-    if (formData.password.length < 6) {
-      toast.error("Password must be at least 6 characters.");
+    if (formData.password.length < 8) {
+      toast.error("Password must be at least 8 characters.");
       return;
     }
 
@@ -81,11 +83,20 @@ function Register() {
     }
   };
 
+  // Reusable inline styles for the eye toggle button
+  const eyeButtonStyle = {
+    position: 'absolute', right: 12, top: '50%',
+    transform: 'translateY(-50%)',
+    background: 'none', border: 'none',
+    cursor: 'pointer', color: 'var(--gray-400)',
+    display: 'flex', alignItems: 'center', padding: 0,
+  };
+
   return (
     <div className="register-container">
       <div className="register-card">
         <div className="register-header">
-          <Link to="/" className="logo-text" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><ToothIcon size={18} /> DentaLink</Link>
+          <Link to="/" className="logo-text" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><img src="/Logo.png" alt="DentaLink" style={{ height: '36px', objectFit: 'contain', display: 'block' }} /><span>DentaLink</span></Link>
           <h2>Create your account</h2>
           <p>Join us for better dental care</p>
         </div>
@@ -134,28 +145,52 @@ function Register() {
 
           <div className="form-group">
             <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="*********"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              disabled={isLoading}
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                placeholder="*********"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                disabled={isLoading}
+                style={{ paddingRight: '44px' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(p => !p)}
+                style={eyeButtonStyle}
+                tabIndex={-1}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <Eye size={16} /> : <EyeOff size={16} />}
+              </button>
+            </div>
           </div>
 
           <div className="form-group">
             <label>Confirm Password</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="*********"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              disabled={isLoading}
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                name="confirmPassword"
+                placeholder="*********"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                disabled={isLoading}
+                style={{ paddingRight: '44px' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(p => !p)}
+                style={eyeButtonStyle}
+                tabIndex={-1}
+                aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+              >
+                {showConfirmPassword ? <Eye size={16} /> : <EyeOff size={16} />}
+              </button>
+            </div>
           </div>
 
           <button

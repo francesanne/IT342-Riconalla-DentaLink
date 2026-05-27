@@ -227,7 +227,7 @@ export default function ManageServices() {
 
                                 <div className="form-group">
                                     <label>Price (₱)</label>
-                                    <input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} required />
+                                    <input type="number" min="0.01" step="0.01" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} required />
                                 </div>
 
                                 <div className="form-group">

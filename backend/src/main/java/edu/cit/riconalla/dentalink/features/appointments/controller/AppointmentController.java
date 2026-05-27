@@ -66,6 +66,14 @@ public class AppointmentController {
         return ResponseEntity.ok(Map.of("success", true, "data", appointmentService.toResponse(a)));
     }
 
+    @PreAuthorize("hasAuthority('PATIENT')")
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<Map<String, Object>> cancelAppointment(@PathVariable Long id,
+                                                                 Authentication auth) {
+        var a = appointmentService.cancelOwnAppointment(auth.getName(), id);
+        return ResponseEntity.ok(Map.of("success", true, "data", appointmentService.toResponse(a)));
+    }
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}/status")
     public ResponseEntity<Map<String, Object>> updateStatus(@PathVariable Long id,

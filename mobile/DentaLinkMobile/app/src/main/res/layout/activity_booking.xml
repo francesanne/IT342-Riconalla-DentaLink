@@ -19,7 +19,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:scrollbars="none">
 
         <LinearLayout
             android:orientation="vertical"
@@ -59,80 +60,129 @@
 
             </LinearLayout>
 
-            <!-- ── Select Dentist ── -->
-            <TextView
-                android:text="Select Dentist"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:layout_marginBottom="6dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <Spinner
-                android:id="@+id/spinnerDentist"
-                android:background="@drawable/bg_input"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp"
-                android:paddingTop="14dp"
-                android:paddingBottom="14dp"
-                android:layout_marginBottom="20dp"
+            <!-- ── Form card — groups all booking fields ── -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:background="@drawable/bg_card"
+                android:padding="20dp"
+                android:elevation="2dp"
+                android:layout_marginBottom="24dp"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/input_height" />
+                android:layout_height="wrap_content">
 
-            <!-- ── Select Date ── -->
-            <TextView
-                android:text="Select Date"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:layout_marginBottom="6dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <!-- Dentist label -->
+                <TextView
+                    android:text="DENTIST"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.08"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="6dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-            <DatePicker
-                android:id="@+id/datePicker"
-                android:calendarViewShown="true"
-                android:spinnersShown="false"
-                android:layout_marginBottom="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <Spinner
+                    android:id="@+id/spinnerDentist"
+                    android:background="@drawable/bg_input"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/input_height" />
 
-            <!-- ── Select Time ── -->
-            <TextView
-                android:text="Select Time"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:layout_marginBottom="6dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <!-- Date label -->
+                <TextView
+                    android:text="DATE"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.08"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="6dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-            <Spinner
-                android:id="@+id/spinnerTime"
-                android:background="@drawable/bg_input"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp"
-                android:paddingTop="14dp"
-                android:paddingBottom="14dp"
-                android:layout_marginBottom="32dp"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/input_height" />
+                <!-- Date selector — taps open MaterialDatePicker dialog -->
+                <LinearLayout
+                    android:id="@+id/rowSelectDate"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_input"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/input_height"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/tvSelectedDate"
+                        android:text="Tap to choose a date"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_muted"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:text="›"
+                        android:textSize="22sp"
+                        android:textColor="@color/text_muted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <!-- Time label -->
+                <TextView
+                    android:text="TIME SLOT"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.08"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="6dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <Spinner
+                    android:id="@+id/spinnerTime"
+                    android:background="@drawable/bg_input"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/input_height" />
+
+            </LinearLayout>
 
             <!-- ── Confirm CTA ── -->
             <Button
                 android:id="@+id/btnConfirmBooking"
                 android:text="Book and Pay"
                 style="@style/PrimaryButton"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="12dp"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height" />
+
+            <!-- Loading indicator shown while booking request is in-flight -->
+            <ProgressBar
+                android:id="@+id/progressBooking"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:indeterminate="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btnCancelBooking"
                 android:text="Cancel"
                 style="?attr/borderlessButtonStyle"
-                android:textColor="@color/primary"
+                android:textColor="@color/text_secondary"
                 android:layout_gravity="center_horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />

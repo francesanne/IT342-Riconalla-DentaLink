@@ -15,7 +15,7 @@ const NAV_LINKS = [
 ];
 
 const CLINIC_HOURS = [
-  { label: 'Monday – Friday', time: '8:00 AM – 6:00 PM', days: [1, 2, 3, 4, 5] },
+  { label: 'Monday – Friday', time: '8:00 AM – 5:00 PM', days: [1, 2, 3, 4, 5] },
   { label: 'Saturday',        time: '9:00 AM – 5:00 PM', days: [6] },
   { label: 'Sunday',          time: 'Closed',             days: [0], closed: true },
 ];
@@ -139,9 +139,8 @@ export default function Contact() {
               <div style={{ padding: 'var(--space-5)' }}>
 
                 <InfoRow icon={<MapPin size={15} />} label="Address">
-                  3rd Floor, One Cybersquare<br />
-                  Cebu IT Park, Archbishop Reyes Ave<br />
-                  Apas, Cebu City, 6000
+                  Upper, Belmont One,<br />
+                  Cebu S Rd, Minglanilla, Cebu
                 </InfoRow>
 
                 <InfoRow icon={<Phone size={15} />} label="Phone">
@@ -248,7 +247,7 @@ export default function Contact() {
                   {CLINIC_NAME}
                 </div>
                 <div style={{ fontSize: 'var(--text-sm)', color: 'var(--gray-500)', marginTop: 2 }}>
-                  Cebu IT Park, Cebu City, Philippines
+                  Upper, Belmont One, Cebu S Rd, Minglanilla, Cebu
                 </div>
               </div>
               <a href={mapsUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>

@@ -33,7 +33,7 @@ export default function PatientDashboard() {
   }, []);
 
   const upcoming = appointments.filter(a =>
-    (a.status === 'CONFIRMED' || a.status === 'PENDING_PAYMENT') &&
+    a.status === 'CONFIRMED' &&
     new Date(a.appointmentDatetime) >= new Date()
   ).sort((a, b) => new Date(a.appointmentDatetime) - new Date(b.appointmentDatetime));
 
@@ -81,7 +81,7 @@ export default function PatientDashboard() {
         {/* Stats */}
         <div className="stats-grid" style={{ marginBottom: 'var(--space-8)' }}>
           <div className="stat-card">
-            <div className="stat-icon blue"><CalendarDays size={20} /></div>
+            <div className="stat-icon teal"><CalendarDays size={20} /></div>
             <div className="stat-info">
               <div className="stat-label">Upcoming Appointments</div>
               <div className="stat-value">{upcoming.length}</div>
@@ -141,7 +141,7 @@ export default function PatientDashboard() {
                     <div style={{ fontWeight: 'var(--font-semibold)', color: 'var(--gray-900)', fontSize: 'var(--text-sm)' }}>{a.serviceName}</div>
                     <StatusBadge status={a.status} />
                   </div>
-                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--gray-500)', display: 'flex', alignItems: 'center', gap: 4 }}><UserRound size={13} /> {a.dentistName}</div>
+                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--gray-500)', display: 'flex', alignItems: 'center', gap: 4 }}><UserRound size={13} /> Dr. {a.dentistName}</div>
                   <div style={{ fontSize: 'var(--text-xs)', color: 'var(--gray-400)', marginTop: 'var(--space-2)', display: 'flex', gap: 'var(--space-3)' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><CalendarDays size={13} /> {formatDate(a.appointmentDatetime)}</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><Clock size={13} /> {formatTime(a.appointmentDatetime)}</span>
@@ -181,7 +181,7 @@ export default function PatientDashboard() {
                   <div>
                     <div style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)', color: 'var(--gray-800)' }}>{a.serviceName}</div>
                     <div style={{ fontSize: 'var(--text-xs)', color: 'var(--gray-500)', marginTop: '2px' }}>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}><UserRound size={13} /> {a.dentistName}</span> · {formatDate(a.appointmentDatetime)}
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}><UserRound size={13} /> Dr. {a.dentistName}</span> · {formatDate(a.appointmentDatetime)}
                     </div>
                   </div>
                   <StatusBadge status={a.status} />

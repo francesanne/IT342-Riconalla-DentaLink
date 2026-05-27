@@ -15,7 +15,6 @@ import edu.cit.riconalla.dentalink.shared.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Service
@@ -69,9 +68,8 @@ public class GoogleService {
                     newUser.setFirstName(firstName);
                     newUser.setLastName(lastName);
                     newUser.setGoogleId(googleId);
-                    newUser.setPassword("");   // workaround: password NOT NULL constraint (issue #17, pending)
+                    newUser.setPassword(null);  // OAuth users have no password
                     newUser.setRole(Role.PATIENT);
-                    newUser.setCreatedAt(LocalDateTime.now());
                     return userRepository.save(newUser);
                 });
 

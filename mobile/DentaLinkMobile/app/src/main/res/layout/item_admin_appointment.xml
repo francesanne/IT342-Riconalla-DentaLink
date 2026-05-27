@@ -8,7 +8,7 @@
     android:paddingBottom="14dp"
     android:layout_marginStart="@dimen/screen_padding"
     android:layout_marginEnd="@dimen/screen_padding"
-    android:layout_marginBottom="@dimen/item_spacing"
+    android:layout_marginBottom="16dp"
     android:elevation="2dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -47,6 +47,15 @@
 
     </LinearLayout>
 
+    <!-- Patient name -->
+    <TextView
+        android:id="@+id/tvAdminApptPatient"
+        android:textSize="13sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="3dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <!-- Dentist name -->
     <TextView
         android:id="@+id/tvAdminApptDentist"
@@ -72,7 +81,7 @@
         android:background="@color/divider"
         android:layout_marginBottom="10dp" />
 
-    <!-- Payment row -->
+    <!-- Payment row + action hint -->
     <LinearLayout
         android:orientation="horizontal"
         android:gravity="center_vertical"
@@ -85,6 +94,17 @@
             android:textColor="@color/text_secondary"
             android:layout_weight="1"
             android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <!-- Shown only for actionable (non-terminal) cards -->
+        <TextView
+            android:id="@+id/tvTapHint"
+            android:text="Tap to update ›"
+            android:textSize="11sp"
+            android:textColor="@color/primary"
+            android:layout_marginEnd="10dp"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <TextView

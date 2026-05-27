@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 import edu.cit.riconalla.dentalink.features.appointments.dto.AppointmentResponse;
 import edu.cit.riconalla.dentalink.shared.exception.BookingConflictException;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Component
@@ -40,18 +42,41 @@ public class AppointmentService {
     /** Patient books an appointment */
     public Appointment createAppointment(String patientEmail, Long serviceId, Long dentistId,
                                          LocalDateTime appointmentDatetime) {
+        // ── Datetime business-rule guards (fail fast before any DB queries) ──────
+        if (appointmentDatetime.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Appointment date must be in the future");
+        }
+        if (appointmentDatetime.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            throw new IllegalArgumentException("The clinic is closed on Sundays");
+        }
+        LocalTime bookingTime = appointmentDatetime.toLocalTime();
+        boolean isSaturday = appointmentDatetime.getDayOfWeek() == DayOfWeek.SATURDAY;
+        LocalTime open  = isSaturday ? LocalTime.of(9, 0) : LocalTime.of(8, 0);
+        LocalTime close = LocalTime.of(17, 0);
+        if (bookingTime.isBefore(open) || bookingTime.isAfter(close)) {
+            String hours = isSaturday ? "9:00 AM – 5:00 PM" : "8:00 AM – 5:00 PM";
+            throw new IllegalArgumentException(
+                    "Appointments must be scheduled during clinic operating hours (" + hours + ")");
+        }
+
         // Validate patient exists
         User patient = userRepository.findByEmail(patientEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Validate service and dentist exist
+        // Validate service exists
         serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new RuntimeException("Service not found"));
-        dentistRepository.findById(dentistId)
-                .orElseThrow(() -> new RuntimeException("Dentist not found"));
 
-        // Double-booking check
-        if (appointmentRepository.existsByDentistIdAndAppointmentDatetime(dentistId, appointmentDatetime)) {
+        // Validate dentist exists and is active
+        var dentist = dentistRepository.findById(dentistId)
+                .orElseThrow(() -> new RuntimeException("Dentist not found"));
+        if (!"ACTIVE".equals(dentist.getDentistStatus())) {
+            throw new IllegalArgumentException("Dentist is not currently available for booking");
+        }
+
+        // Double-booking check (exclude CANCELLED — those slots are free again)
+        if (appointmentRepository.existsByDentistIdAndAppointmentDatetimeAndAppointmentStatusNot(
+                dentistId, appointmentDatetime, AppointmentStatus.CANCELLED)) {
             throw new BookingConflictException("Conflict: This dentist is already booked at the selected date and time");
         }
 
@@ -83,6 +108,24 @@ public class AppointmentService {
         return appointmentRepository.findAll();
     }
 
+    /** Patient cancels their own unpaid appointment */
+    public Appointment cancelOwnAppointment(String patientEmail, Long appointmentId) {
+        Appointment a = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        User patient = userRepository.findByEmail(patientEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!a.getPatientId().equals(patient.getUserId())) {
+            throw new RuntimeException("Access denied: you can only cancel your own appointments");
+        }
+        if (a.getPaymentStatus() != PaymentStatus.UNPAID) {
+            throw new IllegalArgumentException("Only unpaid appointments can be cancelled");
+        }
+
+        a.setAppointmentStatus(AppointmentStatus.CANCELLED);
+        return appointmentRepository.save(a);
+    }
+
     public Appointment getAppointmentById(Long id) {
         return appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
@@ -112,6 +155,10 @@ public class AppointmentService {
                 "Invalid status. Admin may only set: COMPLETED, CANCELLED");
         }
         Appointment a = getAppointmentById(id);
+        if ("COMPLETED".equalsIgnoreCase(status) && a.getPaymentStatus() != PaymentStatus.PAID) {
+            throw new IllegalArgumentException(
+                "Cannot mark an unpaid appointment as completed.");
+        }
         a.setAppointmentStatus(AppointmentStatus.valueOf(status.toUpperCase()));
         return appointmentRepository.save(a);
     }

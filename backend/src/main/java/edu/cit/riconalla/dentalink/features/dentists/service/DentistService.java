@@ -1,5 +1,6 @@
 package edu.cit.riconalla.dentalink.features.dentists.service;
 
+import edu.cit.riconalla.dentalink.features.appointments.repository.AppointmentRepository;
 import edu.cit.riconalla.dentalink.features.dentists.dto.DentistDto;
 import edu.cit.riconalla.dentalink.features.dentists.dto.DentistRequest;
 import edu.cit.riconalla.dentalink.features.dentists.entity.Dentist;
@@ -17,9 +18,12 @@ public class DentistService {
     private static final List<String> VALID_STATUSES = Arrays.asList("ACTIVE", "INACTIVE");
 
     private final DentistRepository dentistRepository;
+    private final AppointmentRepository appointmentRepository;
 
-    public DentistService(DentistRepository dentistRepository) {
+    public DentistService(DentistRepository dentistRepository,
+                          AppointmentRepository appointmentRepository) {
         this.dentistRepository = dentistRepository;
+        this.appointmentRepository = appointmentRepository;
     }
 
     /**
@@ -83,6 +87,11 @@ public class DentistService {
     public void deleteDentist(Long id) {
         if (!dentistRepository.existsById(id)) {
             throw new ResourceNotFoundException("Dentist not found");
+        }
+        if (appointmentRepository.existsByDentistId(id)) {
+            throw new IllegalArgumentException(
+                "Cannot delete a dentist with existing appointments. Set their status to INACTIVE instead."
+            );
         }
         dentistRepository.deleteById(id);
     }

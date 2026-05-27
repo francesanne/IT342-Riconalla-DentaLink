@@ -1,28 +1,33 @@
 package com.example.dentalinkmobile
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.utils.SessionManager
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class PatientDashboardActivity : AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
     private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navView: NavigationView   // class-level so onResume can reset selection
 
     private lateinit var tvUpcoming: TextView
     private lateinit var tvCompleted: TextView
     private lateinit var tvPending: TextView
-    private lateinit var lvUpcoming: ListView
+    private lateinit var llUpcoming: LinearLayout
     private lateinit var tvNoUpcoming: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +38,7 @@ class PatientDashboardActivity : AppCompatActivity() {
 
         val toolbar  = findViewById<MaterialToolbar>(R.id.toolbar)
         drawerLayout = findViewById(R.id.drawerLayout)
-        val navView  = findViewById<NavigationView>(R.id.navView)
+        navView      = findViewById(R.id.navView)
 
         setSupportActionBar(toolbar)
         val toggle = ActionBarDrawerToggle(
@@ -61,12 +66,10 @@ class PatientDashboardActivity : AppCompatActivity() {
             true
         }
 
-        navView.setCheckedItem(R.id.nav_dashboard)
-
         tvUpcoming   = findViewById(R.id.tvUpcomingCount)
         tvCompleted  = findViewById(R.id.tvCompletedCount)
         tvPending    = findViewById(R.id.tvPendingCount)
-        lvUpcoming   = findViewById(R.id.lvUpcomingAppointments)
+        llUpcoming   = findViewById(R.id.llUpcomingAppointments)
         tvNoUpcoming = findViewById(R.id.tvNoUpcoming)
 
         findViewById<TextView>(R.id.tvWelcome).text = "Welcome, $firstName!"
@@ -77,10 +80,16 @@ class PatientDashboardActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnClinicLocation).setOnClickListener {
             startActivity(Intent(this, ClinicDirectionsActivity::class.java))
         }
+        findViewById<TextView>(R.id.tvViewAllAppointments).setOnClickListener {
+            startActivity(Intent(this, MyAppointmentsActivity::class.java))
+        }
     }
 
     override fun onResume() {
         super.onResume()
+        // Always re-highlight Dashboard in the drawer — prevents the stale selection
+        // that occurs when the user navigates to a sub-page and presses back.
+        navView.setCheckedItem(R.id.nav_dashboard)
         loadDashboard()
     }
 
@@ -108,24 +117,88 @@ class PatientDashboardActivity : AppCompatActivity() {
 
                     if (upcomingList.isEmpty()) {
                         tvNoUpcoming.visibility = View.VISIBLE
-                        lvUpcoming.visibility   = View.GONE
+                        llUpcoming.visibility   = View.GONE
                     } else {
                         tvNoUpcoming.visibility = View.GONE
-                        lvUpcoming.visibility   = View.VISIBLE
-                        lvUpcoming.adapter = AppointmentAdapter(
-                            this@PatientDashboardActivity,
-                            upcomingList.take(3)
-                        ) { /* no tap action on dashboard preview */ }
+                        llUpcoming.visibility   = View.VISIBLE
+                        llUpcoming.removeAllViews()
+
+                        val inflater = LayoutInflater.from(this@PatientDashboardActivity)
+                        upcomingList.take(3).forEach { appt ->
+                            val v = inflater.inflate(R.layout.item_appointment, llUpcoming, false)
+
+                            // Clear horizontal margins — the ScrollView container already
+                            // applies screen_padding, so item's own margins cause double-indent
+                            val lp = v.layoutParams as LinearLayout.LayoutParams
+                            lp.marginStart = 0
+                            lp.marginEnd   = 0
+                            v.layoutParams = lp
+
+                            v.findViewById<TextView>(R.id.tvApptServiceName).text =
+                                appt.serviceName ?: "Service"
+                            v.findViewById<TextView>(R.id.tvApptDentistName).text =
+                                if (appt.dentistName != null) "Dr. ${appt.dentistName}" else "Unknown Dentist"
+                            v.findViewById<TextView>(R.id.tvApptDatetime).text =
+                                formatDatetime(appt.appointmentDatetime)
+
+                            val tvStatus = v.findViewById<TextView>(R.id.tvApptStatus)
+                            tvStatus.text = (appt.status ?: "").replace("_", " ")
+                            val (textColor, bgColor) = statusColors(appt.status)
+                            tvStatus.setTextColor(textColor)
+                            tvStatus.backgroundTintList = ColorStateList.valueOf(bgColor)
+
+                            v.findViewById<TextView>(R.id.tvApptPaymentStatus).text =
+                                "Payment: ${appt.paymentStatus ?: ""}"
+
+                            // Hide action buttons — dashboard is preview only
+                            v.findViewById<TextView>(R.id.tvPayNow).visibility    = View.GONE
+                            v.findViewById<TextView>(R.id.tvCancelAppt).visibility = View.GONE
+
+                            llUpcoming.addView(v)
+                        }
                     }
                 }
             } catch (e: Exception) {
-                Toast.makeText(
-                    this@PatientDashboardActivity,
+                Snackbar.make(
+                    this@PatientDashboardActivity.findViewById(android.R.id.content),
                     "Failed to load appointments",
-                    Toast.LENGTH_SHORT
+                    Snackbar.LENGTH_SHORT
                 ).show()
             }
         }
+    }
+
+    private fun statusColors(status: String?): Pair<Int, Int> {
+        return when (status) {
+            "CONFIRMED"       -> Pair(
+                ContextCompat.getColor(this, R.color.status_confirmed),
+                ContextCompat.getColor(this, R.color.status_confirmed_bg)
+            )
+            "PENDING_PAYMENT" -> Pair(
+                ContextCompat.getColor(this, R.color.status_pending),
+                ContextCompat.getColor(this, R.color.status_pending_bg)
+            )
+            "COMPLETED"       -> Pair(
+                ContextCompat.getColor(this, R.color.status_completed),
+                ContextCompat.getColor(this, R.color.status_completed_bg)
+            )
+            "CANCELLED"       -> Pair(
+                ContextCompat.getColor(this, R.color.status_cancelled),
+                ContextCompat.getColor(this, R.color.status_cancelled_bg)
+            )
+            else -> Pair(
+                ContextCompat.getColor(this, R.color.text_secondary),
+                ContextCompat.getColor(this, R.color.surface_variant)
+            )
+        }
+    }
+
+    private fun formatDatetime(dt: String?): String {
+        if (dt == null) return ""
+        return try {
+            val ldt = java.time.LocalDateTime.parse(dt.take(19))
+            ldt.format(java.time.format.DateTimeFormatter.ofPattern("MMM d, yyyy h:mm a"))
+        } catch (e: Exception) { dt }
     }
 
     private fun logout() {

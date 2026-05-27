@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
 import { dentistsAPI, appointmentsAPI, paymentsAPI } from '@/shared/api/api';
 import { toast } from 'sonner';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
-const TIME_SLOTS = [
+const WEEKDAY_SLOTS = [
   '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
   '11:00', '11:30', '13:00', '13:30', '14:00', '14:30',
   '15:00', '15:30', '16:00', '16:30', '17:00',
 ];
+
+const SATURDAY_SLOTS = WEEKDAY_SLOTS.filter(t => t >= '09:00');
 
 function formatPeso(amount) {
   if (!amount) return '₱0.00';
@@ -16,12 +20,12 @@ function formatPeso(amount) {
 export default function BookingModal({ service, onClose, onSuccess }) {
   const [dentists, setDentists] = useState([]);
   const [dentistId, setDentistId] = useState('');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState(null);
   const [time, setTime] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Min date = today
-  const today = new Date().toISOString().split('T')[0];
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
 
   useEffect(() => {
     dentistsAPI.getAll().then(res => {
@@ -37,7 +41,9 @@ export default function BookingModal({ service, onClose, onSuccess }) {
     }
     setLoading(true);
     try {
-      const appointmentDatetime = `${date}T${time}:00`;
+      const pad = n => String(n).padStart(2, '0');
+      const dateStr = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+      const appointmentDatetime = `${dateStr}T${time}:00`;
 
       // Step 1 — Create appointment (status = PENDING_PAYMENT)
       const apptRes = await appointmentsAPI.create({
@@ -112,7 +118,21 @@ export default function BookingModal({ service, onClose, onSuccess }) {
             {/* Date */}
             <div className="form-group">
               <label>Preferred Date</label>
-              <input type="date" value={date} min={today} onChange={e => setDate(e.target.value)} required />
+              <DatePicker
+                selected={date}
+                onChange={d => {
+                  setDate(d);
+                  // Reset time if current selection is invalid for Saturday
+                  if (d && d.getDay() === 6 && time && time < '09:00') setTime('');
+                }}
+                filterDate={d => d.getDay() !== 0}
+                minDate={todayDate}
+                placeholderText="Select a date"
+                dateFormat="MMMM d, yyyy"
+                wrapperClassName="datepicker-wrapper"
+                className="datepicker-input"
+                autoComplete="off"
+              />
             </div>
 
             {/* Time */}
@@ -120,7 +140,7 @@ export default function BookingModal({ service, onClose, onSuccess }) {
               <label>Preferred Time</label>
               <select value={time} onChange={e => setTime(e.target.value)} required>
                 <option value="">Choose a time…</option>
-                {TIME_SLOTS.map(t => (
+                {(date?.getDay() === 6 ? SATURDAY_SLOTS : WEEKDAY_SLOTS).map(t => (
                   <option key={t} value={t}>{formatTime(t)}</option>
                 ))}
               </select>
@@ -133,7 +153,24 @@ export default function BookingModal({ service, onClose, onSuccess }) {
           </div>
 
           <div className="modal-footer" style={{ padding: '0 var(--space-6) var(--space-6)' }}>
-            <button type="button" onClick={onClose} className="btn-sm btn-outline-sm" disabled={loading}>
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loading}
+              style={{
+                height: '44px',
+                padding: '0 var(--space-6)',
+                background: 'white',
+                color: 'var(--gray-700)',
+                border: '2px solid var(--gray-200)',
+                borderRadius: 'var(--radius-lg)',
+                fontWeight: 'var(--font-semibold)',
+                fontSize: 'var(--text-sm)',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.7 : 1,
+                transition: 'all 0.2s ease',
+              }}
+            >
               Cancel
             </button>
             <button

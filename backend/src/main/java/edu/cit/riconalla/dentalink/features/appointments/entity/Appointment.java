@@ -8,12 +8,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-        name = "appointments",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"dentist_id", "appointment_datetime"})
-        }
-)
+@Table(name = "appointments")
 @Getter
 @Setter
 @Builder
@@ -48,4 +43,12 @@ public class Appointment {
 
     @Column(name = "paymongo_intent_id")
     private String paymongoIntentId;
+
+    @Column(name = "created_at", updatable = false)
+    private java.time.LocalDateTime createdAt;
+
+    @jakarta.persistence.PrePersist
+    void prePersist() {
+        if (createdAt == null) createdAt = java.time.LocalDateTime.now();
+    }
 }

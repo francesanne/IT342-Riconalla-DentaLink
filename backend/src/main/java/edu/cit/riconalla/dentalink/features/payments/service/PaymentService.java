@@ -286,12 +286,17 @@ public class PaymentService {
 
         Appointment appointment = appointmentOpt.get();
 
-        // 5. Idempotency — silent ack if already paid
+        // 5. Guard — appointment was auto-cancelled before webhook arrived; do not process late payment
+        if (appointment.getAppointmentStatus() == AppointmentStatus.CANCELLED) {
+            return;
+        }
+
+        // 6. Idempotency — silent ack if already paid
         if (appointment.getPaymentStatus() == PaymentStatus.PAID) {
             return;
         }
 
-        // 6. Create or update Payment row
+        // 7. Create or update Payment row
         Payment payment = paymentRepository.findByAppointmentAppointmentId(appointment.getAppointmentId())
                 .orElseGet(Payment::new);
 
@@ -303,12 +308,12 @@ public class PaymentService {
         payment.setPaymentCreatedAt(LocalDateTime.now());
         paymentRepository.save(payment);
 
-        // 7. Update appointment — ONLY place CONFIRMED is set
+        // 8. Update appointment — ONLY place CONFIRMED is set
         appointment.setPaymentStatus(PaymentStatus.PAID);
         appointment.setAppointmentStatus(AppointmentStatus.CONFIRMED);
         appointmentRepository.save(appointment);
 
-        // 8. Send confirmation email — SDD §2.4 (mandatory, non-blocking)
+        // 9. Send confirmation email — SDD §2.4 (mandatory, non-blocking)
         userRepository.findById(appointment.getPatientId()).ifPresent(patient -> {
             String serviceName = serviceRepository.findById(appointment.getServiceId())
                     .map(s -> s.getServiceName()).orElse("Dental Service");
