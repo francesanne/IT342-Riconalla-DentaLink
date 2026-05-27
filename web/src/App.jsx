@@ -43,7 +43,7 @@ function AppRoutes() {
       <Route path="/profile"         element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/payment/success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
       <Route path="/payment/cancel"  element={<ProtectedRoute><PaymentCancel /></ProtectedRoute>} />
-      <Route path="/contact"         element={<ProtectedRoute><Contact /></ProtectedRoute>} />
+      <Route path="/contact"         element={<Contact />} />
 
       <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
       <Route path="/admin/services" element={<ProtectedRoute adminOnly><ManageServices /></ProtectedRoute>} />
