@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.auth.model.RegisterRequest
 import com.example.dentalinkmobile.utils.SessionManager
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
@@ -37,17 +38,17 @@ class RegisterActivity : AppCompatActivity() {
 
             // Client-side validation — SDD §2.4 (Basic form validation feedback)
             if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-                Toast.makeText(this, getString(R.string.error_fill_all_fields), Toast.LENGTH_SHORT).show()
+                Snackbar.make(findViewById(android.R.id.content), getString(R.string.error_fill_all_fields), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             if (password.length < 8) {
-                Toast.makeText(this, "Password must be at least 8 characters.", Toast.LENGTH_SHORT).show()
+                Snackbar.make(findViewById(android.R.id.content), "Password must be at least 8 characters.", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             if (password != confirmPassword) {
-                Toast.makeText(this, getString(R.string.error_passwords_no_match), Toast.LENGTH_SHORT).show()
+                Snackbar.make(findViewById(android.R.id.content), getString(R.string.error_passwords_no_match), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -68,7 +69,7 @@ class RegisterActivity : AppCompatActivity() {
                             sessionManager.saveToken(accessToken)
                             sessionManager.saveUserInfo(user.role, user.firstName)
 
-                            Toast.makeText(this@RegisterActivity, getString(R.string.register_success), Toast.LENGTH_SHORT).show()
+                            Snackbar.make(this@RegisterActivity.findViewById(android.R.id.content), getString(R.string.register_success), Snackbar.LENGTH_SHORT).show()
 
                             // Navigate directly to patient dashboard — skip login screen
                             val intent = Intent(this@RegisterActivity, PatientDashboardActivity::class.java)
@@ -76,7 +77,7 @@ class RegisterActivity : AppCompatActivity() {
                             startActivity(intent)
                             finish()
                         } else {
-                            Toast.makeText(this@RegisterActivity, getString(R.string.error_invalid_response), Toast.LENGTH_SHORT).show()
+                            Snackbar.make(this@RegisterActivity.findViewById(android.R.id.content), getString(R.string.error_invalid_response), Snackbar.LENGTH_SHORT).show()
                         }
                     } else {
                         // 409 = email already registered (SDD §5.3); 400 = validation failed
@@ -85,11 +86,11 @@ class RegisterActivity : AppCompatActivity() {
                             400 -> "Invalid input. Please check your details."
                             else -> getString(R.string.error_registration_failed)
                         }
-                        Toast.makeText(this@RegisterActivity, errorMsg, Toast.LENGTH_SHORT).show()
+                        Snackbar.make(this@RegisterActivity.findViewById(android.R.id.content), errorMsg, Snackbar.LENGTH_SHORT).show()
                     }
 
                 } catch (e: Exception) {
-                    Toast.makeText(this@RegisterActivity, getString(R.string.error_network_prefix) + e.message, Toast.LENGTH_LONG).show()
+                    Snackbar.make(this@RegisterActivity.findViewById(android.R.id.content), getString(R.string.error_network_prefix) + e.message, Snackbar.LENGTH_LONG).show()
                 }
             }
         }

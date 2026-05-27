@@ -15,6 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -33,10 +34,10 @@ class MainActivity : AppCompatActivity() {
             if (idToken != null) {
                 sendGoogleTokenToBackend(idToken)
             } else {
-                Toast.makeText(this, "Google sign-in failed: no ID token received", Toast.LENGTH_SHORT).show()
+                Snackbar.make(findViewById(android.R.id.content), "Google sign-in failed: no ID token received", Snackbar.LENGTH_SHORT).show()
             }
         } catch (e: ApiException) {
-            Toast.makeText(this, "Google sign-in error (code ${e.statusCode})", Toast.LENGTH_SHORT).show()
+            Snackbar.make(findViewById(android.R.id.content), "Google sign-in error (code ${e.statusCode})", Snackbar.LENGTH_SHORT).show()
         }
     }
 
@@ -79,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             val password = etPassword.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, getString(R.string.error_fill_all_fields), Toast.LENGTH_SHORT).show()
+                Snackbar.make(findViewById(android.R.id.content), getString(R.string.error_fill_all_fields), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -97,13 +98,13 @@ class MainActivity : AppCompatActivity() {
                             sessionManager.saveUserInfo(user.role, user.firstName)
                             navigateToDashboard()
                         } else {
-                            Toast.makeText(this@MainActivity, getString(R.string.error_invalid_response), Toast.LENGTH_SHORT).show()
+                            Snackbar.make(this@MainActivity.findViewById(android.R.id.content), getString(R.string.error_invalid_response), Snackbar.LENGTH_SHORT).show()
                         }
                     } else {
-                        Toast.makeText(this@MainActivity, getString(R.string.error_invalid_credentials), Toast.LENGTH_SHORT).show()
+                        Snackbar.make(this@MainActivity.findViewById(android.R.id.content), getString(R.string.error_invalid_credentials), Snackbar.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(this@MainActivity, getString(R.string.error_network_prefix) + e.message, Toast.LENGTH_LONG).show()
+                    Snackbar.make(this@MainActivity.findViewById(android.R.id.content), getString(R.string.error_network_prefix) + e.message, Snackbar.LENGTH_LONG).show()
                 }
             }
         }
@@ -128,16 +129,16 @@ class MainActivity : AppCompatActivity() {
                         sessionManager.saveUserInfo(user.role, user.firstName)
                         navigateToDashboard()
                     } else {
-                        Toast.makeText(this@MainActivity, getString(R.string.error_invalid_response), Toast.LENGTH_SHORT).show()
+                        Snackbar.make(this@MainActivity.findViewById(android.R.id.content), getString(R.string.error_invalid_response), Snackbar.LENGTH_SHORT).show()
                     }
                 } else {
                     val code = response.code()
                     val msg  = if (code == 401) "Google account not recognized. Please try again."
                                else "Google login failed ($code)"
-                    Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@MainActivity.findViewById(android.R.id.content), msg, Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@MainActivity, getString(R.string.error_network_prefix) + e.message, Toast.LENGTH_LONG).show()
+                Snackbar.make(this@MainActivity.findViewById(android.R.id.content), getString(R.string.error_network_prefix) + e.message, Snackbar.LENGTH_LONG).show()
             }
         }
     }

@@ -15,6 +15,7 @@ import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.appointments.model.AppointmentItem
 import com.example.dentalinkmobile.features.appointments.model.CreateIntentRequest
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -35,7 +36,7 @@ class MyAppointmentsActivity : AppCompatActivity() {
             if (appointmentId != -1L) {
                 pollForConfirmation(appointmentId)
             } else {
-                Toast.makeText(this, "Payment successful! Check your email for confirmation.", Toast.LENGTH_LONG).show()
+                Snackbar.make(findViewById(android.R.id.content), "Payment successful! Check your email for confirmation.", Snackbar.LENGTH_LONG).show()
                 loadAppointments()
             }
         } else {
@@ -84,10 +85,10 @@ class MyAppointmentsActivity : AppCompatActivity() {
                     allAppointments = response.body()?.data ?: emptyList()
                     applyFilter(currentFilter, filterButtons.first())
                 } else {
-                    Toast.makeText(this@MyAppointmentsActivity, "Failed to load appointments", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), "Failed to load appointments", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@MyAppointmentsActivity, "Network error. Please check your connection.", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), "Network error. Please check your connection.", Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -116,7 +117,7 @@ class MyAppointmentsActivity : AppCompatActivity() {
             } else {
                 "Payment received! Your appointment confirmation may take a moment. Check your email shortly."
             }
-            Toast.makeText(this@MyAppointmentsActivity, message, Toast.LENGTH_LONG).show()
+            Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show()
             loadAppointments()
         }
     }
@@ -158,7 +159,7 @@ class MyAppointmentsActivity : AppCompatActivity() {
                     try {
                         val response = RetrofitClient.apiService.cancelAppointment(appointmentId)
                         if (response.isSuccessful) {
-                            Toast.makeText(this@MyAppointmentsActivity, "Your appointment has been cancelled.", Toast.LENGTH_SHORT).show()
+                            Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), "Your appointment has been cancelled.", Snackbar.LENGTH_SHORT).show()
                             loadAppointments()
                         } else {
                             val msg = when (response.code()) {
@@ -167,10 +168,10 @@ class MyAppointmentsActivity : AppCompatActivity() {
                                 404  -> "Appointment not found."
                                 else -> "Failed to cancel appointment. Please try again."
                             }
-                            Toast.makeText(this@MyAppointmentsActivity, msg, Toast.LENGTH_LONG).show()
+                            Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG).show()
                         }
                     } catch (e: Exception) {
-                        Toast.makeText(this@MyAppointmentsActivity, "Network error. Please check your connection.", Toast.LENGTH_LONG).show()
+                        Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), "Network error. Please check your connection.", Snackbar.LENGTH_LONG).show()
                     }
                 }
             }
@@ -191,13 +192,13 @@ class MyAppointmentsActivity : AppCompatActivity() {
                         intent.putExtra(PaymentWebViewActivity.EXTRA_CHECKOUT_URL, checkoutUrl)
                         paymentLauncher.launch(intent)
                     } else {
-                        Toast.makeText(this@MyAppointmentsActivity, "Checkout URL not received", Toast.LENGTH_SHORT).show()
+                        Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), "Checkout URL not received", Snackbar.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this@MyAppointmentsActivity, "Failed to initiate payment", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), "Failed to initiate payment", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@MyAppointmentsActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@MyAppointmentsActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -217,7 +218,7 @@ class AppointmentAdapter(
         val item = items[position]
 
         view.findViewById<TextView>(R.id.tvApptServiceName).text = item.serviceName ?: "Service"
-        view.findViewById<TextView>(R.id.tvApptDentistName).text = item.dentistName ?: ""
+        view.findViewById<TextView>(R.id.tvApptDentistName).text = if (item.dentistName != null) "Dr. ${item.dentistName}" else "Unknown Dentist"
         view.findViewById<TextView>(R.id.tvApptDatetime).text    = formatDatetime(item.appointmentDatetime)
 
         val tvStatus = view.findViewById<TextView>(R.id.tvApptStatus)

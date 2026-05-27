@@ -115,7 +115,7 @@
                 android:paddingEnd="14dp"
                 android:paddingTop="14dp"
                 android:paddingBottom="14dp"
-                android:layout_marginBottom="32dp"
+                android:layout_marginBottom="24dp"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/input_height" />
 
@@ -124,9 +124,19 @@
                 android:id="@+id/btnConfirmBooking"
                 android:text="Book and Pay"
                 style="@style/PrimaryButton"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="12dp"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height" />
+
+            <!-- Loading indicator shown while the booking request is in-flight -->
+            <ProgressBar
+                android:id="@+id/progressBooking"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:indeterminate="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btnCancelBooking"

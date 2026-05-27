@@ -13,6 +13,7 @@ import com.example.dentalinkmobile.features.profile.model.UpdateProfileRequest
 import com.example.dentalinkmobile.utils.ImageLoader
 import com.example.dentalinkmobile.utils.SessionManager
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -74,7 +75,7 @@ class ProfileActivity : AppCompatActivity() {
                     }
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@ProfileActivity, "Failed to load profile", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@ProfileActivity.findViewById(android.R.id.content), "Failed to load profile", Snackbar.LENGTH_SHORT).show()
             }
         }
 
@@ -85,7 +86,7 @@ class ProfileActivity : AppCompatActivity() {
             val newPassword     = etNewPassword.text.toString().trim()
 
             if (firstName.isEmpty() || lastName.isEmpty() || currentPassword.isEmpty()) {
-                Toast.makeText(this, "First name, last name and current password are required", Toast.LENGTH_SHORT).show()
+                Snackbar.make(findViewById(android.R.id.content), "First name, last name and current password are required", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -104,17 +105,17 @@ class ProfileActivity : AppCompatActivity() {
                         if (updated != null) {
                             sessionManager.saveUserInfo(updated.role, updated.firstName)
                         }
-                        Toast.makeText(this@ProfileActivity, "Profile updated", Toast.LENGTH_SHORT).show()
+                        Snackbar.make(this@ProfileActivity.findViewById(android.R.id.content), "Profile updated", Snackbar.LENGTH_SHORT).show()
                         etCurrentPassword.text.clear()
                         etNewPassword.text.clear()
                     } else {
                         val code = response.code()
                         val msg = if (code == 400) "Incorrect current password or invalid input."
                         else "Failed to update profile ($code)"
-                        Toast.makeText(this@ProfileActivity, msg, Toast.LENGTH_SHORT).show()
+                        Snackbar.make(this@ProfileActivity.findViewById(android.R.id.content), msg, Snackbar.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(this@ProfileActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@ProfileActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
                 }
             }
         }
@@ -151,7 +152,7 @@ class ProfileActivity : AppCompatActivity() {
 
                 val response = RetrofitClient.apiService.uploadProfilePicture(part)
                 if (response.isSuccessful) {
-                    Toast.makeText(this@ProfileActivity, "Profile picture updated", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@ProfileActivity.findViewById(android.R.id.content), "Profile picture updated", Snackbar.LENGTH_SHORT).show()
                     // Reload the remote URL returned by the server so the displayed image
                     // reflects exactly what's stored (server may resize/process it)
                     val remoteUrl = response.body()?.data?.profileImageUrl
@@ -159,10 +160,10 @@ class ProfileActivity : AppCompatActivity() {
                         ImageLoader.loadInto(remoteUrl, ivProfilePicture)
                     }
                 } else {
-                    Toast.makeText(this@ProfileActivity, "Upload failed (${response.code()})", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@ProfileActivity.findViewById(android.R.id.content), "Upload failed (${response.code()})", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@ProfileActivity, "Upload error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@ProfileActivity.findViewById(android.R.id.content), "Upload error: ${e.message}", Snackbar.LENGTH_SHORT).show()
             }
         }
     }

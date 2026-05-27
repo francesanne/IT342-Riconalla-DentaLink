@@ -18,6 +18,7 @@ import com.example.dentalinkmobile.features.payments.model.ServiceRequest
 import com.example.dentalinkmobile.utils.ImageLoader
 import com.example.dentalinkmobile.utils.formatPeso
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -29,6 +30,7 @@ class AdminServicesActivity : AppCompatActivity() {
     private var serviceList = listOf<ServiceDto>()
     private lateinit var lvServices: ListView
     private lateinit var tvEmpty: TextView
+    private lateinit var progressBar: ProgressBar
 
     private var pendingServiceImageUri: Uri? = null
     private var onImagePickedCallback: ((Uri) -> Unit)? = null
@@ -51,8 +53,9 @@ class AdminServicesActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener { finish() }
 
-        lvServices = findViewById(R.id.lvAdminServices)
-        tvEmpty    = findViewById(R.id.tvAdminServicesEmpty)
+        lvServices  = findViewById(R.id.lvAdminServices)
+        tvEmpty     = findViewById(R.id.tvAdminServicesEmpty)
+        progressBar = findViewById(R.id.progressBar)
 
         findViewById<Button>(R.id.btnAddService).setOnClickListener {
             showServiceDialog(null)
@@ -65,6 +68,9 @@ class AdminServicesActivity : AppCompatActivity() {
     }
 
     private fun loadServices() {
+        progressBar.visibility = View.VISIBLE
+        lvServices.visibility  = View.GONE
+        tvEmpty.visibility     = View.GONE
         lifecycleScope.launch {
             try {
                 val response = RetrofitClient.apiService.getServices()
@@ -72,10 +78,12 @@ class AdminServicesActivity : AppCompatActivity() {
                     serviceList = response.body()?.data ?: emptyList()
                     renderList()
                 } else {
-                    Toast.makeText(this@AdminServicesActivity, "Failed to load services", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminServicesActivity.findViewById(android.R.id.content), "Failed to load services", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AdminServicesActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminServicesActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
+            } finally {
+                progressBar.visibility = View.GONE
             }
         }
     }
@@ -152,7 +160,7 @@ class AdminServicesActivity : AppCompatActivity() {
                 val price = etPrice.text.toString().toDoubleOrNull()
 
                 if (name.isEmpty() || price == null) {
-                    Toast.makeText(this, "Name and valid price are required", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), "Name and valid price are required", Snackbar.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
 
@@ -191,17 +199,17 @@ class AdminServicesActivity : AppCompatActivity() {
                 val response = RetrofitClient.apiService.createService(request)
                 if (response.isSuccessful) {
                     val newService = response.body()?.data
-                    Toast.makeText(this@AdminServicesActivity, "Service created", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminServicesActivity.findViewById(android.R.id.content), "Service created", Snackbar.LENGTH_SHORT).show()
                     // Upload image first (suspend), THEN reload so the image URL is already saved
                     if (newService != null && imageUri != null) {
                         uploadServiceImage(newService.id, imageUri)
                     }
                     loadServices()
                 } else {
-                    Toast.makeText(this@AdminServicesActivity, "Failed to create service (${response.code()})", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminServicesActivity.findViewById(android.R.id.content), "Failed to create service (${response.code()})", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AdminServicesActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminServicesActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -215,17 +223,17 @@ class AdminServicesActivity : AppCompatActivity() {
             try {
                 val response = RetrofitClient.apiService.updateService(id, request)
                 if (response.isSuccessful) {
-                    Toast.makeText(this@AdminServicesActivity, "Service updated", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminServicesActivity.findViewById(android.R.id.content), "Service updated", Snackbar.LENGTH_SHORT).show()
                     // Upload image first (suspend), THEN reload
                     if (imageUri != null) {
                         uploadServiceImage(id, imageUri)
                     }
                     loadServices()
                 } else {
-                    Toast.makeText(this@AdminServicesActivity, "Failed to update service (${response.code()})", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminServicesActivity.findViewById(android.R.id.content), "Failed to update service (${response.code()})", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AdminServicesActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminServicesActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -244,13 +252,13 @@ class AdminServicesActivity : AppCompatActivity() {
             try {
                 val response = RetrofitClient.apiService.deleteService(id)
                 if (response.isSuccessful) {
-                    Toast.makeText(this@AdminServicesActivity, "Service deleted", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminServicesActivity.findViewById(android.R.id.content), "Service deleted", Snackbar.LENGTH_SHORT).show()
                     loadServices()
                 } else {
-                    Toast.makeText(this@AdminServicesActivity, "Failed to delete service (${response.code()})", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminServicesActivity.findViewById(android.R.id.content), "Failed to delete service (${response.code()})", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AdminServicesActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminServicesActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -265,10 +273,10 @@ class AdminServicesActivity : AppCompatActivity() {
 
             val response = RetrofitClient.apiService.uploadServiceImage(serviceId, part)
             if (!response.isSuccessful) {
-                Toast.makeText(this@AdminServicesActivity, "Image upload failed (${response.code()})", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminServicesActivity.findViewById(android.R.id.content), "Image upload failed (${response.code()})", Snackbar.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
-            Toast.makeText(this@AdminServicesActivity, "Image upload error: ${e.message}", Toast.LENGTH_SHORT).show()
+            Snackbar.make(this@AdminServicesActivity.findViewById(android.R.id.content), "Image upload error: ${e.message}", Snackbar.LENGTH_SHORT).show()
         }
     }
 }

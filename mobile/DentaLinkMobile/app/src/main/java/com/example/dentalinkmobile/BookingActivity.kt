@@ -3,6 +3,7 @@ package com.example.dentalinkmobile
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -11,6 +12,7 @@ import com.example.dentalinkmobile.features.appointments.model.CreateAppointment
 import com.example.dentalinkmobile.features.appointments.model.CreateIntentRequest
 import com.example.dentalinkmobile.features.dentists.model.DentistDto
 import com.example.dentalinkmobile.utils.formatPeso
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -45,8 +47,9 @@ class BookingActivity : AppCompatActivity() {
         val spinnerDentist = findViewById<Spinner>(R.id.spinnerDentist)
         val datePicker     = findViewById<DatePicker>(R.id.datePicker)
         val spinnerTime    = findViewById<Spinner>(R.id.spinnerTime)
-        val btnConfirm     = findViewById<Button>(R.id.btnConfirmBooking)
-        val btnCancel      = findViewById<Button>(R.id.btnCancelBooking)
+        val btnConfirm      = findViewById<Button>(R.id.btnConfirmBooking)
+        val btnCancel       = findViewById<Button>(R.id.btnCancelBooking)
+        val progressBooking = findViewById<ProgressBar>(R.id.progressBooking)
 
         tvServiceName.text  = serviceName
         tvServicePrice.text = formatPeso(servicePrice)
@@ -90,7 +93,7 @@ class BookingActivity : AppCompatActivity() {
                     spinnerDentist.adapter = dentistAdapter
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@BookingActivity, "Failed to load dentists", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@BookingActivity.findViewById(android.R.id.content), "Failed to load dentists", Snackbar.LENGTH_SHORT).show()
             }
         }
 
@@ -99,16 +102,16 @@ class BookingActivity : AppCompatActivity() {
             val selectedCal = Calendar.getInstance()
             selectedCal.set(datePicker.year, datePicker.month, datePicker.dayOfMonth)
             if (selectedCal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-                Toast.makeText(
-                    this,
+                Snackbar.make(
+                    findViewById(android.R.id.content),
                     "The clinic is closed on Sundays. Please select another date.",
-                    Toast.LENGTH_LONG
+                    Snackbar.LENGTH_LONG
                 ).show()
                 return@setOnClickListener
             }
 
             if (dentistList.isEmpty()) {
-                Toast.makeText(this, "No dentists available", Toast.LENGTH_SHORT).show()
+                Snackbar.make(findViewById(android.R.id.content), "No dentists available", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -119,7 +122,8 @@ class BookingActivity : AppCompatActivity() {
             val time  = timeSlots[spinnerTime.selectedItemPosition]
             val appointmentDatetime = "%04d-%02d-%02dT%s:00".format(year, month, day, time)
 
-            // Disable to prevent duplicate taps while the request is in-flight
+            // Show loading state and disable button while the request is in-flight
+            progressBooking.visibility = View.VISIBLE
             btnConfirm.isEnabled = false
             btnConfirm.text = "Processing…"
 
@@ -127,6 +131,7 @@ class BookingActivity : AppCompatActivity() {
                 try {
                     confirmBooking(dentistId, appointmentDatetime)
                 } finally {
+                    progressBooking.visibility = View.GONE
                     btnConfirm.isEnabled = true
                     btnConfirm.text = "Confirm Booking"
                 }
@@ -151,13 +156,13 @@ class BookingActivity : AppCompatActivity() {
                 } else {
                     "Booking failed (${code})"
                 }
-                Toast.makeText(this@BookingActivity, msg, Toast.LENGTH_LONG).show()
+                Snackbar.make(this@BookingActivity.findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG).show()
                 return
             }
 
             val appointmentId = apptResponse.body()?.data?.id
             if (appointmentId == null) {
-                Toast.makeText(this@BookingActivity, "Unexpected response from server", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@BookingActivity.findViewById(android.R.id.content), "Unexpected response from server", Snackbar.LENGTH_SHORT).show()
                 return
             }
 
@@ -173,14 +178,14 @@ class BookingActivity : AppCompatActivity() {
                     startActivity(browserIntent)
                     finish()
                 } else {
-                    Toast.makeText(this@BookingActivity, "Checkout URL not received", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@BookingActivity.findViewById(android.R.id.content), "Checkout URL not received", Snackbar.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(this@BookingActivity, "Failed to create payment. Try again.", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@BookingActivity.findViewById(android.R.id.content), "Failed to create payment. Try again.", Snackbar.LENGTH_SHORT).show()
             }
 
         } catch (e: Exception) {
-            Toast.makeText(this@BookingActivity, "Network error: ${e.message}", Toast.LENGTH_LONG).show()
+            Snackbar.make(this@BookingActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_LONG).show()
         }
     }
 }

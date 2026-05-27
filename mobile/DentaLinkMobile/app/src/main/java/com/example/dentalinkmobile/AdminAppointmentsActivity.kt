@@ -14,6 +14,7 @@ import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.appointments.model.AppointmentItem
 import com.example.dentalinkmobile.features.payments.model.UpdateStatusRequest
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class AdminAppointmentsActivity : AppCompatActivity() {
@@ -23,6 +24,7 @@ class AdminAppointmentsActivity : AppCompatActivity() {
 
     private lateinit var lvAppointments: ListView
     private lateinit var tvEmpty: TextView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +37,7 @@ class AdminAppointmentsActivity : AppCompatActivity() {
 
         lvAppointments = findViewById(R.id.lvAdminAppointments)
         tvEmpty        = findViewById(R.id.tvAdminAppointmentsEmpty)
+        progressBar    = findViewById(R.id.progressBar)
 
         // Filter Spinner — matches the 5 web chip options (All / Pending Payment / Confirmed / Completed / Cancelled)
         val spinnerFilter = findViewById<Spinner>(R.id.spinnerApptFilter)
@@ -62,6 +65,9 @@ class AdminAppointmentsActivity : AppCompatActivity() {
     }
 
     private fun loadAppointments() {
+        progressBar.visibility    = View.VISIBLE
+        lvAppointments.visibility = View.GONE
+        tvEmpty.visibility        = View.GONE
         lifecycleScope.launch {
             try {
                 val response = RetrofitClient.apiService.getAppointments()
@@ -69,10 +75,12 @@ class AdminAppointmentsActivity : AppCompatActivity() {
                     allAppointments = response.body()?.data ?: emptyList()
                     renderList()
                 } else {
-                    Toast.makeText(this@AdminAppointmentsActivity, "Failed to load appointments", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminAppointmentsActivity.findViewById(android.R.id.content), "Failed to load appointments", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AdminAppointmentsActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminAppointmentsActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
+            } finally {
+                progressBar.visibility = View.GONE
             }
         }
     }
@@ -101,7 +109,7 @@ class AdminAppointmentsActivity : AppCompatActivity() {
         val currentStatus = appointment.status ?: ""
 
         if (currentStatus == "COMPLETED" || currentStatus == "CANCELLED") {
-            Toast.makeText(this, "This appointment is already $currentStatus", Toast.LENGTH_SHORT).show()
+            Snackbar.make(findViewById(android.R.id.content), "This appointment is already $currentStatus", Snackbar.LENGTH_SHORT).show()
             return
         }
 
@@ -123,13 +131,13 @@ class AdminAppointmentsActivity : AppCompatActivity() {
                     id, UpdateStatusRequest(status)
                 )
                 if (response.isSuccessful) {
-                    Toast.makeText(this@AdminAppointmentsActivity, "Status updated to $status", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminAppointmentsActivity.findViewById(android.R.id.content), "Status updated to $status", Snackbar.LENGTH_SHORT).show()
                     loadAppointments()
                 } else {
-                    Toast.makeText(this@AdminAppointmentsActivity, "Failed to update status (${response.code()})", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminAppointmentsActivity.findViewById(android.R.id.content), "Failed to update status (${response.code()})", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AdminAppointmentsActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminAppointmentsActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -160,7 +168,7 @@ private class AdminAppointmentAdapter(
         view.findViewById<TextView>(R.id.tvAdminApptPatient).text =
             "Patient: ${"${item.patient?.firstName ?: ""} ${item.patient?.lastName ?: ""}".trim().ifEmpty { "Unknown" }}"
 
-        view.findViewById<TextView>(R.id.tvAdminApptDentist).text  = item.dentistName ?: ""
+        view.findViewById<TextView>(R.id.tvAdminApptDentist).text  = if (item.dentistName != null) "Dr. ${item.dentistName}" else "Unknown Dentist"
         view.findViewById<TextView>(R.id.tvAdminApptDatetime).text = fmt(item.appointmentDatetime)
 
         val tvStatus = view.findViewById<TextView>(R.id.tvAdminApptStatus)

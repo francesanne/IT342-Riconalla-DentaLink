@@ -14,6 +14,7 @@ import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.dentists.model.DentistDto
 import com.example.dentalinkmobile.features.payments.model.DentistRequest
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class AdminDentistsActivity : AppCompatActivity() {
@@ -21,6 +22,7 @@ class AdminDentistsActivity : AppCompatActivity() {
     private var dentistList = listOf<DentistDto>()
     private lateinit var lvDentists: ListView
     private lateinit var tvEmpty: TextView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +33,9 @@ class AdminDentistsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener { finish() }
 
-        lvDentists = findViewById(R.id.lvAdminDentists)
-        tvEmpty    = findViewById(R.id.tvAdminDentistsEmpty)
+        lvDentists  = findViewById(R.id.lvAdminDentists)
+        tvEmpty     = findViewById(R.id.tvAdminDentistsEmpty)
+        progressBar = findViewById(R.id.progressBar)
 
         findViewById<Button>(R.id.btnAddDentist).setOnClickListener {
             showDentistDialog(null)
@@ -45,6 +48,9 @@ class AdminDentistsActivity : AppCompatActivity() {
     }
 
     private fun loadDentists() {
+        progressBar.visibility = View.VISIBLE
+        lvDentists.visibility  = View.GONE
+        tvEmpty.visibility     = View.GONE
         lifecycleScope.launch {
             try {
                 val response = RetrofitClient.apiService.getDentists()
@@ -52,10 +58,12 @@ class AdminDentistsActivity : AppCompatActivity() {
                     dentistList = response.body()?.data ?: emptyList()
                     renderList()
                 } else {
-                    Toast.makeText(this@AdminDentistsActivity, "Failed to load dentists", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminDentistsActivity.findViewById(android.R.id.content), "Failed to load dentists", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AdminDentistsActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminDentistsActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
+            } finally {
+                progressBar.visibility = View.GONE
             }
         }
     }
@@ -113,7 +121,7 @@ class AdminDentistsActivity : AppCompatActivity() {
                 val status = if (rgStatus.checkedRadioButtonId == R.id.rbInactive) "INACTIVE" else "ACTIVE"
 
                 if (name.isEmpty()) {
-                    Toast.makeText(this, "Name is required", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(findViewById(android.R.id.content), "Name is required", Snackbar.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
 
@@ -129,13 +137,13 @@ class AdminDentistsActivity : AppCompatActivity() {
             try {
                 val response = RetrofitClient.apiService.createDentist(request)
                 if (response.isSuccessful) {
-                    Toast.makeText(this@AdminDentistsActivity, "Dentist added", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminDentistsActivity.findViewById(android.R.id.content), "Dentist added", Snackbar.LENGTH_SHORT).show()
                     loadDentists()
                 } else {
-                    Toast.makeText(this@AdminDentistsActivity, "Failed to add dentist (${response.code()})", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminDentistsActivity.findViewById(android.R.id.content), "Failed to add dentist (${response.code()})", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AdminDentistsActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminDentistsActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -145,13 +153,13 @@ class AdminDentistsActivity : AppCompatActivity() {
             try {
                 val response = RetrofitClient.apiService.updateDentist(id, request)
                 if (response.isSuccessful) {
-                    Toast.makeText(this@AdminDentistsActivity, "Dentist updated", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminDentistsActivity.findViewById(android.R.id.content), "Dentist updated", Snackbar.LENGTH_SHORT).show()
                     loadDentists()
                 } else {
-                    Toast.makeText(this@AdminDentistsActivity, "Failed to update dentist (${response.code()})", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminDentistsActivity.findViewById(android.R.id.content), "Failed to update dentist (${response.code()})", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AdminDentistsActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminDentistsActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -170,13 +178,13 @@ class AdminDentistsActivity : AppCompatActivity() {
             try {
                 val response = RetrofitClient.apiService.deleteDentist(id)
                 if (response.isSuccessful) {
-                    Toast.makeText(this@AdminDentistsActivity, "Dentist deleted", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminDentistsActivity.findViewById(android.R.id.content), "Dentist deleted", Snackbar.LENGTH_SHORT).show()
                     loadDentists()
                 } else {
-                    Toast.makeText(this@AdminDentistsActivity, "Failed to delete dentist (${response.code()})", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminDentistsActivity.findViewById(android.R.id.content), "Failed to delete dentist (${response.code()})", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AdminDentistsActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminDentistsActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
             }
         }
     }

@@ -14,6 +14,7 @@ import com.example.dentalinkmobile.features.services.model.ServiceDto
 import com.example.dentalinkmobile.utils.ImageLoader
 import com.example.dentalinkmobile.utils.formatPeso
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -54,11 +55,11 @@ class ServicesActivity : AppCompatActivity() {
                         }
                     }
                 } else {
-                    Toast.makeText(this@ServicesActivity, "Failed to load services", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@ServicesActivity.findViewById(android.R.id.content), "Failed to load services", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 progressBar.visibility = View.GONE
-                Toast.makeText(this@ServicesActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@ServicesActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
             }
         }
     }

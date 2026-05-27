@@ -12,6 +12,7 @@ import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.utils.SessionManager
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class PatientDashboardActivity : AppCompatActivity() {
@@ -121,10 +122,10 @@ class PatientDashboardActivity : AppCompatActivity() {
                     }
                 }
             } catch (e: Exception) {
-                Toast.makeText(
-                    this@PatientDashboardActivity,
+                Snackbar.make(
+                    this@PatientDashboardActivity.findViewById(android.R.id.content),
                     "Failed to load appointments",
-                    Toast.LENGTH_SHORT
+                    Snackbar.LENGTH_SHORT
                 ).show()
             }
         }

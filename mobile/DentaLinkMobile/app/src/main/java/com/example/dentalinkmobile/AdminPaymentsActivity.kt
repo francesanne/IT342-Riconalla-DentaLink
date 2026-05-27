@@ -13,12 +13,14 @@ import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.payments.model.PaymentItem
 import com.example.dentalinkmobile.utils.formatPeso
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class AdminPaymentsActivity : AppCompatActivity() {
 
     private lateinit var lvPayments: ListView
     private lateinit var tvEmpty: TextView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +31,9 @@ class AdminPaymentsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener { finish() }
 
-        lvPayments = findViewById(R.id.lvAdminPayments)
-        tvEmpty    = findViewById(R.id.tvAdminPaymentsEmpty)
+        lvPayments  = findViewById(R.id.lvAdminPayments)
+        tvEmpty     = findViewById(R.id.tvAdminPaymentsEmpty)
+        progressBar = findViewById(R.id.progressBar)
     }
 
     override fun onResume() {
@@ -39,6 +42,9 @@ class AdminPaymentsActivity : AppCompatActivity() {
     }
 
     private fun loadPayments() {
+        progressBar.visibility = View.VISIBLE
+        lvPayments.visibility  = View.GONE
+        tvEmpty.visibility     = View.GONE
         lifecycleScope.launch {
             try {
                 val response = RetrofitClient.apiService.getPayments()
@@ -55,10 +61,12 @@ class AdminPaymentsActivity : AppCompatActivity() {
                     lvPayments.visibility = View.VISIBLE
                     lvPayments.adapter    = AdminPaymentAdapter(this@AdminPaymentsActivity, payments)
                 } else {
-                    Toast.makeText(this@AdminPaymentsActivity, "Failed to load payments (${response.code()})", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(this@AdminPaymentsActivity.findViewById(android.R.id.content), "Failed to load payments (${response.code()})", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AdminPaymentsActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Snackbar.make(this@AdminPaymentsActivity.findViewById(android.R.id.content), "Network error: ${e.message}", Snackbar.LENGTH_SHORT).show()
+            } finally {
+                progressBar.visibility = View.GONE
             }
         }
     }
