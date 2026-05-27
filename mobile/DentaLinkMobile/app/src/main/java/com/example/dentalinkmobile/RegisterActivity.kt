@@ -41,6 +41,11 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            if (password.length < 8) {
+                Toast.makeText(this, "Password must be at least 8 characters.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (password != confirmPassword) {
                 Toast.makeText(this, getString(R.string.error_passwords_no_match), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
