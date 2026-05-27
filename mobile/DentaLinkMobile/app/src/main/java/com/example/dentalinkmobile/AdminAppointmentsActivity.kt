@@ -130,6 +130,10 @@ private class AdminAppointmentAdapter(
         val item = items[position]
 
         view.findViewById<TextView>(R.id.tvAdminApptService).text  = item.serviceName ?: "Service"
+
+        view.findViewById<TextView>(R.id.tvAdminApptPatient).text =
+            "Patient: ${"${item.patient?.firstName ?: ""} ${item.patient?.lastName ?: ""}".trim().ifEmpty { "Unknown" }}"
+
         view.findViewById<TextView>(R.id.tvAdminApptDentist).text  = item.dentistName ?: ""
         view.findViewById<TextView>(R.id.tvAdminApptDatetime).text = fmt(item.appointmentDatetime)
 

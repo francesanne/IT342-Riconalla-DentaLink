@@ -47,6 +47,15 @@
 
     </LinearLayout>
 
+    <!-- Patient name -->
+    <TextView
+        android:id="@+id/tvAdminApptPatient"
+        android:textSize="13sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="3dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <!-- Dentist name -->
     <TextView
         android:id="@+id/tvAdminApptDentist"
