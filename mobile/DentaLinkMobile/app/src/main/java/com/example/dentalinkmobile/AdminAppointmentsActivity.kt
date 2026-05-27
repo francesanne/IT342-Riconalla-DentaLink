@@ -19,6 +19,8 @@ import kotlinx.coroutines.launch
 class AdminAppointmentsActivity : AppCompatActivity() {
 
     private var allAppointments = listOf<AppointmentItem>()
+    private var currentFilter   = ""          // "" = All; otherwise an exact status string
+
     private lateinit var lvAppointments: ListView
     private lateinit var tvEmpty: TextView
 
@@ -33,6 +35,25 @@ class AdminAppointmentsActivity : AppCompatActivity() {
 
         lvAppointments = findViewById(R.id.lvAdminAppointments)
         tvEmpty        = findViewById(R.id.tvAdminAppointmentsEmpty)
+
+        // Filter Spinner — matches the 5 web chip options (All / Pending Payment / Confirmed / Completed / Cancelled)
+        val spinnerFilter = findViewById<Spinner>(R.id.spinnerApptFilter)
+        val filterLabels  = arrayOf("All", "Pending Payment", "Confirmed", "Completed", "Cancelled")
+        val filterValues  = arrayOf("", "PENDING_PAYMENT", "CONFIRMED", "COMPLETED", "CANCELLED")
+
+        spinnerFilter.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            filterLabels
+        ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+
+        spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
+                currentFilter = filterValues[pos]
+                renderList()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
     }
 
     override fun onResume() {
@@ -57,7 +78,11 @@ class AdminAppointmentsActivity : AppCompatActivity() {
     }
 
     private fun renderList() {
-        if (allAppointments.isEmpty()) {
+        // Apply the active filter (empty string = show all)
+        val filtered = if (currentFilter.isEmpty()) allAppointments
+                       else allAppointments.filter { it.status == currentFilter }
+
+        if (filtered.isEmpty()) {
             tvEmpty.visibility        = View.VISIBLE
             lvAppointments.visibility = View.GONE
             return
@@ -65,9 +90,10 @@ class AdminAppointmentsActivity : AppCompatActivity() {
         tvEmpty.visibility        = View.GONE
         lvAppointments.visibility = View.VISIBLE
 
-        lvAppointments.adapter = AdminAppointmentAdapter(this, allAppointments, ::formatDatetime)
+        lvAppointments.adapter = AdminAppointmentAdapter(this, filtered, ::formatDatetime)
+        // Use filtered[position] so taps map to the correct item after filtering
         lvAppointments.setOnItemClickListener { _, _, position, _ ->
-            showStatusOptions(allAppointments[position])
+            showStatusOptions(filtered[position])
         }
     }
 

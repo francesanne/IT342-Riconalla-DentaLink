@@ -30,6 +30,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <!-- Status filter -->
+    <Spinner
+        android:id="@+id/spinnerApptFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@color/surface"
+        android:elevation="2dp" />
+
     <TextView
         android:id="@+id/tvAdminAppointmentsEmpty"
         android:text="No appointments found"
