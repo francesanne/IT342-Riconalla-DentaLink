@@ -95,6 +95,7 @@ class BookingActivity : AppCompatActivity() {
         }
 
         btnConfirm.setOnClickListener {
+            // Validate before disabling — early returns keep button enabled
             val selectedCal = Calendar.getInstance()
             selectedCal.set(datePicker.year, datePicker.month, datePicker.dayOfMonth)
             if (selectedCal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
@@ -116,61 +117,70 @@ class BookingActivity : AppCompatActivity() {
             val month = datePicker.month + 1
             val day   = datePicker.dayOfMonth
             val time  = timeSlots[spinnerTime.selectedItemPosition]
-
             val appointmentDatetime = "%04d-%02d-%02dT%s:00".format(year, month, day, time)
 
-            confirmBooking(dentistId, appointmentDatetime)
+            // Disable to prevent duplicate taps while the request is in-flight
+            btnConfirm.isEnabled = false
+            btnConfirm.text = "Processing…"
+
+            lifecycleScope.launch {
+                try {
+                    confirmBooking(dentistId, appointmentDatetime)
+                } finally {
+                    btnConfirm.isEnabled = true
+                    btnConfirm.text = "Confirm Booking"
+                }
+            }
         }
 
         btnCancel.setOnClickListener { finish() }
     }
 
-    private fun confirmBooking(dentistId: Long, appointmentDatetime: String) {
-        lifecycleScope.launch {
-            try {
-                // Step 1: create appointment
-                val apptResponse = RetrofitClient.apiService.createAppointment(
-                    CreateAppointmentRequest(serviceId, dentistId, appointmentDatetime)
-                )
+    // suspend — called from within a coroutine; no internal launch needed
+    private suspend fun confirmBooking(dentistId: Long, appointmentDatetime: String) {
+        try {
+            // Step 1: create appointment
+            val apptResponse = RetrofitClient.apiService.createAppointment(
+                CreateAppointmentRequest(serviceId, dentistId, appointmentDatetime)
+            )
 
-                if (!apptResponse.isSuccessful) {
-                    val code = apptResponse.code()
-                    val msg = if (code == 409) {
-                        "This dentist is already booked at that time. Please select a different slot."
-                    } else {
-                        "Booking failed (${code})"
-                    }
-                    Toast.makeText(this@BookingActivity, msg, Toast.LENGTH_LONG).show()
-                    return@launch
-                }
-
-                val appointmentId = apptResponse.body()?.data?.id
-                if (appointmentId == null) {
-                    Toast.makeText(this@BookingActivity, "Unexpected response from server", Toast.LENGTH_SHORT).show()
-                    return@launch
-                }
-
-                // Step 2: create payment intent and open checkout
-                val intentResponse = RetrofitClient.apiService.createPaymentIntent(
-                    CreateIntentRequest(appointmentId)
-                )
-
-                if (intentResponse.isSuccessful) {
-                    val checkoutUrl = intentResponse.body()?.data?.checkoutUrl
-                    if (!checkoutUrl.isNullOrEmpty()) {
-                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(checkoutUrl))
-                        startActivity(browserIntent)
-                        finish()
-                    } else {
-                        Toast.makeText(this@BookingActivity, "Checkout URL not received", Toast.LENGTH_SHORT).show()
-                    }
+            if (!apptResponse.isSuccessful) {
+                val code = apptResponse.code()
+                val msg = if (code == 409) {
+                    "This dentist is already booked at that time. Please select a different slot."
                 } else {
-                    Toast.makeText(this@BookingActivity, "Failed to create payment. Try again.", Toast.LENGTH_SHORT).show()
+                    "Booking failed (${code})"
                 }
-
-            } catch (e: Exception) {
-                Toast.makeText(this@BookingActivity, "Network error: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@BookingActivity, msg, Toast.LENGTH_LONG).show()
+                return
             }
+
+            val appointmentId = apptResponse.body()?.data?.id
+            if (appointmentId == null) {
+                Toast.makeText(this@BookingActivity, "Unexpected response from server", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            // Step 2: create payment intent and open checkout
+            val intentResponse = RetrofitClient.apiService.createPaymentIntent(
+                CreateIntentRequest(appointmentId)
+            )
+
+            if (intentResponse.isSuccessful) {
+                val checkoutUrl = intentResponse.body()?.data?.checkoutUrl
+                if (!checkoutUrl.isNullOrEmpty()) {
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(checkoutUrl))
+                    startActivity(browserIntent)
+                    finish()
+                } else {
+                    Toast.makeText(this@BookingActivity, "Checkout URL not received", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this@BookingActivity, "Failed to create payment. Try again.", Toast.LENGTH_SHORT).show()
+            }
+
+        } catch (e: Exception) {
+            Toast.makeText(this@BookingActivity, "Network error: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 }
