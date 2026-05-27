@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/shared/components/Navbar';
 import { dentistsAPI } from '@/shared/api/api';
-import { AlertCircle, Pencil, Trash2, X, Users } from 'lucide-react';
+import { AlertCircle, Pencil, Trash2, X, Users, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import '@/features/dashboard/styles/dashboard.css';
 
@@ -177,7 +177,6 @@ export default function ManageDentists() {
                         <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
                           <button className="btn-sm btn-outline-sm" onClick={() => openEdit(d)}><Pencil size={14} /></button>
                           <button className="btn-sm btn-danger-sm" onClick={() => setDeleteId(d.id)}><Trash2 size={14} /></button>
-                    
                         </div>
                       </td>
                     </tr>
@@ -252,25 +251,86 @@ export default function ManageDentists() {
         </div>
       )}
 
-      {/* Delete confirm */}
+      {/* Delete confirm modal */}
       {deleteId && (
-        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setDeleteId(null)}>
-          <div className="modal" style={{ maxWidth: 400 }}>
-            <div className="modal-header">
-              <div className="modal-title">Delete Dentist</div>
-              <button className="modal-close" onClick={() => setDeleteId(null)}><X size={18} /></button>
+        <div style={{
+          position: 'fixed', inset: 0,
+          background: 'rgba(17,24,39,0.5)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 200,
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '20px',
+            padding: '40px 36px 32px',
+            maxWidth: '420px',
+            width: '90%',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
+            textAlign: 'center',
+          }}>
+
+            {/* Icon */}
+            <div style={{
+              width: 68, height: 68, borderRadius: '50%',
+              background: 'linear-gradient(135deg, rgba(239,68,68,0.12), rgba(239,68,68,0.06))',
+              border: '2px solid rgba(239,68,68,0.2)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 20px',
+            }}>
+              <AlertTriangle size={28} color="#ef4444" strokeWidth={2} />
             </div>
-            <div className="modal-body">
-              <p style={{ color: 'var(--gray-600)' }}>Are you sure you want to remove this dentist record? This cannot be undone.</p>
-            </div>
-            <div className="modal-footer" style={{ padding: '0 var(--space-6) var(--space-6)' }}>
-              <button className="btn-sm btn-outline-sm" onClick={() => setDeleteId(null)}>Cancel</button>
+
+            {/* Title */}
+            <h3 style={{
+              margin: '0 0 10px',
+              fontSize: '20px',
+              fontWeight: 700,
+              color: 'var(--gray-900)',
+              fontFamily: 'var(--font-display)',
+            }}>
+              Delete Dentist
+            </h3>
+
+            {/* Message */}
+            <p style={{ fontSize: '14px', color: 'var(--gray-600)', lineHeight: 1.65, margin: 0 }}>
+              Are you sure you want to remove this dentist record?
+              This action <strong>cannot be undone</strong>.
+            </p>
+
+            {/* Divider */}
+            <div style={{ height: 1, background: 'var(--gray-100)', margin: '24px 0 20px' }} />
+
+            {/* Buttons */}
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
               <button
-                className="btn-sm"
-                style={{ height: 44, padding: '0 24px', background: 'var(--danger)', color: 'white', border: 'none', borderRadius: 'var(--radius-lg)', fontWeight: 600, cursor: 'pointer' }}
+                onClick={() => setDeleteId(null)}
+                style={{
+                  height: 42, padding: '0 22px',
+                  background: 'white', color: 'var(--gray-600)',
+                  border: '1.5px solid var(--gray-200)',
+                  borderRadius: '10px', fontWeight: 600,
+                  fontSize: '13px', cursor: 'pointer',
+                  transition: 'all 0.15s',
+                }}
+              >
+                Go Back
+              </button>
+              <button
                 onClick={() => handleDelete(deleteId)}
-              >Delete</button>
+                style={{
+                  height: 42, padding: '0 22px',
+                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  color: 'white', border: 'none',
+                  borderRadius: '10px', fontWeight: 600,
+                  fontSize: '13px', cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(239,68,68,0.3)',
+                  transition: 'all 0.15s',
+                }}
+              >
+                Yes, Delete
+              </button>
             </div>
+
           </div>
         </div>
       )}
