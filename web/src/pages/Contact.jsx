@@ -15,7 +15,7 @@ const NAV_LINKS = [
 ];
 
 const CLINIC_HOURS = [
-  { label: 'Monday – Friday', time: '8:00 AM – 6:00 PM', days: [1, 2, 3, 4, 5] },
+  { label: 'Monday – Friday', time: '8:00 AM – 5:00 PM', days: [1, 2, 3, 4, 5] },
   { label: 'Saturday',        time: '9:00 AM – 5:00 PM', days: [6] },
   { label: 'Sunday',          time: 'Closed',             days: [0], closed: true },
 ];
