@@ -1,5 +1,6 @@
 package com.example.dentalinkmobile
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -98,7 +99,7 @@ class BookingActivity : AppCompatActivity() {
         }
 
         btnConfirm.setOnClickListener {
-            // Validate before disabling — early returns keep button enabled
+            // ── Validation (early returns keep the button enabled) ──
             val selectedCal = Calendar.getInstance()
             selectedCal.set(datePicker.year, datePicker.month, datePicker.dayOfMonth)
             if (selectedCal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
@@ -115,27 +116,55 @@ class BookingActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val dentistId = dentistList[spinnerDentist.selectedItemPosition].id
-            val year  = datePicker.year
-            val month = datePicker.month + 1
-            val day   = datePicker.dayOfMonth
-            val time  = timeSlots[spinnerTime.selectedItemPosition]
+            // ── Collect selection ──
+            val selectedDentist     = dentistList[spinnerDentist.selectedItemPosition]
+            val dentistId           = selectedDentist.id
+            val dentistName         = selectedDentist.name
+            val year                = datePicker.year
+            val month               = datePicker.month + 1
+            val day                 = datePicker.dayOfMonth
+            val time                = timeSlots[spinnerTime.selectedItemPosition]
             val appointmentDatetime = "%04d-%02d-%02dT%s:00".format(year, month, day, time)
 
-            // Show loading state and disable button while the request is in-flight
-            progressBooking.visibility = View.VISIBLE
-            btnConfirm.isEnabled = false
-            btnConfirm.text = "Processing…"
+            val formattedDate = try {
+                java.time.LocalDate.of(year, month, day)
+                    .format(java.time.format.DateTimeFormatter.ofPattern("MMMM d, yyyy"))
+            } catch (e: Exception) { "$month/$day/$year" }
 
-            lifecycleScope.launch {
-                try {
-                    confirmBooking(dentistId, appointmentDatetime)
-                } finally {
-                    progressBooking.visibility = View.GONE
-                    btnConfirm.isEnabled = true
-                    btnConfirm.text = "Confirm Booking"
+            val formattedTime = try {
+                java.time.LocalTime.parse(time)
+                    .format(java.time.format.DateTimeFormatter.ofPattern("h:mm a"))
+            } catch (e: Exception) { time }
+
+            // ── Confirmation summary dialog ──
+            AlertDialog.Builder(this)
+                .setTitle("Confirm Your Booking")
+                .setMessage(
+                    "Service: $serviceName\n" +
+                    "Dentist: Dr. $dentistName\n" +
+                    "Date: $formattedDate\n" +
+                    "Time: $formattedTime\n" +
+                    "Amount: ${formatPeso(servicePrice)}\n\n" +
+                    "You will be redirected to complete payment."
+                )
+                .setPositiveButton("Proceed to Payment") { _, _ ->
+                    // Show loading state only after user confirms
+                    progressBooking.visibility = View.VISIBLE
+                    btnConfirm.isEnabled = false
+                    btnConfirm.text = "Processing…"
+
+                    lifecycleScope.launch {
+                        try {
+                            confirmBooking(dentistId, appointmentDatetime)
+                        } finally {
+                            progressBooking.visibility = View.GONE
+                            btnConfirm.isEnabled = true
+                            btnConfirm.text = "Confirm Booking"
+                        }
+                    }
                 }
-            }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
 
         btnCancel.setOnClickListener { finish() }
