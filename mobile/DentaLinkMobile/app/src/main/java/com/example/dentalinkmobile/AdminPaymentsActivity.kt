@@ -82,6 +82,9 @@ private class AdminPaymentAdapter(
             "${item.patient.firstName} ${item.patient.lastName}" else "Unknown"
         view.findViewById<TextView>(R.id.tvPayPatientName).text = patientName
 
+        view.findViewById<TextView>(R.id.tvPayServiceName).text =
+            item.serviceName ?: "Unknown Service"
+
         val amount = item.paymentAmount?.let { formatPeso(it) } ?: "N/A"
         view.findViewById<TextView>(R.id.tvPayAmount).text = amount
 
