@@ -94,6 +94,17 @@ class BookingActivity : AppCompatActivity() {
         }
 
         btnConfirm.setOnClickListener {
+            val selectedCal = Calendar.getInstance()
+            selectedCal.set(datePicker.year, datePicker.month, datePicker.dayOfMonth)
+            if (selectedCal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                Toast.makeText(
+                    this,
+                    "The clinic is closed on Sundays. Please select another date.",
+                    Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
+            }
+
             if (dentistList.isEmpty()) {
                 Toast.makeText(this, "No dentists available", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener

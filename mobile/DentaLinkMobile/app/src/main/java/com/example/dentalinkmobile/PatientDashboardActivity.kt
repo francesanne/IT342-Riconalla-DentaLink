@@ -114,8 +114,10 @@ class PatientDashboardActivity : AppCompatActivity() {
                         lvUpcoming.visibility   = View.VISIBLE
                         lvUpcoming.adapter = AppointmentAdapter(
                             this@PatientDashboardActivity,
-                            upcomingList.take(3)
-                        ) { /* no tap action on dashboard preview */ }
+                            upcomingList.take(3),
+                            onPayClick    = { /* no pay action on dashboard preview */ },
+                            onCancelClick = { /* no cancel action on dashboard preview */ }
+                        )
                     }
                 }
             } catch (e: Exception) {
