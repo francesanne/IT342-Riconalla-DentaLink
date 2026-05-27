@@ -120,19 +120,17 @@ class AdminAppointmentsActivity : AppCompatActivity() {
             return
         }
 
-        // Build options based on current state:
-        //   PENDING_PAYMENT → Confirm | Cancel
-        //   CONFIRMED       → Complete | Cancel
+        // Build options based on current state — matches web ManageAppointments.jsx:
+        //   CONFIRMED       → Mark Completed | Cancel
+        //   PENDING_PAYMENT → Cancel only
+        //     (COMPLETED is blocked — payment is still UNPAID;
+        //      CONFIRMED is blocked — only the PayMongo webhook may set this)
         val (options, statusValues) = when (currentStatus) {
-            "PENDING_PAYMENT" -> Pair(
-                arrayOf("✓  Confirm appointment", "✗  Cancel appointment"),
-                arrayOf("CONFIRMED", "CANCELLED")
-            )
             "CONFIRMED" -> Pair(
                 arrayOf("✓  Mark as Completed", "✗  Cancel appointment"),
                 arrayOf("COMPLETED", "CANCELLED")
             )
-            else -> Pair(
+            else -> Pair(   // PENDING_PAYMENT: only cancellation is permitted
                 arrayOf("✗  Cancel appointment"),
                 arrayOf("CANCELLED")
             )
