@@ -187,7 +187,7 @@ export default function AdminDashboard() {
                             </div>
                           </td>
                           <td style={{ color: 'var(--gray-700)' }}>{a.serviceName ?? '—'}</td>
-                          <td className="col-hide-tablet" style={{ color: 'var(--gray-700)' }}>{a.dentistName}</td>
+                          <td className="col-hide-tablet" style={{ color: 'var(--gray-700)' }}>{a.dentistName ? `Dr. ${a.dentistName}` : '—'}</td>
                           <td style={{ color: 'var(--gray-600)', fontSize: 'var(--text-sm)' }}>{formatDate(a.appointmentDatetime)}</td>
                           <td><StatusBadge status={a.appointmentStatus} /></td>
                         </tr>
