@@ -65,9 +65,9 @@ class RegisterActivity : AppCompatActivity() {
 
                             Toast.makeText(this@RegisterActivity, getString(R.string.register_success), Toast.LENGTH_SHORT).show()
 
-                            // Navigate to login so user explicitly authenticates after registration
-                            val intent = Intent(this@RegisterActivity, MainActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                            // Navigate directly to patient dashboard — skip login screen
+                            val intent = Intent(this@RegisterActivity, PatientDashboardActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                             startActivity(intent)
                             finish()
                         } else {
