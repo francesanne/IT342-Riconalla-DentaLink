@@ -16,6 +16,7 @@ import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.services.model.ServiceDto
 import com.example.dentalinkmobile.features.payments.model.ServiceRequest
 import com.example.dentalinkmobile.utils.ImageLoader
+import com.example.dentalinkmobile.utils.formatPeso
 import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -287,7 +288,7 @@ private class AdminServiceAdapter(
 
         view.findViewById<TextView>(R.id.tvServiceName).text        = item.name
         view.findViewById<TextView>(R.id.tvServiceDescription).text = item.description ?: ""
-        view.findViewById<TextView>(R.id.tvServicePrice).text       = "P${String.format("%.2f", item.price)}"
+        view.findViewById<TextView>(R.id.tvServicePrice).text       = formatPeso(item.price)
 
         ivImage.setImageResource(android.R.drawable.ic_menu_gallery)
         if (!item.imageUrl.isNullOrBlank()) {

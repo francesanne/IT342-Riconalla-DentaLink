@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.payments.model.PaymentItem
+import com.example.dentalinkmobile.utils.formatPeso
 import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.launch
 
@@ -81,7 +82,7 @@ private class AdminPaymentAdapter(
             "${item.patient.firstName} ${item.patient.lastName}" else "Unknown"
         view.findViewById<TextView>(R.id.tvPayPatientName).text = patientName
 
-        val amount = item.paymentAmount?.let { "P${String.format("%.2f", it)}" } ?: "N/A"
+        val amount = item.paymentAmount?.let { formatPeso(it) } ?: "N/A"
         view.findViewById<TextView>(R.id.tvPayAmount).text = amount
 
         view.findViewById<TextView>(R.id.tvPayRef).text =

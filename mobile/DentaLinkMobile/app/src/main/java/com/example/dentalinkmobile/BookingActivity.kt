@@ -10,6 +10,7 @@ import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.appointments.model.CreateAppointmentRequest
 import com.example.dentalinkmobile.features.appointments.model.CreateIntentRequest
 import com.example.dentalinkmobile.features.dentists.model.DentistDto
+import com.example.dentalinkmobile.utils.formatPeso
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -48,7 +49,7 @@ class BookingActivity : AppCompatActivity() {
         val btnCancel      = findViewById<Button>(R.id.btnCancelBooking)
 
         tvServiceName.text  = serviceName
-        tvServicePrice.text = "P${String.format("%.2f", servicePrice)}"
+        tvServicePrice.text = formatPeso(servicePrice)
 
         // Enforce minimum date = today
         val today = Calendar.getInstance()

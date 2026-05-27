@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.dentalinkmobile.api.RetrofitClient
 import com.example.dentalinkmobile.features.dashboard.model.RecentAppointment
 import com.example.dentalinkmobile.utils.SessionManager
+import com.example.dentalinkmobile.utils.formatPeso
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.launch
@@ -97,7 +98,7 @@ class AdminDashboardActivity : AppCompatActivity() {
                     tvTotal.text     = stats.totalAppointments.toString()
                     tvPending.text   = stats.pendingPayments.toString()
                     tvConfirmed.text = stats.confirmedAppointments.toString()
-                    tvRevenue.text   = "P${String.format("%.2f", stats.totalRevenue)}"
+                    tvRevenue.text   = formatPeso(stats.totalRevenue)
 
                     lvRecent.adapter = RecentAppointmentAdapter(
                         this@AdminDashboardActivity,
